@@ -1,38 +1,17 @@
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import type { AppProps } from 'next/app'
+import { WagmiConfig } from 'wagmi'
 
-import '@rainbow-me/rainbowkit/styles.css';
-import {
-  getDefaultWallets,
-  RainbowKitProvider,
-} from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { goerli } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-
-const { chains, provider } = configureChains(
-  [goerli],
-  [
-    publicProvider()
-  ]
-);
-const { connectors } = getDefaultWallets({
-  appName: 'Alyra Final Project',
-  chains
-});
-const wagmiClient = createClient({
-  autoConnect: false,
-  connectors,
-  provider
-})
+import { chains, wagmiClient } from '../libraries/rainbowkit.config'
 
 const App = ({ Component, pageProps }: AppProps) => {
-  return (
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
-        <Component {...pageProps} />
-      </RainbowKitProvider>
-    </WagmiConfig>
-  );
-};
+    return (
+        <WagmiConfig client={wagmiClient}>
+            <RainbowKitProvider chains={chains}>
+                <Component {...pageProps} />
+            </RainbowKitProvider>
+        </WagmiConfig>
+    )
+}
 
-export default App;
+export default App
