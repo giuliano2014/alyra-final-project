@@ -1,14 +1,25 @@
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { ChakraProvider } from '@chakra-ui/react'
+import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import type { AppProps } from 'next/app'
 import { WagmiConfig } from 'wagmi'
 
-import { chains, wagmiClient } from '../libraries/rainbowkit.config'
+import Layout from '@/components/layout'
+import { chains, wagmiClient } from '@/libraries/rainbowkit.config'
 
 const App = ({ Component, pageProps }: AppProps) => {
     return (
         <WagmiConfig client={wagmiClient}>
-            <RainbowKitProvider chains={chains}>
-                <Component {...pageProps} />
+            <RainbowKitProvider 
+                chains={chains}
+                theme={lightTheme({
+                    accentColor: '#575CFE',
+                })}
+            >
+                <ChakraProvider>
+                    <Layout>
+                        <Component {...pageProps} />
+                    </Layout>
+                </ChakraProvider>
             </RainbowKitProvider>
         </WagmiConfig>
     )
