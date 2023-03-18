@@ -13,13 +13,14 @@ import {
     StackDivider,
     Text
 } from '@chakra-ui/react'
+import NextLink from 'next/link'
 import Head from 'next/head'
 
 const Invest = () => {
     return (
         <>
             <Head>
-                <title>HydrInvest - Invest</title>
+                <title>HydrInvest - Assets</title>
                 <meta name="description" content="DeFi Dapp" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
@@ -27,7 +28,7 @@ const Invest = () => {
             <Box pb='4' pl='4' pr='4' pt='20'>
                 <Container maxW='container.lg'>
                     <Box textAlign='center'>
-                        <Heading size='2xl'>Invest</Heading>
+                        <Heading size='2xl'>Assets</Heading>
                         <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets. Browse our featured products or select a asset.</Text>
                         <Text fontSize='xl'>We&apos;ve launched Multiply for Aave.</Text>
                     </Box>
@@ -35,7 +36,7 @@ const Invest = () => {
                     <SimpleGrid minChildWidth='xs' mt='20' spacing='40px'>
                         <Card bg='rgba(200, 181, 247, 0.2)' borderRadius='2xl' w='100%'>
                             <CardHeader>
-                                <Heading size='lg'>Asset One</Heading>
+                                <Heading size='lg'>Asset 19</Heading>
                             </CardHeader>
                             <CardBody>
                                 <Stack divider={<StackDivider />} spacing='4'>
@@ -74,7 +75,7 @@ const Invest = () => {
                             </CardBody>
                             <Divider color='#e2e8f0' />
                             <CardFooter justifyContent='end'>
-                                <Button bg='#575CFE' color='white' colorScheme='purple'>
+                                <Button as={NextLink} href='/assets/19' bg='#575CFE' color='white' colorScheme='purple'>
                                     Buy now
                                 </Button>
                             </CardFooter>

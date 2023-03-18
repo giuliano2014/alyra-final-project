@@ -38,8 +38,8 @@ const Navbar = () => {
                     <Button as={NextLink} href='/' variant='ghost'>
                         Home
                     </Button>
-                    <Button as={NextLink} href='/invest' variant='ghost'>
-                        Invest
+                    <Button as={NextLink} href='/assets' variant='ghost'>
+                        Assets
                     </Button>
                     <Menu>
                         <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
@@ -85,8 +85,8 @@ const Navbar = () => {
                     <Link href="/" mb='2'>
                         Home
                     </Link>
-                    <Link href="/invest" mb='2'>
-                        Invest
+                    <Link href="/assets" mb='2'>
+                        Assets
                     </Link>
                     <Text mb='2'>
                         About
