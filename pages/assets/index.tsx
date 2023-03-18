@@ -16,7 +16,7 @@ import {
 import NextLink from 'next/link'
 import Head from 'next/head'
 
-const Invest = () => {
+const Assets = () => {
     return (
         <>
             <Head>
@@ -34,7 +34,7 @@ const Invest = () => {
                     </Box>
 
                     <SimpleGrid minChildWidth='xs' mt='20' spacing='40px'>
-                        <Card bg='rgba(200, 181, 247, 0.2)' borderRadius='2xl' w='100%'>
+                        <Card bg='purple.50' borderRadius='2xl' w='100%'>
                             <CardHeader>
                                 <Heading size='lg'>Asset 19</Heading>
                             </CardHeader>
@@ -48,7 +48,7 @@ const Invest = () => {
                                             View a summary of all your clients over the last month.
                                         </Text>
                                     </Box>
-                                    <Card bg='rgba(200, 181, 247, 0.5)' borderRadius='2xl'>
+                                    <Card bg='purple.100' borderRadius='2xl'>
                                         <CardBody textAlign='center'>
                                             <Text>With 100 ETH 👇</Text>
                                             <Heading size='xs'>Get up to 571 ETH exposure</Heading>
@@ -62,7 +62,6 @@ const Invest = () => {
                                             Check out the overview of your clients.
                                         </Text>
                                     </Box>
-
                                     <Box>
                                         <Heading size='xs' textTransform='uppercase'>
                                             Analysis
@@ -75,15 +74,15 @@ const Invest = () => {
                             </CardBody>
                             <Divider color='#e2e8f0' />
                             <CardFooter justifyContent='end'>
-                                <Button as={NextLink} href='/assets/19' bg='#575CFE' color='white' colorScheme='purple'>
+                                <Button as={NextLink} bg='purple.900' color='white' colorScheme='purple'  href='/assets/19'>
                                     Buy now
                                 </Button>
                             </CardFooter>
                         </Card>
-                        <Box bg='rgba(200, 181, 247, 0.2)'  height='80px' borderRadius='2xl'></Box>
-                        <Box bg='rgba(200, 181, 247, 0.2)'  height='80px' borderRadius='2xl'></Box>
-                        <Box bg='rgba(200, 181, 247, 0.2)'  height='80px' borderRadius='2xl'></Box>
-                        <Box bg='rgba(200, 181, 247, 0.2)'  height='80px' borderRadius='2xl'></Box>
+                        <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
+                        <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
+                        <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
+                        <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
                     </SimpleGrid>
                 </Container>
             </Box>
@@ -91,4 +90,4 @@ const Invest = () => {
     )
 }
 
-export default Invest
+export default Assets
