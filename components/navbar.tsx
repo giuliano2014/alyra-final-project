@@ -38,14 +38,18 @@ const Navbar = () => {
                     <Button as={NextLink} href='/' variant='ghost'>
                         Home
                     </Button>
+                    <Button as={NextLink} href='/invest' variant='ghost'>
+                        Invest
+                    </Button>
                     <Menu>
                         <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
-                            Assets
+                            About
                         </MenuButton>
                         <MenuList>
-                            <MenuItem as={NextLink} href='bob'>Invest</MenuItem>
-                            <MenuItem as={NextLink} href='bob'>Learn</MenuItem>
-                            <MenuItem as={NextLink} href='bob'>Tips</MenuItem>
+                            <MenuItem as={NextLink} href='/about/team'>Team</MenuItem>
+                            <MenuItem as={NextLink} href='/about/manifest'>Manifest</MenuItem>
+                            <MenuItem as={NextLink} href='/about/white-paper'>White Paper</MenuItem>
+                            <MenuItem as={NextLink} href='/about/help'>Help</MenuItem>
                         </MenuList>
                     </Menu>
                     <Menu>
@@ -53,9 +57,9 @@ const Navbar = () => {
                             Account
                         </MenuButton>
                         <MenuList>
-                            <MenuItem as={NextLink} href='bob'>Board</MenuItem>
-                            <MenuItem as={NextLink} href='bob'>Profil</MenuItem>
-                            <MenuItem as={NextLink} href='bob'>Settings</MenuItem>
+                            <MenuItem as={NextLink} href='/account/board'>Board</MenuItem>
+                            <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
+                            <MenuItem as={NextLink} href='/account/settings'>Settings</MenuItem>
                         </MenuList>
                     </Menu>
                 </Flex>
@@ -78,32 +82,38 @@ const Navbar = () => {
                 mt='4'
             >
                 <Flex display={{ base: 'flex', md: 'none' }} flexDirection="column" ml='4'>
-                    <Link href="#" mb='2'>
+                    <Link href="/" mb='2'>
                         Home
                     </Link>
+                    <Link href="/invest" mb='2'>
+                        Invest
+                    </Link>
                     <Text mb='2'>
-                        Assets
+                        About
                     </Text>
                     <Flex direction='column' ml={4}>
-                        <Link href="#" mb='2'>
-                            Invest
+                        <Link href="/about/team" mb='2'>
+                            Team
                         </Link>
-                        <Link href="#" mb='2'>
-                            Learn
+                        <Link href="/about/manifest" mb='2'>
+                            Manifest
                         </Link>
-                        <Link href="#" mb='2'>
-                            Tips
+                        <Link href="/about/white-paper" mb='2'>
+                            White Paper
+                        </Link>
+                        <Link href="/about/help" mb='2'>
+                            Help
                         </Link>
                     </Flex>
                     <Text mb='2'>Account</Text>
                     <Flex direction='column' ml={4}>
-                        <Link href="#" mb='2'>
+                        <Link href="/account/board" mb='2'>
                             Board
                         </Link>
-                        <Link href="#" mb='2'>
+                        <Link href="/account/profil" mb='2'>
                             Profil
                         </Link>
-                        <Link href="#" mb='2'>
+                        <Link href="/account/settings" mb='2'>
                             Settings
                         </Link>
                     </Flex>
