@@ -13,6 +13,7 @@ import {
     StackDivider,
     Text
 } from '@chakra-ui/react'
+import NextLink from 'next/link'
 import Head from 'next/head'
 
 const Invest = () => {
@@ -74,7 +75,7 @@ const Invest = () => {
                             </CardBody>
                             <Divider color='#e2e8f0' />
                             <CardFooter justifyContent='end'>
-                                <Button bg='#575CFE' color='white' colorScheme='purple'>
+                                <Button as={NextLink} href='/invest/19' bg='#575CFE' color='white' colorScheme='purple'>
                                     Buy now
                                 </Button>
                             </CardFooter>
