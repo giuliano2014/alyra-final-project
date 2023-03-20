@@ -62,6 +62,15 @@ const Navbar = () => {
                             <MenuItem as={NextLink} href='/account/settings'>Settings</MenuItem>
                         </MenuList>
                     </Menu>
+                    <Menu>
+                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
+                            Test
+                        </MenuButton>
+                        <MenuList>
+                            <MenuItem as={NextLink} href='/test/set'>Set a number</MenuItem>
+                            <MenuItem as={NextLink} href='/test/get'>Get the number</MenuItem>
+                        </MenuList>
+                    </Menu>
                 </Flex>
 
                 <Flex display={displayMenu}>
@@ -115,6 +124,15 @@ const Navbar = () => {
                         </Link>
                         <Link href="/account/settings" mb='2'>
                             Settings
+                        </Link>
+                    </Flex>
+                    <Text mb='2'>Test</Text>
+                    <Flex direction='column' ml={4}>
+                        <Link href="/test/set" mb='2'>
+                            Set a number
+                        </Link>
+                        <Link href="/test/get" mb='2'>
+                            Get the number
                         </Link>
                     </Flex>
                     <Divider mb='6' mt='4' />
