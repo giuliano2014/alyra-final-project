@@ -3,10 +3,16 @@ import "@nomicfoundation/hardhat-toolbox";
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
+  gasReporter: {
+    // currency: "USD",
+    enabled: true,
+    // enabled: process.env.REPORT_GAS ? true : false,
+    // excludeContracts: [],
+    // src: "./contracts",
+  },
   networks: {
     localhost: {
       url: "http://127.0.0.1:8545",
-      //accounts : Merci hardhat :D !
       chainId: 31337,
     }
   },
