@@ -4,12 +4,11 @@ import Head from 'next/head'
 import { useState } from 'react'
 import { useAccount, useProvider } from 'wagmi'
 
-import { contractAddress, abi } from "@/public/constants"
+import { abi, contractAddress } from "@/contracts/simpleStorage"
 
 const Get = () => {
     const { isConnected } = useAccount()
     const provider = useProvider()
-
     const [number, setNumber] = useState(null)
 
     const getTheNumber = async() => {

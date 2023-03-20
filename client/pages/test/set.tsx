@@ -12,17 +12,14 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useAccount, useSigner } from 'wagmi'
 
-import { contractAddress, abi } from "@/public/constants"
+import { abi, contractAddress } from "@/contracts/simpleStorage"
 
 const Set = () => {
-    const { address, isConnected } = useAccount()
-    const { data: signer } = useSigner()
-    const toast = useToast()
+    const { isConnected } = useAccount()
     const router = useRouter()
-
+    const { data: signer } = useSigner()
     const [number, setNumber] = useState(null)
-
-    console.log('signer', signer)
+    const toast = useToast()
 
     const setTheNumber = async() => {
         if (!signer) return

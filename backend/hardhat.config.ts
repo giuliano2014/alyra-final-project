@@ -2,7 +2,6 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.19",
   defaultNetwork: "hardhat",
   networks: {
     localhost: {
@@ -11,6 +10,7 @@ const config: HardhatUserConfig = {
       chainId: 31337,
     }
   },
+  solidity: "0.8.19",
 };
 
 export default config;
