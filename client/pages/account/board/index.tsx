@@ -70,10 +70,11 @@ const Board = () => {
                         <TabPanels>
                             <TabPanel>
                                 <Box mt='10'>
-                                    <Heading size='md'>Assets list</Heading>
+                                    <Heading size='md'>Asset Metrics</Heading>
                                     <Card borderRadius='2xl' mt='4'>
                                         <TableContainer>
                                             <Table variant='striped'>
+                                                <TableCaption>Asset Metrics</TableCaption>
                                                 <Thead>
                                                     <Tr>
                                                         <Th>Asset&apos;s title</Th>
@@ -87,52 +88,176 @@ const Board = () => {
                                                 <Tbody>
                                                     <Tr>
                                                         <Td>Asset #1</Td>
-                                                        <Td>1.000.000</Td>
+                                                        <Td>200.000</Td>
                                                         <Td>AFT</Td>
-                                                        <Td>599.999</Td>
-                                                        <Td>400.001</Td>
+                                                        <Td>130.000</Td>
+                                                        <Td>70.000</Td>
                                                         <Td>
                                                             <Badge colorScheme="orange">Sale in progress</Badge>
                                                         </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>Asset #1</Td>
+                                                        <Td>Asset #2</Td>
                                                         <Td>1.000.000</Td>
-                                                        <Td>AFT</Td>
-                                                        <Td>599.999</Td>
-                                                        <Td>400.001</Td>
+                                                        <Td>AST</Td>
+                                                        <Td>350.000</Td>
+                                                        <Td>650.000</Td>
                                                         <Td>
                                                             <Badge colorScheme="orange">Second round</Badge>
                                                         </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>Asset #1</Td>
-                                                        <Td>1.000.000</Td>
-                                                        <Td>AFT</Td>
-                                                        <Td>599.999</Td>
-                                                        <Td>400.001</Td>
+                                                        <Td>Asset #3</Td>
+                                                        <Td>50.000</Td>
+                                                        <Td>ATT</Td>
+                                                        <Td>50.000</Td>
+                                                        <Td>0</Td>
                                                         <Td>
                                                             <Badge colorScheme="green">Sale is closed</Badge>
                                                         </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>Asset #1</Td>
-                                                        <Td>1.000.000</Td>
-                                                        <Td>AFT</Td>
-                                                        <Td>599.999</Td>
-                                                        <Td>400.001</Td>
+                                                        <Td>Asset #4</Td>
+                                                        <Td>500.000</Td>
+                                                        <Td>AQT</Td>
+                                                        <Td>0</Td>
+                                                        <Td>500.000</Td>
                                                         <Td>
                                                             <Badge>Sale not started</Badge>
                                                         </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>Asset #1</Td>
-                                                        <Td>1.000.000</Td>
-                                                        <Td>AFT</Td>
-                                                        <Td>599.999</Td>
-                                                        <Td>400.001</Td>
+                                                        <Td>Asset #5</Td>
+                                                        <Td>2.000.000</Td>
+                                                        <Td>ACT</Td>
+                                                        <Td>1.300.000</Td>
+                                                        <Td>700.000</Td>
                                                         <Td>
                                                             <Badge colorScheme="red">Sale canceled</Badge>
+                                                        </Td>
+                                                    </Tr>
+                                                </Tbody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Card>
+                                </Box>
+                                <Box mt='10'>
+                                    <Heading size='md'>Asset Workflow Actions</Heading>
+                                    <Card borderRadius='2xl' mt='4'>
+                                        <TableContainer>
+                                            <Table variant='striped'>
+                                                <TableCaption>Asset Workflow Actions</TableCaption>
+                                                <Thead>
+                                                    <Tr>
+                                                        <Th>Asset&apos;s title</Th>
+                                                        <Th>Lock time 1</Th>
+                                                        <Th>Lock time 2</Th>
+                                                        <Th>Cancel</Th>
+                                                    </Tr>
+                                                </Thead>
+                                                <Tbody>
+                                                    <Tr>
+                                                        <Td>Asset #1</Td>
+                                                        <Td>
+                                                            <Button
+                                                                colorScheme='teal'
+                                                                isLoading
+                                                                loadingText='In progress'
+                                                                spinnerPlacement='start'
+                                                                size='xs'
+                                                                variant='outline'
+                                                            >
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' size='xs'>
+                                                                Stop
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>Asset #2</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button
+                                                                colorScheme='teal'
+                                                                isLoading
+                                                                loadingText='In progress'
+                                                                spinnerPlacement='start'
+                                                                size='xs'
+                                                                variant='outline'
+                                                            >
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' size='xs'>
+                                                                Stop
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>Asset #3</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' isDisabled size='xs'>
+                                                                Stop
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>Asset #4</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' isDisabled size='xs'>
+                                                                Stop
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>Asset #5</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Start
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' isDisabled size='xs'>
+                                                                Stop
+                                                            </Button>
                                                         </Td>
                                                     </Tr>
                                                 </Tbody>
@@ -160,11 +285,12 @@ const Board = () => {
                                 </Card>
                             </TabPanel>
                             <TabPanel>
-                            <Box mt='10'>
+                                <Box mt='10'>
                                     <Heading size='md'>KYC&apos;s status</Heading>
                                     <Card borderRadius='2xl' mt='4'>
                                         <TableContainer>
                                             <Table variant='striped'>
+                                                <TableCaption>KYC Metrics</TableCaption>
                                                 <Thead>
                                                     <Tr>
                                                         <Th>User&apos;s Address</Th>
