@@ -18,6 +18,7 @@ import {
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import NextLink from 'next/link'
 import React, { useState } from 'react'
+import { useAccount } from 'wagmi'
 
 const Navbar = () => {
     const displayMenu = useBreakpointValue({ base: 'none', md: 'flex' })
@@ -26,6 +27,21 @@ const Navbar = () => {
     const handleMobileMenu = () => {
         setMobileMenuOpen(!isMobileMenuOpen)
     }
+
+    const { address, connector, isConnected, isReconnecting, isDisconnected } = useAccount({
+        onConnect: () => {
+            // console.log('onConnect isConnected', isConnected)
+            // console.log('onConnect isConnected', isConnected)
+            // console.log('onConnect isReconnecting', isReconnecting)
+            sessionStorage.setItem("isConnected", 'true');
+        },
+        onDisconnect: () => {
+            // console.log('onDisconnect isConnected', isConnected)
+            // console.log('onDisconnect isDisconnected', isDisconnected)
+            // console.log('onDisconnect isReconnecting', isReconnecting)
+            sessionStorage.setItem("isConnected", 'false');
+        },
+})
 
     return (
         <Box p='4'>
@@ -52,17 +68,19 @@ const Navbar = () => {
                             <MenuItem as={NextLink} href='/about/help'>Help</MenuItem>
                         </MenuList>
                     </Menu>
-                    <Menu>
-                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
-                            Account
-                        </MenuButton>
-                        <MenuList>
-                            <MenuItem as={NextLink} href='/account/board'>Board</MenuItem>
-                            <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
-                            <MenuItem as={NextLink} href='/account/settings'>Settings</MenuItem>
-                        </MenuList>
-                    </Menu>
-                    <Menu>
+                    {isConnected && 
+                        <Menu>
+                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
+                                Account
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem as={NextLink} href='/account/board'>Board</MenuItem>
+                                <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
+                                <MenuItem as={NextLink} href='/account/settings'>Settings</MenuItem>
+                            </MenuList>
+                        </Menu>
+                    }
+                    {/* <Menu>
                         <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
                             Test
                         </MenuButton>
@@ -70,7 +88,7 @@ const Navbar = () => {
                             <MenuItem as={NextLink} href='/test/set'>Set a number</MenuItem>
                             <MenuItem as={NextLink} href='/test/get'>Get the number</MenuItem>
                         </MenuList>
-                    </Menu>
+                    </Menu> */}
                 </Flex>
 
                 <Flex display={displayMenu}>

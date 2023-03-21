@@ -27,10 +27,13 @@ import {
     Th,
     Thead,
     Tr,
-    Switch
+    Switch,
+    Alert,
+    AlertIcon
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import { ChangeEvent, ChangeEventHandler, useState } from 'react'
+import { useAccount } from 'wagmi'
 
 const Board = () => {
     const [assetName, setAssetName] = useState('')
@@ -45,6 +48,44 @@ const Board = () => {
             [event.target.name]: event.target.checked
         })
     }
+
+    const { address, connector, isConnected, isReconnecting, isDisconnected } = useAccount({
+        onConnect: () => {
+            // console.log('onConnect isConnected', isConnected)
+            // console.log('onConnect isConnected', isConnected)
+            // console.log('onConnect isReconnecting', isReconnecting)
+            sessionStorage.setItem("isConnected", 'true');
+        },
+        onDisconnect: () => {
+            // console.log('onDisconnect isConnected', isConnected)
+            // console.log('onDisconnect isDisconnected', isDisconnected)
+            // console.log('onDisconnect isReconnecting', isReconnecting)
+            sessionStorage.setItem("isConnected", 'false');
+        },
+})
+
+if (!isConnected) {
+    return (
+        // <Box pb='4' pl='4' pr='4' pt='20'>
+        //         <Container maxW='container.lg'>
+        // <Alert status='warning' width="50%">
+        //             <AlertIcon />
+        //             Please, connect your Wallet!
+        //         </Alert>
+        //         </Container>
+        // </Box>
+        <Box pb='4' pl='4' pr='4' pt='20'>
+
+        <Container maxW='container.lg'>
+
+        <Alert status='warning'>
+    <AlertIcon />
+    Please, connect your Wallet!
+  </Alert>
+        </Container>
+        </Box>
+    )
+  }
   
     return (
         <>
