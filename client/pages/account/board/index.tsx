@@ -42,10 +42,9 @@ const Board = () => {
     const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
         setSwitchStates({
             ...switchStates,
-            [event.target.name]: event.target.checked,
-        });
-        console.log('switchStates', switchStates)
-    };
+            [event.target.name]: event.target.checked
+        })
+    }
   
     return (
         <>
@@ -163,8 +162,8 @@ const Board = () => {
                                                                 colorScheme='teal'
                                                                 isLoading
                                                                 loadingText='In progress'
-                                                                spinnerPlacement='start'
                                                                 size='xs'
+                                                                spinnerPlacement='start'
                                                                 variant='outline'
                                                             >
                                                                 Start
@@ -193,8 +192,8 @@ const Board = () => {
                                                                 colorScheme='teal'
                                                                 isLoading
                                                                 loadingText='In progress'
-                                                                spinnerPlacement='start'
                                                                 size='xs'
+                                                                spinnerPlacement='start'
                                                                 variant='outline'
                                                             >
                                                                 Start
@@ -286,11 +285,11 @@ const Board = () => {
                             </TabPanel>
                             <TabPanel>
                                 <Box mt='10'>
-                                    <Heading size='md'>KYC&apos;s status</Heading>
+                                    <Heading size='md'>KYC Status</Heading>
                                     <Card borderRadius='2xl' mt='4'>
                                         <TableContainer>
                                             <Table variant='striped'>
-                                                <TableCaption>KYC Metrics</TableCaption>
+                                                <TableCaption>KYC Status</TableCaption>
                                                 <Thead>
                                                     <Tr>
                                                         <Th>User&apos;s Address</Th>
@@ -307,36 +306,36 @@ const Board = () => {
                                                         <Td isNumeric>
                                                             <Switch
                                                                 colorScheme="teal" 
-                                                                name='0'
                                                                 isChecked={switchStates[0]}
+                                                                name='0'
                                                                 onChange={handleSwitchChange}
                                                             />
                                                         </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>0xf39...2266</Td>
+                                                        <Td>0xt76...5312</Td>
                                                         <Td>
                                                             <Badge colorScheme="green">Valid</Badge>
                                                         </Td>
                                                         <Td isNumeric>
                                                             <Switch
                                                                 colorScheme="teal" 
-                                                                name='1'
                                                                 isChecked={switchStates[1]}
+                                                                name='1'
                                                                 onChange={handleSwitchChange}
                                                             />
                                                         </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>0xf39...2266</Td>
+                                                        <Td>0xa87...5287</Td>
                                                         <Td>
                                                             <Badge colorScheme="red">Not Valid</Badge>
                                                         </Td>
                                                         <Td isNumeric>
                                                             <Switch
                                                                 colorScheme="teal" 
-                                                                name='2'
                                                                 isChecked={switchStates[2]}
+                                                                name='2'
                                                                 onChange={handleSwitchChange}
                                                             />
                                                         </Td>
