@@ -73,39 +73,69 @@ const Board = () => {
                                     <Heading size='md'>Assets list</Heading>
                                     <Card borderRadius='2xl' mt='4'>
                                         <TableContainer>
-                                            <Table colorScheme='purple' variant='striped'>
-                                                <TableCaption>Imperial to metric conversion factors</TableCaption>
+                                            <Table variant='striped'>
                                                 <Thead>
                                                     <Tr>
-                                                        <Th>To convert</Th>
-                                                        <Th>into</Th>
-                                                        <Th isNumeric>multiply by</Th>
+                                                        <Th>Asset&apos;s title</Th>
+                                                        <Th>Total supply</Th>
+                                                        <Th>Supply symbol</Th>
+                                                        <Th>Supply sold</Th>
+                                                        <Th>Supply left</Th>
+                                                        <Th>Status</Th>
                                                     </Tr>
                                                 </Thead>
                                                 <Tbody>
                                                     <Tr>
-                                                        <Td>inches</Td>
-                                                        <Td>millimetres (mm)</Td>
-                                                        <Td isNumeric>25.4</Td>
+                                                        <Td>Asset #1</Td>
+                                                        <Td>1.000.000</Td>
+                                                        <Td>AFT</Td>
+                                                        <Td>599.999</Td>
+                                                        <Td>400.001</Td>
+                                                        <Td>
+                                                            <Badge colorScheme="orange">Sale in progress</Badge>
+                                                        </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>feet</Td>
-                                                        <Td>centimetres (cm)</Td>
-                                                        <Td isNumeric>30.48</Td>
+                                                        <Td>Asset #1</Td>
+                                                        <Td>1.000.000</Td>
+                                                        <Td>AFT</Td>
+                                                        <Td>599.999</Td>
+                                                        <Td>400.001</Td>
+                                                        <Td>
+                                                            <Badge colorScheme="orange">Second round</Badge>
+                                                        </Td>
                                                     </Tr>
                                                     <Tr>
-                                                        <Td>yards</Td>
-                                                        <Td>metres (m)</Td>
-                                                        <Td isNumeric>0.91444</Td>
+                                                        <Td>Asset #1</Td>
+                                                        <Td>1.000.000</Td>
+                                                        <Td>AFT</Td>
+                                                        <Td>599.999</Td>
+                                                        <Td>400.001</Td>
+                                                        <Td>
+                                                            <Badge colorScheme="green">Sale is closed</Badge>
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>Asset #1</Td>
+                                                        <Td>1.000.000</Td>
+                                                        <Td>AFT</Td>
+                                                        <Td>599.999</Td>
+                                                        <Td>400.001</Td>
+                                                        <Td>
+                                                            <Badge>Sale not started</Badge>
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>Asset #1</Td>
+                                                        <Td>1.000.000</Td>
+                                                        <Td>AFT</Td>
+                                                        <Td>599.999</Td>
+                                                        <Td>400.001</Td>
+                                                        <Td>
+                                                            <Badge colorScheme="red">Sale canceled</Badge>
+                                                        </Td>
                                                     </Tr>
                                                 </Tbody>
-                                                <Tfoot>
-                                                    <Tr>
-                                                        <Th>To convert</Th>
-                                                        <Th>into</Th>
-                                                        <Th isNumeric>multiply by</Th>
-                                                    </Tr>
-                                                </Tfoot>
                                             </Table>
                                         </TableContainer>
                                     </Card>
@@ -124,7 +154,7 @@ const Board = () => {
                                             ) : (
                                                 <FormErrorMessage>Asset&apos;s name is required.</FormErrorMessage>
                                             )}
-                                            <Button colorScheme='purple' mt='4' type='submit'>Add</Button>
+                                            <Button colorScheme='teal' mt='4' type='submit'>Add</Button>
                                         </FormControl>
                                     </Stack>
                                 </Card>
