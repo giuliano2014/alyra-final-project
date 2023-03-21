@@ -1,4 +1,5 @@
 import {
+    Badge,
     Box,
     Button,
     Card,
@@ -25,16 +26,26 @@ import {
     Tfoot,
     Th,
     Thead,
-    Tr
+    Tr,
+    Switch
 } from '@chakra-ui/react'
 import Head from 'next/head'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, ChangeEventHandler, useState } from 'react'
 
 const Board = () => {
     const [assetName, setAssetName] = useState('')
+    const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({})
     const isAssetNameError = assetName === ''
 
     const handleInputAssetNameChange = (e: ChangeEvent<HTMLInputElement>): void => setAssetName(e.target.value)
+
+    const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
+        setSwitchStates({
+            ...switchStates,
+            [event.target.name]: event.target.checked,
+        });
+        console.log('switchStates', switchStates)
+    };
   
     return (
         <>
@@ -119,7 +130,66 @@ const Board = () => {
                                 </Card>
                             </TabPanel>
                             <TabPanel>
-                                <p>KYC</p>
+                            <Box mt='10'>
+                                    <Heading size='md'>KYC&apos;s status</Heading>
+                                    <Card borderRadius='2xl' mt='4'>
+                                        <TableContainer>
+                                            <Table variant='striped'>
+                                                <Thead>
+                                                    <Tr>
+                                                        <Th>User&apos;s Address</Th>
+                                                        <Th>Status</Th>
+                                                        <Th isNumeric>KYC Validation</Th>
+                                                    </Tr>
+                                                </Thead>
+                                                <Tbody>
+                                                    <Tr>
+                                                        <Td>0xf39...2266</Td>
+                                                        <Td>
+                                                            <Badge colorScheme="red">Not Valid</Badge>
+                                                        </Td>
+                                                        <Td isNumeric>
+                                                            <Switch
+                                                                colorScheme="teal" 
+                                                                name='0'
+                                                                isChecked={switchStates[0]}
+                                                                onChange={handleSwitchChange}
+                                                            />
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>0xf39...2266</Td>
+                                                        <Td>
+                                                            <Badge colorScheme="green">Valid</Badge>
+                                                        </Td>
+                                                        <Td isNumeric>
+                                                            <Switch
+                                                                colorScheme="teal" 
+                                                                name='1'
+                                                                isChecked={switchStates[1]}
+                                                                onChange={handleSwitchChange}
+                                                            />
+                                                        </Td>
+                                                    </Tr>
+                                                    <Tr>
+                                                        <Td>0xf39...2266</Td>
+                                                        <Td>
+                                                            <Badge colorScheme="red">Not Valid</Badge>
+                                                        </Td>
+                                                        <Td isNumeric>
+                                                            <Switch
+                                                                colorScheme="teal" 
+                                                                name='2'
+                                                                isChecked={switchStates[2]}
+                                                                onChange={handleSwitchChange}
+                                                            />
+                                                        </Td>
+                                                    </Tr>
+                                                </Tbody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Card>
+                                </Box>
                             </TabPanel>
                         </TabPanels>
                     </Tabs>
