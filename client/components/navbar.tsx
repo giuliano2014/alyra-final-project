@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import NextLink from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 const Navbar = () => {
@@ -42,7 +42,13 @@ const Navbar = () => {
             // console.log('onDisconnect isReconnecting', isReconnecting)
             sessionStorage.setItem("isConnected", 'false');
         },
-})
+    })
+
+    const [isConnected2, setIsConnected2] = useState(false)
+
+    useEffect(() => {
+        setIsConnected2(isConnected)
+    }, [isConnected])
 
     return (
         <Container maxW='container.xxl'>
@@ -53,7 +59,7 @@ const Navbar = () => {
                     <Avatar bg='#575CFE' color='white' name='Hydrinvest' size='sm' />
                 </WrapItem>
 
-                {/* <Flex display={displayMenu} gap='10'> */}
+                <Flex display={displayMenu} gap='10'>
                     <Button as={NextLink} href='/' variant='ghost'>
                         Home
                     </Button>
@@ -92,12 +98,12 @@ const Navbar = () => {
                             <MenuItem as={NextLink} href='/test/get'>Get the number</MenuItem>
                         </MenuList>
                     </Menu> */}
-                {/* </Flex> */}
+                </Flex>
 
                 </Flex>
 
                 <Flex alignItems='center' display={displayMenu} justifyContent='space-between' gap='5'>
-                    {isConnected && 
+                    {isConnected2 && 
                         <Menu>
                             <MenuButton
                                 aria-label='Options'

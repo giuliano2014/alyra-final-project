@@ -32,11 +32,12 @@ import {
     AlertIcon
 } from '@chakra-ui/react'
 import Head from 'next/head'
-import { ChangeEvent, ChangeEventHandler, useState } from 'react'
+import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 const Board = () => {
     const [assetName, setAssetName] = useState('')
+    const [isConnected2, setIsConnected2] = useState(false)
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({})
     const isAssetNameError = assetName === ''
 
@@ -49,22 +50,30 @@ const Board = () => {
         })
     }
 
+   
+
     const { address, connector, isConnected, isReconnecting, isDisconnected } = useAccount({
         onConnect: () => {
-            // console.log('onConnect isConnected', isConnected)
+            console.log('onConnect isConnected', isConnected)
+            console.log('onConnect isConnected', typeof isConnected)
             // console.log('onConnect isConnected', isConnected)
             // console.log('onConnect isReconnecting', isReconnecting)
-            sessionStorage.setItem("isConnected", 'true');
+            // sessionStorage.setItem("isConnected", 'true');
         },
         onDisconnect: () => {
-            // console.log('onDisconnect isConnected', isConnected)
+            console.log('onDisconnect isConnected', isConnected)
+            console.log('onDisconnect isConnected', typeof isConnected)
             // console.log('onDisconnect isDisconnected', isDisconnected)
             // console.log('onDisconnect isReconnecting', isReconnecting)
-            sessionStorage.setItem("isConnected", 'false');
+            // sessionStorage.setItem("isConnected", 'false');
         },
 })
 
-if (!isConnected) {
+useEffect(() => {
+    setIsConnected2(isConnected)
+}, [isConnected])
+
+if (!isConnected2) {
     return (
         // <Box pb='4' pl='4' pr='4' pt='20'>
         //         <Container maxW='container.lg'>
