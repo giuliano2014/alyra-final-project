@@ -23,19 +23,27 @@ import {
     Tbody,
     Td,
     Text,
-    Tfoot,
     Th,
     Thead,
     Tr,
-    Switch
+    Switch,
+    Alert,
+    AlertIcon
 } from '@chakra-ui/react'
 import Head from 'next/head'
-import { ChangeEvent, ChangeEventHandler, useState } from 'react'
+import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
 
 const Board = () => {
+    const { isConnected } = useAccount()
     const [assetName, setAssetName] = useState('')
+    const [isAccountConnected, setIsAccountConnected] = useState(false)
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({})
     const isAssetNameError = assetName === ''
+
+    useEffect(() => {
+        setIsAccountConnected(isConnected)
+    }, [isConnected])
 
     const handleInputAssetNameChange = (e: ChangeEvent<HTMLInputElement>): void => setAssetName(e.target.value)
 
@@ -44,6 +52,19 @@ const Board = () => {
             ...switchStates,
             [event.target.name]: event.target.checked
         })
+    }
+
+    if (!isAccountConnected) {
+        return (
+            <Box pb='4' pl='4' pr='4' pt='20'>
+                <Container maxW='container.xl'>
+                    <Alert status='warning'>
+                    <AlertIcon />
+                        Please, connect your Wallet!
+                    </Alert>
+                </Container>
+            </Box>
+        )
     }
   
     return (
@@ -55,7 +76,7 @@ const Board = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box pb='4' pl='4' pr='4' pt='20'>
-                <Container maxW='container.lg'>
+                <Container maxW='container.xl'>
                     <Box textAlign='center'>
                         <Heading size='2xl'>Board</Heading>
                         <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets. Browse our featured products or select a asset.</Text>
