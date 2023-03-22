@@ -11,7 +11,7 @@ const Layout = ({ children }: LayoutProps ) => {
     return (
         <>
             <Navbar />
-            <Box bg='gray.50' minH='calc(100vh - 72px)' pb='4' pl='4' pr='4' pt='20'>
+            <Box bg='gray.50' minH='100vh' pb='4' pl='4' pr='4' pt='36'>
                 <Container maxW='container.xl'>
                     {children}
                 </Container>
