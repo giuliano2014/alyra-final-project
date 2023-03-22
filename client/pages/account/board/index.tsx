@@ -23,7 +23,6 @@ import {
     Tbody,
     Td,
     Text,
-    Tfoot,
     Th,
     Thead,
     Tr,
@@ -36,10 +35,15 @@ import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 const Board = () => {
+    const { isConnected } = useAccount()
     const [assetName, setAssetName] = useState('')
-    const [isConnected2, setIsConnected2] = useState(false)
+    const [isAccountConnected, setIsAccountConnected] = useState(false)
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({})
     const isAssetNameError = assetName === ''
+
+    useEffect(() => {
+        setIsAccountConnected(isConnected)
+    }, [isConnected])
 
     const handleInputAssetNameChange = (e: ChangeEvent<HTMLInputElement>): void => setAssetName(e.target.value)
 
@@ -50,51 +54,18 @@ const Board = () => {
         })
     }
 
-   
-
-    const { address, connector, isConnected, isReconnecting, isDisconnected } = useAccount({
-        onConnect: () => {
-            console.log('onConnect isConnected', isConnected)
-            console.log('onConnect isConnected', typeof isConnected)
-            // console.log('onConnect isConnected', isConnected)
-            // console.log('onConnect isReconnecting', isReconnecting)
-            // sessionStorage.setItem("isConnected", 'true');
-        },
-        onDisconnect: () => {
-            console.log('onDisconnect isConnected', isConnected)
-            console.log('onDisconnect isConnected', typeof isConnected)
-            // console.log('onDisconnect isDisconnected', isDisconnected)
-            // console.log('onDisconnect isReconnecting', isReconnecting)
-            // sessionStorage.setItem("isConnected", 'false');
-        },
-})
-
-useEffect(() => {
-    setIsConnected2(isConnected)
-}, [isConnected])
-
-if (!isConnected2) {
-    return (
-        // <Box pb='4' pl='4' pr='4' pt='20'>
-        //         <Container maxW='container.lg'>
-        // <Alert status='warning' width="50%">
-        //             <AlertIcon />
-        //             Please, connect your Wallet!
-        //         </Alert>
-        //         </Container>
-        // </Box>
-        <Box pb='4' pl='4' pr='4' pt='20'>
-
-        <Container maxW='container.xl'>
-
-        <Alert status='warning'>
-    <AlertIcon />
-    Please, connect your Wallet!
-  </Alert>
-        </Container>
-        </Box>
-    )
-  }
+    if (!isAccountConnected) {
+        return (
+            <Box pb='4' pl='4' pr='4' pt='20'>
+                <Container maxW='container.xl'>
+                    <Alert status='warning'>
+                    <AlertIcon />
+                        Please, connect your Wallet!
+                    </Alert>
+                </Container>
+            </Box>
+        )
+    }
   
     return (
         <>
