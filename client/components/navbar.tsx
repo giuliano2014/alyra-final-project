@@ -49,7 +49,7 @@ const Navbar = () => {
     }
 
     return (
-        <Container maxW='container.xxl'>
+        <Container bg='white' maxW='container.xxl' position='fixed' zIndex='1'>
             <Box p='4'>
                 <Flex alignItems='center' justifyContent='space-between'>
                     <Flex alignItems='center' justifyContent='space-between' gap={gap}>
