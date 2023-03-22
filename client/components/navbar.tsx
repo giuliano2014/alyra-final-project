@@ -1,8 +1,9 @@
-import { ChevronDownIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, CloseIcon, HamburgerIcon, SettingsIcon } from '@chakra-ui/icons'
 import {
     Avatar,
     Box,
     Button,
+    Container,
     Divider,
     Flex,
     IconButton,
@@ -44,13 +45,15 @@ const Navbar = () => {
 })
 
     return (
+        <Container maxW='container.xxl'>
         <Box p='4'>
             <Flex alignItems='center' justifyContent='space-between'>
+            <Flex alignItems='center' justifyContent='space-between' gap='10'>
                 <WrapItem as={NextLink} href='/'>
                     <Avatar bg='#575CFE' color='white' name='Hydrinvest' size='sm' />
                 </WrapItem>
 
-                <Flex display={displayMenu} gap='10'>
+                {/* <Flex display={displayMenu} gap='10'> */}
                     <Button as={NextLink} href='/' variant='ghost'>
                         Home
                     </Button>
@@ -68,7 +71,7 @@ const Navbar = () => {
                             <MenuItem as={NextLink} href='/about/help'>Help</MenuItem>
                         </MenuList>
                     </Menu>
-                    {isConnected && 
+                    {/* {isConnected && 
                         <Menu>
                             <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
                                 Account
@@ -79,7 +82,7 @@ const Navbar = () => {
                                 <MenuItem as={NextLink} href='/account/settings'>Settings</MenuItem>
                             </MenuList>
                         </Menu>
-                    }
+                    } */}
                     {/* <Menu>
                         <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
                             Test
@@ -89,9 +92,26 @@ const Navbar = () => {
                             <MenuItem as={NextLink} href='/test/get'>Get the number</MenuItem>
                         </MenuList>
                     </Menu> */}
+                {/* </Flex> */}
+
                 </Flex>
 
-                <Flex display={displayMenu}>
+                <Flex alignItems='center' display={displayMenu} justifyContent='space-between' gap='5'>
+                    {isConnected && 
+                        <Menu>
+                            <MenuButton
+                                aria-label='Options'
+                                as={IconButton}
+                                icon={<SettingsIcon />}
+                                variant='outline'
+                            />
+                            <MenuList>
+                                <MenuItem as={NextLink} href='/account/board'>Board</MenuItem>
+                                <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
+                                <MenuItem as={NextLink} href='/account/settings'>Settings</MenuItem>
+                            </MenuList>
+                        </Menu>
+                    }
                     <ConnectButton /> 
                 </Flex>
 
@@ -158,6 +178,7 @@ const Navbar = () => {
                 </Flex>
             </Flex>
         </Box>
+        </Container>
     )
 }
 
