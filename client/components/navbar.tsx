@@ -23,6 +23,7 @@ import { useAccount } from 'wagmi'
 
 const Navbar = () => {
     const displayMenu = useBreakpointValue({ base: 'none', md: 'flex' })
+    const test = useBreakpointValue({ base: '5', md: '10' })
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     const handleMobileMenu = () => {
@@ -51,13 +52,20 @@ const Navbar = () => {
     }, [isConnected])
 
     return (
-        <Container maxW='container.xxl'>
+        <Container maxW='container.xxl' style={{ width: '100vw' }}>
         <Box p='4'>
             <Flex alignItems='center' justifyContent='space-between'>
-            <Flex alignItems='center' justifyContent='space-between' gap='10'>
+            <Flex alignItems='center' justifyContent='space-between' gap={test}>
                 <WrapItem as={NextLink} href='/'>
                     <Avatar bg='#575CFE' color='white' name='Hydrinvest' size='sm' />
                 </WrapItem>
+
+                <IconButton
+                    aria-label='Menu'
+                    display={{ base: 'flex', md: 'none' }}
+                    icon={isMobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
+                    onClick={handleMobileMenu}
+                />
 
                 <Flex display={displayMenu} gap='10'>
                     <Button as={NextLink} href='/' variant='ghost'>
@@ -102,7 +110,8 @@ const Navbar = () => {
 
                 </Flex>
 
-                <Flex alignItems='center' display={displayMenu} justifyContent='space-between' gap='5'>
+                {/* <Flex alignItems='center' display={displayMenu} justifyContent='space-between' gap='5'> */}
+                <Flex alignItems='center' justifyContent='space-between' gap='5'>
                     {isConnected2 && 
                         <Menu>
                             <MenuButton
@@ -118,15 +127,20 @@ const Navbar = () => {
                             </MenuList>
                         </Menu>
                     }
-                    <ConnectButton /> 
+                    <ConnectButton
+  accountStatus={{
+    smallScreen: 'avatar',
+    largeScreen: 'full',
+  }}
+/>
                 </Flex>
 
-                <IconButton
+                {/* <IconButton
                     aria-label='Menu'
                     display={{ base: 'flex', md: 'none' }}
                     icon={isMobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
                     onClick={handleMobileMenu}
-                />
+                /> */}
             </Flex>
 
             <Flex
@@ -158,7 +172,7 @@ const Navbar = () => {
                             Help
                         </Link>
                     </Flex>
-                    <Text mb='2'>Account</Text>
+                    {/* <Text mb='2'>Account</Text>
                     <Flex direction='column' ml={4}>
                         <Link href="/account/board" mb='2'>
                             Board
@@ -180,7 +194,7 @@ const Navbar = () => {
                         </Link>
                     </Flex>
                     <Divider mb='6' mt='4' />
-                    <ConnectButton /> 
+                    <ConnectButton />  */}
                 </Flex>
             </Flex>
         </Box>
