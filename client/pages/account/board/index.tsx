@@ -30,19 +30,16 @@ import {
     AlertIcon
 } from '@chakra-ui/react'
 import Head from 'next/head'
-import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { ChangeEvent, ChangeEventHandler, useState } from 'react'
+
+import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Board = () => {
-    const { isConnected } = useAccount()
+    const isAccountConnected = useIsAccountConnected()
     const [assetName, setAssetName] = useState('')
-    const [isAccountConnected, setIsAccountConnected] = useState(false)
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({})
     const isAssetNameError = assetName === ''
-
-    useEffect(() => {
-        setIsAccountConnected(isConnected)
-    }, [isConnected])
 
     const handleInputAssetNameChange = (e: ChangeEvent<HTMLInputElement>): void => setAssetName(e.target.value)
 
@@ -54,14 +51,7 @@ const Board = () => {
     }
 
     if (!isAccountConnected) {
-        return (
-            <>
-                <Alert status='warning'>
-                <AlertIcon />
-                    Please, connect your Wallet!
-                </Alert>
-            </>
-        )
+        return <AccountNotConnectedWarning />
     }
   
     return (

@@ -17,15 +17,16 @@ import {
 } from '@chakra-ui/react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import NextLink from 'next/link'
-import React, { useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import React, { useState } from 'react'
+
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Navbar = () => {
-    const { isConnected } = useAccount()
     const displayMenu = useBreakpointValue({ base: 'none', md: 'flex' })
     const gap = useBreakpointValue({ base: '5', md: '10' })
-    const [isAccountConnected, setIsAccountConnected] = useState(false)
+    const isAccountConnected = useIsAccountConnected()
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
+
 
     // const { address, connector, isConnected, isReconnecting, isDisconnected } = useAccount({
     //     onConnect: () => {
@@ -39,10 +40,6 @@ const Navbar = () => {
     //         console.log('onDisconnect isReconnecting', isReconnecting)
     //     }
     // })
-
-    useEffect(() => {
-        setIsAccountConnected(isConnected)
-    }, [isConnected])
 
     const handleMobileMenu = () => {
         setMobileMenuOpen(!isMobileMenuOpen)
