@@ -1,20 +1,16 @@
 import { Alert, AlertIcon, Button, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
-import { useAccount, useProvider } from 'wagmi'
+import { useState } from 'react'
+import { useProvider } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Get = () => {
-    const { isConnected } = useAccount()
+    const isAccountConnected = useIsAccountConnected()
     const provider = useProvider()
-    const [isAccountConnected, setIsAccountConnected] = useState(false)
     const [number, setNumber] = useState(null)
-
-    useEffect(() => {
-        setIsAccountConnected(isConnected)
-    }, [isConnected])
 
     const getTheNumber = async() => {
         const contract = new ethers.Contract(contractAddress, abi, provider)

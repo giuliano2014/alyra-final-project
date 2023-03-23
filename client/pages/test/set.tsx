@@ -9,22 +9,18 @@ import {
 import Head from 'next/head'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { useAccount, useSigner } from 'wagmi'
+import { useState } from 'react'
+import { useSigner } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Set = () => {
-    const { isConnected } = useAccount()
+    const isAccountConnected = useIsAccountConnected()
     const router = useRouter()
     const { data: signer } = useSigner()
-    const [isAccountConnected, setIsAccountConnected] = useState(false)
     const [number, setNumber] = useState(null)
     const toast = useToast()
-
-    useEffect(() => {
-        setIsAccountConnected(isConnected)
-    }, [isConnected])
 
     const setTheNumber = async() => {
         if (!signer) return
