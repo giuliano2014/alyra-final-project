@@ -9,7 +9,7 @@ import {
 import Head from 'next/head'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAccount, useSigner } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
@@ -18,8 +18,13 @@ const Set = () => {
     const { isConnected } = useAccount()
     const router = useRouter()
     const { data: signer } = useSigner()
+    const [isAccountConnected, setIsAccountConnected] = useState(false)
     const [number, setNumber] = useState(null)
     const toast = useToast()
+
+    useEffect(() => {
+        setIsAccountConnected(isConnected)
+    }, [isConnected])
 
     const setTheNumber = async() => {
         if (!signer) return
@@ -49,6 +54,17 @@ const Set = () => {
         }
     }
 
+    if (!isAccountConnected) {
+        return (
+            <>
+                <Alert status='warning'>
+                <AlertIcon />
+                    Please, connect your Wallet!
+                </Alert>
+            </>
+        )
+    }
+
     return (
         <>
             <Head>
@@ -57,17 +73,10 @@ const Set = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            {isConnected ? (
-                <Flex alignItems="center">
-                    <Input placeholder='Your number...' onChange={(e: any) => setNumber(e.target.value)} />
-                    <Button colorScheme='blue' onClick={() => setTheNumber()}>Set</Button>
-                </Flex>
-                ) : (
-                <Alert status='warning' width="50%">
-                    <AlertIcon />
-                    Please, connect your Wallet.
-                </Alert>
-            )}
+            <Flex alignItems="center">
+                <Input placeholder='Your number...' onChange={(e: any) => setNumber(e.target.value)} />
+                <Button colorScheme='blue' onClick={() => setTheNumber()}>Set</Button>
+            </Flex>
         </>
     )
 }
