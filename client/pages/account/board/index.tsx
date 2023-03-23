@@ -58,7 +58,7 @@ const Board = () => {
             <>
                 <Alert status='warning'>
                 <AlertIcon />
-                    Please, connect your Wallet!
+                    Please, connect your Wallet !
                 </Alert>
             </>
         )

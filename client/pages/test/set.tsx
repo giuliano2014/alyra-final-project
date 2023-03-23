@@ -36,7 +36,7 @@ const Set = () => {
             router.push('/test/get')
             toast({
                 title: 'Congratulations',
-                description: "the number has been changed!",
+                description: 'The number has been changed !',
                 status: 'success',
                 duration: 9000,
                 isClosable: true
@@ -45,7 +45,7 @@ const Set = () => {
         catch(e) {
             toast({
                 title: 'Error',
-                description: "An error occured.",
+                description: 'An error occured.',
                 status: 'error',
                 duration: 9000,
                 isClosable: true
@@ -59,7 +59,7 @@ const Set = () => {
             <>
                 <Alert status='warning'>
                 <AlertIcon />
-                    Please, connect your Wallet!
+                    Please, connect your Wallet !
                 </Alert>
             </>
         )
