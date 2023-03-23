@@ -45,7 +45,7 @@ const Home = () => {
                             Investissez en fonction de vos moyens et participez activement aux défis de notre monde.
                         </Highlight>
                     </Text>
-                    <Button as={NextLink} color='white' colorScheme='blue'  href='/assets' mt='10'>
+                    <Button as={NextLink} color='white' colorScheme='blue' href='/assets' mt='10'>
                         Découvrir nos actifs
                     </Button>
                 </Container>
