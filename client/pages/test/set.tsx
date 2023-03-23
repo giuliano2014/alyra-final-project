@@ -9,7 +9,7 @@ import {
 import Head from 'next/head'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { useSigner } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
@@ -19,7 +19,7 @@ const Set = () => {
     const isAccountConnected = useIsAccountConnected()
     const router = useRouter()
     const { data: signer } = useSigner()
-    const [number, setNumber] = useState(null)
+    const [number, setNumber] = useState<string>('')
     const toast = useToast()
 
     const setTheNumber = async() => {
@@ -70,7 +70,10 @@ const Set = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Flex alignItems="center">
-                <Input placeholder='Your number...' onChange={(e: any) => setNumber(e.target.value)} />
+                <Input
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setNumber(e.target.value)}
+                    placeholder='Your number...'
+                />
                 <Button colorScheme='blue' onClick={() => setTheNumber()}>Set</Button>
             </Flex>
         </>

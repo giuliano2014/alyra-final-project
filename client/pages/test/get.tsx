@@ -12,7 +12,7 @@ const Get = () => {
     const provider = useProvider()
     const [number, setNumber] = useState(null)
 
-    const getTheNumber = async() => {
+    const getTheNumber = async () => {
         const contract = new ethers.Contract(contractAddress, abi, provider)
         let smartContractValue = await contract.get()
         setNumber(smartContractValue.toString())
@@ -38,7 +38,7 @@ const Get = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Flex alignItems='center'>
-                <Button colorScheme='blue' onClick={() => getTheNumber()}>Get the number</Button>
+                <Button colorScheme='blue' onClick={getTheNumber}>Get the number</Button>
                 {number ? (
                     <Text ml='4'>{number}</Text> 
                 ) : (
