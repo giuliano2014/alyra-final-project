@@ -63,7 +63,7 @@ const Board = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box mt='16' textAlign='center'>
-                <Heading size='2xl'>Board</Heading>
+                <Heading size='xl'>Board</Heading>
                 <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets. Browse our featured products or select a asset.</Text>
                 <Text fontSize='xl'>We&apos;ve launched Multiply for Aave.</Text>
             </Box>
