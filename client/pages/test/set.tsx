@@ -13,6 +13,7 @@ import { ChangeEvent, useState } from 'react'
 import { useSigner } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
+import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Set = () => {
@@ -51,14 +52,7 @@ const Set = () => {
     }
 
     if (!isAccountConnected) {
-        return (
-            <>
-                <Alert status='warning'>
-                <AlertIcon />
-                    Please, connect your Wallet !
-                </Alert>
-            </>
-        )
+        return <AccountNotConnectedWarning />
     }
 
     return (

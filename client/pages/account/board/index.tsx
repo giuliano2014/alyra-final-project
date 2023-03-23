@@ -32,6 +32,7 @@ import {
 import Head from 'next/head'
 import { ChangeEvent, ChangeEventHandler, useState } from 'react'
 
+import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Board = () => {
@@ -50,14 +51,7 @@ const Board = () => {
     }
 
     if (!isAccountConnected) {
-        return (
-            <>
-                <Alert status='warning'>
-                <AlertIcon />
-                    Please, connect your Wallet !
-                </Alert>
-            </>
-        )
+        return <AccountNotConnectedWarning />
     }
   
     return (

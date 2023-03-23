@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useProvider } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
+import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Get = () => {
@@ -19,14 +20,7 @@ const Get = () => {
     }
 
     if (!isAccountConnected) {
-        return (
-            <>
-                <Alert status='warning'>
-                <AlertIcon />
-                    Please, connect your Wallet !
-                </Alert>
-            </>
-        )
+        return <AccountNotConnectedWarning />
     }
 
     return (
