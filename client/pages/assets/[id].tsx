@@ -32,8 +32,8 @@ const SingleAsset = () => {
             </Head>
             <Box mt='16' textAlign='center'>
                 <Heading size='xl'>Asset : {id}</Heading>
-                <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets. Browse our featured products or select a asset.</Text>
-                <Text fontSize='xl'>We&apos;ve launched Multiply for Aave.</Text>
+                <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets.</Text>
+                <Text fontSize='xl'>Browse our featured products or select a asset.</Text>
             </Box>
             <SimpleGrid gridTemplateColumns={{ md: '60% 1fr' }} mt='20' spacing='40px'>
                 <Card borderRadius='2xl'>

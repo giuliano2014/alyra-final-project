@@ -35,54 +35,54 @@ const AddNewAsset = () => {
 
     return (
         <Box mt='10'>
-            <Heading size='md'>Add a New Asset</Heading>
+            <Heading size='md'>Ajouter un nouvel actif</Heading>
                 <Card borderRadius='2xl' mt='4' padding='4'>
                     <Box as='form' onSubmit={handleSubmit}>
                         <VStack align='flex-end' spacing={4}>
                             <FormControl isInvalid={isAssetNameError}>
-                                <FormLabel>Asset&apos;s name</FormLabel>
+                                <FormLabel>Titre de l&apos;actif</FormLabel>
                                 <Input
                                     onChange={(e) => setAssetName(e.target.value)}
                                     value={assetName}
                                 />
                                 {!isAssetNameError ? (
                                     <FormHelperText>
-                                        Asset&apos;s name should be shortest possible.
+                                        Le titre de l&apos;actif doit être le plus court possible.
                                     </FormHelperText>
                                 ) : (
-                                    <FormErrorMessage>Asset&apos;s name is required.</FormErrorMessage>
+                                    <FormErrorMessage>Le titre de l&apos;actif est obligatoire.</FormErrorMessage>
                                 )}
                             </FormControl>
                             <FormControl isInvalid={isTokenNameError}>
-                                <FormLabel>Token&apos;s name</FormLabel>
+                                <FormLabel>Nom du token</FormLabel>
                                 <Input
                                     onChange={(e) => setTokenName(e.target.value)}
                                     value={tokenName}
                                 />
                                 {!isTokenNameError ? (
                                     <FormHelperText>
-                                        Token&apos;s name should be shortest possible.
+                                        Le nom du token doit être le plus court possible.
                                     </FormHelperText>
                                 ) : (
-                                    <FormErrorMessage>Token&apos;s name is required.</FormErrorMessage>
+                                    <FormErrorMessage>Le nom du token est obligatoire.</FormErrorMessage>
                                 )}
                             </FormControl>
                             <FormControl isInvalid={isTokenSymbolError}>
-                                <FormLabel>Token&apos;s symbol</FormLabel>
+                                <FormLabel>Symbol du token</FormLabel>
                                 <Input
                                     onChange={(e) => setTokenSymbol(e.target.value)}
                                     value={tokenSymbol}
                                 />
                                 {!isTokenSymbolError ? (
                                     <FormHelperText>
-                                        Token&apos;s symbol should be shortest possible.
+                                        Le symbol du token doit être le plus court possible.
                                     </FormHelperText>
                                 ) : (
-                                    <FormErrorMessage>Token&apos;s symbol is required.</FormErrorMessage>
+                                    <FormErrorMessage>Le symbol du token est obligatoire.</FormErrorMessage>
                                 )}
                             </FormControl>
                             <FormControl isInvalid={isTotalSupplyError}>
-                                <FormLabel>Total supply</FormLabel>
+                                <FormLabel>Nombre total de token</FormLabel>
                                 <NumberInput
                                     defaultValue={0}
                                     min={1}
@@ -97,10 +97,10 @@ const AddNewAsset = () => {
                                 </NumberInput>
                                 {!isTotalSupplyError ? (
                                     <FormHelperText>
-                                        Total supply should be superior or egal to 1.
+                                        Le nombre total de token doit être supérieur ou égal à 1.
                                     </FormHelperText>
                                 ) : (
-                                    <FormErrorMessage>Total supply is required and should be superior or egal to 1.</FormErrorMessage>
+                                    <FormErrorMessage>Le nombre total de token est obligatoire et doit être supérieur ou égal à 1.</FormErrorMessage>
                                 )}
                             </FormControl>
                             <Button
@@ -113,7 +113,7 @@ const AddNewAsset = () => {
                                 }
                                 type='submit'
                             >
-                                Add
+                                Ajouter
                             </Button>
                     </VStack>
                 </Box>

@@ -61,20 +61,20 @@ const Navbar = () => {
                         />
                         <Flex display={displayMenu} gap='10'>
                             <Button as={NextLink} href='/' variant='ghost'>
-                                Home
+                                Accueil
                             </Button>
                             <Button as={NextLink} href='/assets' variant='ghost'>
-                                Assets
+                                Actifs
                             </Button>
                             <Menu>
                                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
-                                    About
+                                    À propos
                                 </MenuButton>
                                 <MenuList>
-                                    <MenuItem as={NextLink} href='/about/team'>Team</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/manifest'>Manifest</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/white-paper'>White Paper</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/help'>Help</MenuItem>
+                                    <MenuItem as={NextLink} href='/about/team'>L&apos;équipe</MenuItem>
+                                    <MenuItem as={NextLink} href='/about/manifest'>Le manifest</MenuItem>
+                                    <MenuItem as={NextLink} href='/about/white-paper'>Le white Paper</MenuItem>
+                                    <MenuItem as={NextLink} href='/about/help'>Aide</MenuItem>
                                 </MenuList>
                             </Menu>
                         </Flex>
@@ -89,9 +89,9 @@ const Navbar = () => {
                                     variant='outline'
                                 />
                                 <MenuList>
-                                    <MenuItem as={NextLink} href='/account/board'>Board</MenuItem>
+                                    <MenuItem as={NextLink} href='/account/board'>Tableau de bord</MenuItem>
                                     <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
-                                    <MenuItem as={NextLink} href='/account/settings'>Settings</MenuItem>
+                                    <MenuItem as={NextLink} href='/account/settings'>Paramètres</MenuItem>
                                 </MenuList>
                             </Menu>
                         }
@@ -100,6 +100,7 @@ const Navbar = () => {
                                 largeScreen: 'full',
                                 smallScreen: 'avatar',
                             }}
+                            label="Se connecter"
                         />
                     </Flex>
                 </Flex>
@@ -110,26 +111,26 @@ const Navbar = () => {
                 >
                     <Flex display={{ base: 'flex', md: 'none' }} flexDirection="column" ml='4'>
                         <Link href="/" mb='2'>
-                            Home
+                            Accueil
                         </Link>
                         <Link href="/assets" mb='2'>
-                            Assets
+                            Actifs
                         </Link>
                         <Text mb='2'>
-                            About
+                            À propos
                         </Text>
                         <Flex direction='column' ml={4}>
                             <Link href="/about/team" mb='2'>
-                                Team
+                                L&apos;équipe
                             </Link>
                             <Link href="/about/manifest" mb='2'>
-                                Manifest
+                                Le manifest
                             </Link>
                             <Link href="/about/white-paper" mb='2'>
-                                White Paper
+                                Le white Paper
                             </Link>
                             <Link href="/about/help" mb='2'>
-                                Help
+                                Aide
                             </Link>
                         </Flex>
                     </Flex>
