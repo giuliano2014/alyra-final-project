@@ -30,7 +30,7 @@ const Assets = () => {
                 <Text fontSize='xl'>Parcourez nos produits ou sélectionnez un actif.</Text>
             </Box>
             <SimpleGrid minChildWidth='xs' mt='20' spacing='40px'>
-                <Card bg='purple.50' borderRadius='2xl' w='100%'>
+                <Card borderRadius='2xl' w='100%'>
                     <CardHeader>
                         <Heading size='md'>Sustainable Forestry</Heading>
                     </CardHeader>
@@ -44,7 +44,7 @@ const Assets = () => {
                                     Portefeuille diversifié d’actifs forestiers
                                 </Text>
                             </Box>
-                            <Card bg='purple.100' borderRadius='2xl'>
+                            <Card bg='teal.100' borderRadius='2xl'>
                                 <CardBody textAlign='center'>
                                     <Text>Avec 100 USDC 👇</Text>
                                     <Heading size='xs'>Obtenez 1 SFT</Heading>
@@ -72,19 +72,18 @@ const Assets = () => {
                     <CardFooter justifyContent='end'>
                         <Button
                             as={NextLink}
-                            bg='purple.900'
                             color='white'
-                            colorScheme='purple'
+                            colorScheme='blue'
                             href='/assets/sustainable-forestry'
                         >
                             En savoir plus
                         </Button>
                     </CardFooter>
                 </Card>
-                <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
-                <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
-                <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
-                <Box bg='purple.50' borderRadius='2xl' height='80px'></Box>
+                <Box bg='gray.100' borderRadius='2xl' height={{ base: '80px', md: 'auto' }}></Box>
+                <Box bg='gray.100' borderRadius='2xl' height={{ base: '80px', md: 'auto' }}></Box>
+                <Box bg='gray.100' borderRadius='2xl' height='80px'></Box>
+                <Box bg='gray.100' borderRadius='2xl' height='80px'></Box>
             </SimpleGrid>
         </>
     )

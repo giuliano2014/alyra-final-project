@@ -12,8 +12,7 @@ import {
     MenuItem,
     MenuList,
     Text,
-    useBreakpointValue,
-    WrapItem,
+    WrapItem
 } from '@chakra-ui/react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import NextLink from 'next/link'
@@ -22,8 +21,6 @@ import React, { useState } from 'react'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Navbar = () => {
-    const displayMenu = useBreakpointValue({ base: 'none', md: 'flex' })
-    const gap = useBreakpointValue({ base: '5', md: '10' })
     const isAccountConnected = useIsAccountConnected()
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -49,7 +46,7 @@ const Navbar = () => {
         <Container bg='white' maxW='container.xxl' position='fixed' zIndex='1'>
             <Box p='4'>
                 <Flex alignItems='center' justifyContent='space-between'>
-                    <Flex alignItems='center' justifyContent='space-between' gap={gap}>
+                    <Flex alignItems='center' justifyContent='space-between' gap={{ base: '5', md: '10' }}>
                         <WrapItem as={NextLink} href='/'>
                             <Avatar bg='#575CFE' color='white' name='Hydrinvest' size='sm' />
                         </WrapItem>
@@ -59,7 +56,7 @@ const Navbar = () => {
                             icon={isMobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
                             onClick={handleMobileMenu}
                         />
-                        <Flex display={displayMenu} gap='10'>
+                        <Flex display={{ base: 'none', md: 'flex' }} gap='10'>
                             <Button as={NextLink} href='/' variant='ghost'>
                                 Accueil
                             </Button>
