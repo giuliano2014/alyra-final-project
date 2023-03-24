@@ -43,7 +43,6 @@ const Board = () => {
             ...switchStates,
             [event.target.name]: event.target.checked
         })
-        console.log(switchStates)
     }
 
     if (!isAccountConnected) {
@@ -60,8 +59,6 @@ const Board = () => {
             </Head>
             <Box mt='16' textAlign='center'>
                 <Heading size='xl'>Tableau de bord</Heading>
-                {/* <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets. Browse our featured products or select a asset.</Text>
-                <Text fontSize='xl'>We&apos;ve launched Multiply for Aave.</Text> */}
             </Box>
             <Tabs colorScheme='purple' isLazy  mt='20' variant='soft-rounded'>
                 <TabList>
