@@ -3,14 +3,7 @@ import {
     Box,
     Button,
     Card,
-    Divider,
-    FormControl,
-    FormErrorMessage,
-    FormHelperText,
-    FormLabel,
     Heading,
-    Input,
-    Stack,
     Tab,
     Table,
     TableCaption,
@@ -25,23 +18,18 @@ import {
     Th,
     Thead,
     Tr,
-    Switch,
-    Alert,
-    AlertIcon
+    Switch
 } from '@chakra-ui/react'
 import Head from 'next/head'
-import { ChangeEvent, ChangeEventHandler, useState } from 'react'
+import { ChangeEventHandler, useState } from 'react'
 
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
+import AddNewAsset from '@/components/addNewAsset'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Board = () => {
     const isAccountConnected = useIsAccountConnected()
-    const [assetName, setAssetName] = useState('')
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({})
-    const isAssetNameError = assetName === ''
-
-    const handleInputAssetNameChange = (e: ChangeEvent<HTMLInputElement>): void => setAssetName(e.target.value)
 
     const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
         setSwitchStates({
@@ -270,24 +258,7 @@ const Board = () => {
                                 </TableContainer>
                             </Card>
                         </Box>
-                        <Card borderRadius='2xl' mt='10'>
-                            <Stack direction='row' p={4}>
-                                <Heading minW='25%' size='md'>Add a new asset</Heading>
-                                <Divider h='auto' orientation='vertical' />
-                                <FormControl isInvalid={isAssetNameError} padding='4'>
-                                    <FormLabel>Asset&apos;s name</FormLabel>
-                                    <Input onChange={handleInputAssetNameChange} type='text' value={assetName} />
-                                    {!isAssetNameError ? (
-                                        <FormHelperText>
-                                            Asset&apos;s name should be shortest possible.
-                                        </FormHelperText>
-                                    ) : (
-                                        <FormErrorMessage>Asset&apos;s name is required.</FormErrorMessage>
-                                    )}
-                                    <Button colorScheme='teal' mt='4' type='submit'>Add</Button>
-                                </FormControl>
-                            </Stack>
-                        </Card>
+                        <AddNewAsset />
                     </TabPanel>
                     <TabPanel>
                         <Box mt='10'>
