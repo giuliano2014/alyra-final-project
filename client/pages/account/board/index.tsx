@@ -24,8 +24,8 @@ import Head from 'next/head'
 import { ChangeEventHandler, useState } from 'react'
 
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
-import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 import AddNewAsset from '@/components/addNewAsset'
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Board = () => {
     const isAccountConnected = useIsAccountConnected()
