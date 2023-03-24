@@ -4,7 +4,7 @@ const AccountNotConnectedWarning = () => {
     return(
         <Alert status='warning'>
             <AlertIcon />
-            Please, connect your Wallet !
+            Veuillez connecter votre portefeuille !
         </Alert>
     )
 }
