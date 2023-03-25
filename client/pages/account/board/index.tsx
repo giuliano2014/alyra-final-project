@@ -26,6 +26,10 @@ import { ChangeEventHandler, useState } from 'react'
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import AddNewAsset from '@/components/addNewAsset'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
+import { useSigner } from 'wagmi'
+import { ethers } from 'ethers'
+
+import { abi, contractAddress } from "@/contracts/financialVehicule"
 
 const Board = () => {
     const isAccountConnected = useIsAccountConnected()
@@ -45,6 +49,49 @@ const Board = () => {
         })
     }
 
+    const { data: signer } = useSigner()
+
+    // const createAsset = async () => {
+    //     if (!signer) return
+
+    //     try {
+    //         const contract = new ethers.Contract(contractAddress, abi, signer)
+    //         let transaction = await contract.createAsset('Actif #1', 'AFT', 500000)
+    //         const response = await transaction.wait()
+    //         console.log('Asset created', response)
+    //         const event = response.events.find(
+    //             (evt: ethers.Event) => evt.event === 'AssetCreated'
+    //         )
+    //         console.log('AssetCreated event', event)
+    //     }
+    //     catch(e) {
+    //         console.log(e)
+    //     }
+    // }
+
+    const createAsset = async () => {
+        if (!signer) return;
+      
+        try {
+          const contract = new ethers.Contract(contractAddress, abi, signer);
+          // Convertissez le nombre en BigNumber en utilisant les fonctions de conversion appropriées
+        const quantity = ethers.utils.parseUnits("500000", "wei");
+          let transaction = await contract.createAsset("Actif #1", "AFT", quantity);
+          const response = await transaction.wait();
+          console.log("Asset created", response);
+          const event = response.events?.find(
+            (evt: ethers.Event) => evt.event === "AssetCreated"
+          );
+          if (event) {
+            console.log("AssetCreated event", event);
+          } else {
+            console.log("AssetCreated event not found");
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      };
+
     if (!isAccountConnected) {
         return <AccountNotConnectedWarning />
     }
@@ -60,6 +107,13 @@ const Board = () => {
             <Box mt='16' textAlign='center'>
                 <Heading size='xl'>Tableau de bord</Heading>
             </Box>
+            <Button
+                                colorScheme='teal'
+                                type='button'
+                                onClick={createAsset}
+                            >
+                                Ajouter
+                            </Button>
             <Tabs colorScheme='purple' isLazy  mt='20' variant='soft-rounded'>
                 <TabList>
                     <Tab>Gestion des actifs</Tab>
