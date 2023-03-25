@@ -1,12 +1,15 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-etherscan";
-
-import * as dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 
 const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",
+    etherscan: {
+        // Your API key for Etherscan
+        // Obtain one at https://etherscan.io/
+        apiKey: process.env.ETHERSCAN_ALYRA_PROJECTS_API_KEY
+    },
     gasReporter: {
         // currency: "USD",
         enabled: true,
@@ -27,11 +30,6 @@ const config: HardhatUserConfig = {
             url: `https://sepolia.infura.io/v3/${process.env.INFURA_ALYRA_PROJECTS_API_KEY}`,
             accounts: [process.env.ACCOUNT_1_PRIVATE_KEY || ""],
           }
-    },
-    etherscan: {
-        // Your API key for Etherscan
-        // Obtain one at https://etherscan.io/
-        apiKey: process.env.ETHERSCAN_ALYRA_PROJECTS_API_KEY
     },
     solidity: "0.8.19",
 };
