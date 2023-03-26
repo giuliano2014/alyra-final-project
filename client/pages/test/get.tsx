@@ -2,25 +2,32 @@ import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import Head from 'next/head'
 import { useState } from 'react'
-import { useAccount, useProvider } from 'wagmi'
+// import { useAccount, useProvider } from 'wagmi'
+import { useProvider } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Get = () => {
-    const { address } = useAccount()
+    // const { address } = useAccount()
     const isAccountConnected = useIsAccountConnected()
     const provider = useProvider()
     const [assets, setAssets] = useState([])
     const [count, setCount] = useState(null)
     const [number, setNumber] = useState(null)
 
-    const getAssets = async () => {
+    const getAssetsList = async () => {
         const contract = new ethers.Contract(contractAddress, abi, provider)
-        const result = await contract.getAssets(address)
+        const result = await contract.getAssetsList()
         setAssets(result)
     }
+
+    // const getAssets = async () => {
+    //     const contract = new ethers.Contract(contractAddress, abi, provider)
+    //     const result = await contract.getAssets(address)
+    //     setAssets(result)
+    // }
 
     const getTheCount = async () => {
         const contract = new ethers.Contract(contractAddress, abi, provider)
@@ -64,7 +71,7 @@ const Get = () => {
             </Flex>
             <Box alignItems='center' mt='5'>
             <Flex alignItems='center' mt='5'>
-                <Button colorScheme='teal' onClick={getAssets}>Get assets</Button>
+                <Button colorScheme='teal' onClick={getAssetsList}>Get assets</Button>
                 {assets.length > 0 ? (
                     <Text ml='4'>This is the assets list.</Text> 
                 ) : (

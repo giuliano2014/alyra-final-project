@@ -1,6 +1,6 @@
-export const contractAddress = "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690" // localhost
+// export const contractAddress = "0x4826533B4897376654Bb4d4AD88B7faFD0C98528" // localhost
 // export const contractAddress = "0xec6d597f09ee9866c030Ed436E81D929559c3de6" // goerli
-// export const contractAddress = "0x143eA928C4F24499fDa0D66582EA162c628f089f" // sepolia
+export const contractAddress = "0x5a88b0f33852311A642C846634026b480ac1A05E" // sepolia
 
 export const abi = [
     {
@@ -28,6 +28,37 @@ export const abi = [
             "internalType": "struct SimpleStorage.Asset",
             "name": "asset",
             "type": "tuple"
+        }
+        ],
+        "name": "AssetAdded",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+        {
+            "indexed": false,
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        },
+        {
+            "indexed": false,
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+        },
+        {
+            "indexed": false,
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+        },
+        {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
         }
         ],
         "name": "AssetCreated",
@@ -70,6 +101,35 @@ export const abi = [
         "type": "function"
     },
     {
+        "inputs": [
+        {
+            "internalType": "string",
+            "name": "_name",
+            "type": "string"
+        },
+        {
+            "internalType": "string",
+            "name": "_symbol",
+            "type": "string"
+        },
+        {
+            "internalType": "uint256",
+            "name": "_initialSupply",
+            "type": "uint256"
+        }
+        ],
+        "name": "createToken",
+        "outputs": [
+        {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "get",
         "outputs": [
@@ -91,6 +151,36 @@ export const abi = [
         }
         ],
         "name": "getAssets",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "quantity",
+                "type": "uint256"
+            }
+            ],
+            "internalType": "struct SimpleStorage.Asset[]",
+            "name": "",
+            "type": "tuple[]"
+        }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getAssetsList",
         "outputs": [
         {
             "components": [

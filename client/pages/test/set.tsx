@@ -25,13 +25,13 @@ const Set = () => {
     const [number, setNumber] = useState<string>('')
     const toast = useToast()
 
-    const addAsset = async () => {
+    const createToken = async () => {
         if (!signer) return
 
         try {
             const contract = new ethers.Contract(contractAddress, abi, signer)
             const assetQuantityBigNumber = ethers.utils.parseUnits(assetQuantity.toString(), 'ether')
-            let transaction = await contract.addAsset(assetName, assetSymbol, assetQuantityBigNumber)
+            let transaction = await contract.createToken(assetName, assetSymbol, assetQuantityBigNumber)
             await transaction.wait()
             router.push('/test/get')
             toast({
@@ -53,6 +53,35 @@ const Set = () => {
             console.log(e)
         }
     }
+
+    // const addAsset = async () => {
+    //     if (!signer) return
+
+    //     try {
+    //         const contract = new ethers.Contract(contractAddress, abi, signer)
+    //         const assetQuantityBigNumber = ethers.utils.parseUnits(assetQuantity.toString(), 'ether')
+    //         let transaction = await contract.addAsset(assetName, assetSymbol, assetQuantityBigNumber)
+    //         await transaction.wait()
+    //         router.push('/test/get')
+    //         toast({
+    //             title: 'Congratulations',
+    //             description: 'Asset have been added !',
+    //             status: 'success',
+    //             duration: 9000,
+    //             isClosable: true
+    //         })
+    //     }
+    //     catch(e) {
+    //         toast({
+    //             title: 'Error',
+    //             description: 'An error occured.',
+    //             status: 'error',
+    //             duration: 9000,
+    //             isClosable: true
+    //         })
+    //         console.log(e)
+    //     }
+    // }
 
     const setTheNumber = async () => {
         if (!signer) return
@@ -152,7 +181,7 @@ const Set = () => {
                     onChange={e => setAssetQuantity(Number(e.target.value))}
                     placeholder="Token Quantity"
                 />
-                <Button colorScheme="teal" onClick={() => addAsset()}>
+                <Button colorScheme="teal" onClick={() => createToken()}>
                     Add
                 </Button>
             </Flex>
