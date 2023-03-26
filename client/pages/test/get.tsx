@@ -5,7 +5,7 @@ import { useState } from 'react'
 // import { useAccount, useProvider } from 'wagmi'
 import { useProvider } from 'wagmi'
 
-import { abi, contractAddress } from "@/contracts/simpleStorage"
+import { abi, contractAddress } from "@/contracts/factoryClone"
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
@@ -17,11 +17,17 @@ const Get = () => {
     const [count, setCount] = useState(null)
     const [number, setNumber] = useState(null)
 
-    const getAssetsList = async () => {
+    const getAssets = async () => {
         const contract = new ethers.Contract(contractAddress, abi, provider)
-        const result = await contract.getAssetsList()
+        const result = await contract.getAssets()
         setAssets(result)
     }
+
+    // const getAssetsList = async () => {
+    //     const contract = new ethers.Contract(contractAddress, abi, provider)
+    //     const result = await contract.getAssetsList()
+    //     setAssets(result)
+    // }
 
     // const getAssets = async () => {
     //     const contract = new ethers.Contract(contractAddress, abi, provider)
@@ -71,7 +77,7 @@ const Get = () => {
             </Flex>
             <Box alignItems='center' mt='5'>
             <Flex alignItems='center' mt='5'>
-                <Button colorScheme='teal' onClick={getAssetsList}>Get assets</Button>
+                <Button colorScheme='teal' onClick={getAssets}>Get assets</Button>
                 {assets.length > 0 ? (
                     <Text ml='4'>This is the assets list.</Text> 
                 ) : (
@@ -80,12 +86,12 @@ const Get = () => {
                 </Flex>
                 {assets.length > 0 && (
                     <ul style={{padding: '20px'}}>
-                        {assets.map(({name, symbol, quantity}) => {
+                        {assets.map(({name, symbol, initialSupply}) => {
                             return (
                                 <li key={`${name}${symbol}`} style={{margin: '20px'}}>
                                     <Text ml='4'>Asset Name : {name}</Text> 
                                     <Text ml='4'>Token Symbol : {symbol}</Text> 
-                                    <Text ml='4'>Token Quantity : { ethers.utils.formatUnits(quantity, 18)}</Text>
+                                    <Text ml='4'>Token Quantity : { ethers.utils.formatUnits(initialSupply, 18)}</Text>
                                 </li>
                             )
                         })}

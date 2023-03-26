@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
 import { useSigner } from 'wagmi'
 
-import { abi, contractAddress } from "@/contracts/simpleStorage"
+import { abi, contractAddress } from "@/contracts/factoryClone"
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
@@ -31,7 +31,7 @@ const Set = () => {
         try {
             const contract = new ethers.Contract(contractAddress, abi, signer)
             const assetQuantityBigNumber = ethers.utils.parseUnits(assetQuantity.toString(), 'ether')
-            let transaction = await contract.createToken(assetName, assetSymbol, assetQuantityBigNumber)
+            const transaction = await contract.createToken(assetName, assetSymbol, assetQuantityBigNumber)
             await transaction.wait()
             router.push('/test/get')
             toast({
@@ -53,6 +53,35 @@ const Set = () => {
             console.log(e)
         }
     }
+
+    // const createToken = async () => {
+    //     if (!signer) return
+
+    //     try {
+    //         const contract = new ethers.Contract(contractAddress, abi, signer)
+    //         const assetQuantityBigNumber = ethers.utils.parseUnits(assetQuantity.toString(), 'ether')
+    //         let transaction = await contract.createToken(assetName, assetSymbol, assetQuantityBigNumber)
+    //         await transaction.wait()
+    //         router.push('/test/get')
+    //         toast({
+    //             title: 'Congratulations',
+    //             description: 'Asset have been added !',
+    //             status: 'success',
+    //             duration: 9000,
+    //             isClosable: true
+    //         })
+    //     }
+    //     catch(e) {
+    //         toast({
+    //             title: 'Error',
+    //             description: 'An error occured.',
+    //             status: 'error',
+    //             duration: 9000,
+    //             isClosable: true
+    //         })
+    //         console.log(e)
+    //     }
+    // }
 
     // const addAsset = async () => {
     //     if (!signer) return
