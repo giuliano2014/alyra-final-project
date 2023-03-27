@@ -1,4 +1,6 @@
-export const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+// export const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3" // localhost
+export const contractAddress = "0xec6d597f09ee9866c030Ed436E81D929559c3de6" // goerli
+// export const contractAddress = "0x143eA928C4F24499fDa0D66582EA162c628f089f" // sepolia
 
 export const abi = [
     {

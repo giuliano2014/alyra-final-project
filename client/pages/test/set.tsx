@@ -9,16 +9,18 @@ import {
 import Head from 'next/head'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { useAccount, useSigner } from 'wagmi'
+import { ChangeEvent, useState } from 'react'
+import { useSigner } from 'wagmi'
 
 import { abi, contractAddress } from "@/contracts/simpleStorage"
+import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Set = () => {
-    const { isConnected } = useAccount()
+    const isAccountConnected = useIsAccountConnected()
     const router = useRouter()
     const { data: signer } = useSigner()
-    const [number, setNumber] = useState(null)
+    const [number, setNumber] = useState<string>('')
     const toast = useToast()
 
     const setTheNumber = async() => {
@@ -31,7 +33,7 @@ const Set = () => {
             router.push('/test/get')
             toast({
                 title: 'Congratulations',
-                description: "the number has been changed!",
+                description: 'The number has been changed !',
                 status: 'success',
                 duration: 9000,
                 isClosable: true
@@ -40,13 +42,17 @@ const Set = () => {
         catch(e) {
             toast({
                 title: 'Error',
-                description: "An error occured.",
+                description: 'An error occured.',
                 status: 'error',
                 duration: 9000,
                 isClosable: true
             })
             console.log(e)
         }
+    }
+
+    if (!isAccountConnected) {
+        return <AccountNotConnectedWarning />
     }
 
     return (
@@ -57,17 +63,13 @@ const Set = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            {isConnected ? (
-                <Flex alignItems="center">
-                    <Input placeholder='Your number...' onChange={(e: any) => setNumber(e.target.value)} />
-                    <Button colorScheme='blue' onClick={() => setTheNumber()}>Set</Button>
-                </Flex>
-                ) : (
-                <Alert status='warning' width="50%">
-                    <AlertIcon />
-                    Please, connect your Wallet.
-                </Alert>
-            )}
+            <Flex alignItems="center">
+                <Input
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setNumber(e.target.value)}
+                    placeholder='Your number...'
+                />
+                <Button colorScheme='blue' onClick={() => setTheNumber()}>Set</Button>
+            </Flex>
         </>
     )
 }

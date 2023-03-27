@@ -11,9 +11,7 @@ const Team = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box textAlign='center'>
-                <Heading size='2xl'>Team</Heading>
-                <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets. Browse our featured products or select a asset.</Text>
-                <Text fontSize='xl'>We&apos;ve launched Multiply for Aave.</Text>
+                <Heading size='xl'>L&apos;équipe</Heading>
             </Box>
         </>
     )
