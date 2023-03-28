@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { useState } from 'react'
 import { useProvider } from 'wagmi'
 
-import { abi, contractAddress } from "@/contracts/simpleStorage"
+import { abi, contractAddress } from "@/contracts/financialVehicle"
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
