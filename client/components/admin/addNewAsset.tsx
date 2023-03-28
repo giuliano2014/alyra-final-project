@@ -15,45 +15,30 @@ import {
     NumberInputStepper,
     VStack,
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { FC, FormEvent } from 'react'
 
-import { abi, contractAddress } from "@/contracts/financialVehicle"
-import { ethers } from 'ethers'
-import { useSigner } from 'wagmi'
+type AddNewAssetProps = {
+    assetName: string
+    assetSymbol: string
+    assetTotalSupply: number
+    createAsset: (event: FormEvent) => void
+    setAssetName: (value: string) => void
+    setAssetSymbol: (value: string) => void
+    setAssetTotalSupply: (value: number) => void
+}
 
-const AddNewAsset = () => {
-    const [assetName, setAssetName] = useState('')
-    const [assetTotalSupply, setAssetTotalSupply] = useState(0)
-    const [assetSymbol, setAssetTokenSymbol] = useState('')
-
+const AddNewAsset: FC<AddNewAssetProps> = ({
+    assetName,
+    assetSymbol,
+    assetTotalSupply,
+    createAsset,
+    setAssetName,
+    setAssetSymbol,
+    setAssetTotalSupply,
+}) => {
     const isAssetNameError = assetName === ''
     const isAssetTotalSupplyError = assetTotalSupply < 1
     const isAssetSymbolError = assetSymbol === ''
-
-    const { data: signer } = useSigner()
-
-    const createAsset = async (event: any) => {
-        event.preventDefault()
-
-        if (!signer) return
-
-        try {
-            const contract = new ethers.Contract(contractAddress, abi, signer)
-            const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
-            const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
-            const result = await transaction.wait()
-
-            console.log('result', result)
-
-            contract.on("AssetCreated", async (event) => {
-                console.log('AssetCreated', event)
-            })
-        }
-        catch(e) {
-            console.log(e)
-        }
-    }
-
     return (
         <Box mt='10'>
             <Heading size='md'>Ajouter un nouvel actif</Heading>
@@ -77,7 +62,7 @@ const AddNewAsset = () => {
                             <FormControl isInvalid={isAssetSymbolError}>
                                 <FormLabel>Symbol du token</FormLabel>
                                 <Input
-                                    onChange={(e) => setAssetTokenSymbol(e.target.value)}
+                                    onChange={(e) => setAssetSymbol(e.target.value)}
                                     value={assetSymbol}
                                 />
                                 {!isAssetSymbolError ? (

@@ -17,13 +17,31 @@ import {
     Th,
     Thead,
     Tr,
-    Switch
+    Switch,
+    useToast
 } from '@chakra-ui/react'
-import { ChangeEventHandler, useState } from 'react'
+import { ChangeEventHandler, useEffect, useState } from 'react'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
+import { useProvider, useSigner } from 'wagmi'
+import { ethers } from 'ethers'
+
+import { abi, contractAddress } from '@/contracts/financialVehicle'
+
+type Asset = {
+    tokenAddress: string;
+    name: string;
+    symbol: string;
+    initialSupply: number;
+}
 
 const AdminBoard = () => {
+    const provider = useProvider()
+    const { data: signer } = useSigner()
+    const [assetName, setAssetName] = useState('')
+    const [assetTotalSupply, setAssetTotalSupply] = useState(0)
+    const [assetSymbol, setAssetTokenSymbol] = useState('')
+    const [assets, setAssets] = useState<Asset[]>([])
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({
         0: false,
         1: true,
@@ -32,12 +50,63 @@ const AdminBoard = () => {
         4: true,
         5: false
     })
+    const toast = useToast()
+
+    useEffect(() => {
+        getAssets()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const createAsset = async (event: any) => {
+        event.preventDefault()
+
+        if (!signer) return
+
+        try {
+            const contract = new ethers.Contract(contractAddress, abi, signer)
+            const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
+            const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
+            await transaction.wait()
+            toast({
+                title: 'Congratulations',
+                description: 'A new actif has been created !',
+                status: 'success',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+        catch (error: any) {
+            console.log(error)
+            toast({
+                title: 'Error',
+                description: `An error occurred. ${error.message}`,
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+    }
+
+    const getAssets = async () => {
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+
+        contract.on("AssetCreated", async () => {
+            const result = await contract.getAssets()
+            const reversedResult = [...result].reverse()
+            setAssets(reversedResult)
+            scrollToTop()
+        })
+    }
 
     const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
         setSwitchStates({
             ...switchStates,
             [event.target.name]: event.target.checked
         })
+    }
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   
     return (
@@ -56,11 +125,11 @@ const AdminBoard = () => {
                             <Heading size='md'>Métriques des actifs</Heading>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>Métriques des actifs</TableCaption>
+                                    <Table variant='striped' minH={assets.length > 0 ? '0' : '150'}>
+                                        <TableCaption>{assets.length > 0 ? "Métriques des actifs" : "Aucun actif n'a été créé pour le moment"}</TableCaption>
                                         <Thead>
                                             <Tr>
-                                                <Th>Titre</Th>
+                                                <Th>Nom</Th>
                                                 <Th>Nb total de token</Th>
                                                 <Th>Symbol du token</Th>
                                                 <Th>Nb token vendu</Th>
@@ -69,7 +138,21 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            <Tr>
+                                            {assets.length > 0 && assets.map(({ name, symbol, initialSupply }, index) => {
+                                                return (
+                                                    <Tr key={`${index}${name}${symbol}`}>
+                                                        <Td>{name}</Td>
+                                                        <Td>{ethers.utils.formatUnits(initialSupply, 18)}</Td>
+                                                        <Td>{symbol}</Td>
+                                                        <Td>0</Td>
+                                                        <Td>{ethers.utils.formatUnits(initialSupply, 18)}</Td>
+                                                        <Td>
+                                                            <Badge>Vente non commencée</Badge>
+                                                        </Td>
+                                                    </Tr>
+                                                )
+                                            })}
+                                            {/* <Tr>
                                                 <Td>Actif #1</Td>
                                                 <Td>200.000</Td>
                                                 <Td>AFT</Td>
@@ -118,7 +201,7 @@ const AdminBoard = () => {
                                                 <Td>
                                                     <Badge colorScheme="red">Vente annulée</Badge>
                                                 </Td>
-                                            </Tr>
+                                            </Tr> */}
                                         </Tbody>
                                     </Table>
                                 </TableContainer>
@@ -248,7 +331,15 @@ const AdminBoard = () => {
                                 </TableContainer>
                             </Card>
                         </Box>
-                        <AddNewAsset />
+                        <AddNewAsset
+                            assetName={assetName}
+                            assetSymbol={assetSymbol}
+                            assetTotalSupply={assetTotalSupply}
+                            createAsset={createAsset}
+                            setAssetName={setAssetName}
+                            setAssetSymbol ={setAssetTokenSymbol}
+                            setAssetTotalSupply={setAssetTotalSupply}
+                        />
                     </TabPanel>
                     <TabPanel>
                         <Box mt='10'>
