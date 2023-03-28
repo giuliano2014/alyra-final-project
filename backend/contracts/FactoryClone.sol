@@ -6,12 +6,13 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract FactoryClone {
     struct Asset {
+        address token;
         string name;
         string symbol;
         uint256 initialSupply;
     }
 
-    event AssetCreated(address, string, string, uint256);
+    event AssetCreated(Asset);
 
     address immutable tokenImplementation;
     Asset[] public assets;
@@ -23,8 +24,8 @@ contract FactoryClone {
     function createToken(string calldata _name, string calldata _symbol, uint256 _initialSupply) external returns (address) {
         address clone = Clones.clone(tokenImplementation);
         ERC20PresetFixedSupplyUpgradeable(clone).initialize(_name, _symbol, _initialSupply, msg.sender);
-        emit AssetCreated(clone, _name, _symbol, _initialSupply);
-        assets.push(Asset(_name, _symbol, _initialSupply));
+        emit AssetCreated(Asset(clone, _name, _symbol, _initialSupply));
+        assets.push(Asset(clone, _name, _symbol, _initialSupply));
         return clone;
     }
 

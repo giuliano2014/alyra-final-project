@@ -1,4 +1,4 @@
-export const contractAddress = "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF" // localhost
+export const contractAddress = "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0" // localhost
 // export const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3" // hardhat
 // export const contractAddress = "0x296304b3d75cC4289F2E80a5579b0B0f8bA37B68" // sepolia
 
@@ -12,28 +12,32 @@ export const abi = [
         "anonymous": false,
         "inputs": [
         {
+            "components": [
+            {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "initialSupply",
+                "type": "uint256"
+            }
+            ],
             "indexed": false,
-            "internalType": "address",
+            "internalType": "struct FactoryClone.Asset",
             "name": "",
-            "type": "address"
-        },
-        {
-            "indexed": false,
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-        },
-        {
-            "indexed": false,
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-        },
-        {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
+            "type": "tuple"
         }
         ],
         "name": "AssetCreated",
@@ -49,6 +53,11 @@ export const abi = [
         ],
         "name": "assets",
         "outputs": [
+        {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+        },
         {
             "internalType": "string",
             "name": "name",
@@ -103,6 +112,11 @@ export const abi = [
         "outputs": [
         {
             "components": [
+            {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            },
             {
                 "internalType": "string",
                 "name": "name",

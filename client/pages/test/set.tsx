@@ -33,6 +33,33 @@ const Set = () => {
             const assetQuantityBigNumber = ethers.utils.parseUnits(assetQuantity.toString(), 'ether')
             const transaction = await contract.createToken(assetName, assetSymbol, assetQuantityBigNumber)
             await transaction.wait()
+
+            // contract.on("AssetCreated", async (event) => {
+            //     console.log('AssetCreated', event)
+            // })
+
+            // Créez un filtre pour l'événement 'AssetCreated'
+            const filter = contract.filters.AssetCreated()
+
+            // Récupérez les événements passés depuis le premier bloc
+            const pastEvents = await contract.queryFilter(filter, "earliest")
+
+            // Affichez les événements passés
+            pastEvents.forEach((event) => {
+                console.log("pastEvents data", event)
+            })
+
+            // // Écoutez les nouveaux événements 'AssetCreated'
+            // contract.on(filter, async (event) => {
+            //     console.log("data", event)
+            // }).catch((error: any) => {
+            //     console.log("error", error)
+            // })
+
+            contract.on("AssetCreated", async (event) => {
+                console.log('AssetCreated', event)
+            })
+
             router.push('/test/get')
             toast({
                 title: 'Congratulations',

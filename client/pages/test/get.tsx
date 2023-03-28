@@ -17,10 +17,27 @@ const Get = () => {
     const [count, setCount] = useState(null)
     const [number, setNumber] = useState(null)
 
+    // const getAssets = async () => {
+    //     const contract = new ethers.Contract(contractAddress, abi, provider)
+    //     const result = await contract.getAssets()
+    //     console.log(result)
+    //     setAssets(result)
+    // }
+
     const getAssets = async () => {
         const contract = new ethers.Contract(contractAddress, abi, provider)
-        const result = await contract.getAssets()
-        setAssets(result)
+    
+        // Ecoute l'événement 'AssetCreated' et récupère les assets lorsqu'il est émis
+        contract.on("AssetCreated", async () => {
+            const result = await contract.getAssets()
+            console.log(result)
+            setAssets(result)
+        })
+    
+        // Récupère les assets initiaux une fois au chargement de la fonction
+        const initialResult = await contract.getAssets()
+        console.log(initialResult)
+        setAssets(initialResult)
     }
 
     // const getAssetsList = async () => {
@@ -86,9 +103,10 @@ const Get = () => {
                 </Flex>
                 {assets.length > 0 && (
                     <ul style={{padding: '20px'}}>
-                        {assets.map(({name, symbol, initialSupply}) => {
+                        {assets.map(({token, name, symbol, initialSupply}) => {
                             return (
                                 <li key={`${name}${symbol}`} style={{margin: '20px'}}>
+                                    <Text ml='4'>Token Address : {token}</Text> 
                                     <Text ml='4'>Asset Name : {name}</Text> 
                                     <Text ml='4'>Token Symbol : {symbol}</Text> 
                                     <Text ml='4'>Token Quantity : { ethers.utils.formatUnits(initialSupply, 18)}</Text>
