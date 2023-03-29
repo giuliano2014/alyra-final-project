@@ -97,6 +97,22 @@ const AdminBoard = () => {
         }
     }
 
+    const fetchAndFormatAssets = async () => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const result = await contract.getAssets()
+        const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({
+            name,
+            symbol,
+            totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
+        }))
+        const reversedResult = [...formattedResult].reverse()
+        return reversedResult
+    }
+
     const getAssets = async () => {
         if (!contractAddress) {
             throw new Error("contractAddress is not defined")
@@ -123,22 +139,6 @@ const AdminBoard = () => {
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
-    const fetchAndFormatAssets = async () => {
-        if (!contractAddress) {
-            throw new Error("contractAddress is not defined")
-        }
-
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        const result = await contract.getAssets()
-        const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({
-            name,
-            symbol,
-            totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
-        }))
-        const reversedResult = [...formattedResult].reverse()
-        return reversedResult
     }
   
     return (

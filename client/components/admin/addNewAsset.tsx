@@ -37,8 +37,9 @@ const AddNewAsset: FC<AddNewAssetProps> = ({
     setAssetTotalSupply
 }) => {
     const isAssetNameError = assetName === ''
-    const isAssetTotalSupplyError = assetTotalSupply < 1
     const isAssetSymbolError = assetSymbol === ''
+    const isAssetTotalSupplyError = assetTotalSupply < 1
+
     return (
         <Box mt='10'>
             <Heading size='md'>Ajouter un nouvel actif</Heading>
@@ -46,17 +47,17 @@ const AddNewAsset: FC<AddNewAssetProps> = ({
                     <Box as='form' onSubmit={createAsset}>
                         <VStack align='flex-end' spacing={4}>
                             <FormControl isInvalid={isAssetNameError}>
-                                <FormLabel>Titre de l&apos;actif</FormLabel>
+                                <FormLabel>Nom de l&apos;actif</FormLabel>
                                 <Input
                                     onChange={(e) => setAssetName(e.target.value)}
                                     value={assetName}
                                 />
                                 {!isAssetNameError ? (
                                     <FormHelperText>
-                                        Le titre de l&apos;actif doit être le plus court possible.
+                                        Le nom de l&apos;actif doit être le plus court possible.
                                     </FormHelperText>
                                 ) : (
-                                    <FormErrorMessage>Le titre de l&apos;actif est obligatoire.</FormErrorMessage>
+                                    <FormErrorMessage>Le nom de l&apos;actif est obligatoire.</FormErrorMessage>
                                 )}
                             </FormControl>
                             <FormControl isInvalid={isAssetSymbolError}>
