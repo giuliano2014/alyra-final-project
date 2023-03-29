@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { useState } from 'react'
 import { useProvider } from 'wagmi'
 
-import { abi, contractAddress } from "@/contracts/simpleStorage"
+import { abi, contractAddress } from "@/contracts/financialVehicle"
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
@@ -14,6 +14,10 @@ const Get = () => {
     const [number, setNumber] = useState(null)
 
     const getTheNumber = async () => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
         const contract = new ethers.Contract(contractAddress, abi, provider)
         let smartContractValue = await contract.get()
         setNumber(smartContractValue.toString())

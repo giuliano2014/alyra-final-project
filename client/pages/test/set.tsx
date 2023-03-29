@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
 import { useSigner } from 'wagmi'
 
-import { abi, contractAddress } from "@/contracts/simpleStorage"
+import { abi, contractAddress } from "@/contracts/financialVehicle"
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
@@ -23,8 +23,12 @@ const Set = () => {
     const [number, setNumber] = useState<string>('')
     const toast = useToast()
 
-    const setTheNumber = async() => {
+    const setTheNumber = async () => {
         if (!signer) return
+
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
 
         try {
             const contract = new ethers.Contract(contractAddress, abi, signer)

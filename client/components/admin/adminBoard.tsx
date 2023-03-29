@@ -17,13 +17,37 @@ import {
     Th,
     Thead,
     Tr,
-    Switch
+    Switch,
+    useToast
 } from '@chakra-ui/react'
-import { ChangeEventHandler, useState } from 'react'
+import { ChangeEventHandler, FormEvent, useEffect, useState } from 'react'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
+import { useProvider, useSigner } from 'wagmi'
+import { ethers } from 'ethers'
+
+import { abi, contractAddress } from '@/contracts/financialVehicle'
+
+type Asset = {
+    tokenAddress: string;
+    name: string;
+    symbol: string;
+    totalSupply: ethers.BigNumber;
+}
+
+type FormattedAsset = {
+    name: string;
+    symbol: string;
+    totalSupply: string;
+};
 
 const AdminBoard = () => {
+    const provider = useProvider()
+    const { data: signer } = useSigner()
+    const [assetName, setAssetName] = useState('')
+    const [assetTotalSupply, setAssetTotalSupply] = useState(0)
+    const [assetSymbol, setAssetTokenSymbol] = useState('')
+    const [assets, setAssets] = useState<FormattedAsset[]>([])
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({
         0: false,
         1: true,
@@ -32,12 +56,89 @@ const AdminBoard = () => {
         4: true,
         5: false
     })
+    const toast = useToast()
+
+    useEffect(() => {
+        getAssets()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const createAsset = async (event: FormEvent) => {
+        event.preventDefault()
+
+        if (!signer) return
+
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
+        try {
+            const contract = new ethers.Contract(contractAddress, abi, signer)
+            const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
+            const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
+            await transaction.wait()
+            toast({
+                title: 'Congratulations',
+                description: 'A new actif has been created !',
+                status: 'success',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+        catch (error: any) {
+            console.log(error)
+            toast({
+                title: 'Error',
+                description: `An error occurred`,
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+    }
+
+    const fetchAndFormatAssets = async () => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const result = await contract.getAssets()
+        const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({
+            name,
+            symbol,
+            totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
+        }))
+        const reversedResult = [...formattedResult].reverse()
+        return reversedResult
+    }
+
+    const getAssets = async () => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+
+        contract.on("AssetCreated", async () => {
+            const reversedResult = await fetchAndFormatAssets()
+            setAssets(reversedResult)
+            scrollToTop()
+        })
+
+        const reversedResult = await fetchAndFormatAssets()
+        setAssets(reversedResult)
+    }
 
     const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
         setSwitchStates({
             ...switchStates,
             [event.target.name]: event.target.checked
         })
+    }
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   
     return (
@@ -56,11 +157,13 @@ const AdminBoard = () => {
                             <Heading size='md'>Métriques des actifs</Heading>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>Métriques des actifs</TableCaption>
+                                    <Table variant='striped' minH={assets.length > 0 ? '0' : '150'}>
+                                        <TableCaption>
+                                            {assets.length > 0 ? "Métriques des actifs" : "Aucun actif n'a été créé pour le moment"}
+                                        </TableCaption>
                                         <Thead>
                                             <Tr>
-                                                <Th>Titre</Th>
+                                                <Th>Nom</Th>
                                                 <Th>Nb total de token</Th>
                                                 <Th>Symbol du token</Th>
                                                 <Th>Nb token vendu</Th>
@@ -69,7 +172,21 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            <Tr>
+                                            {assets.length > 0 && assets.map(({ name, symbol, totalSupply }, index) => {
+                                                return (
+                                                    <Tr key={`${index}${name}${symbol}`}>
+                                                        <Td>{name}</Td>
+                                                        <Td>{totalSupply}</Td>
+                                                        <Td>{symbol}</Td>
+                                                        <Td>0</Td>
+                                                        <Td>{totalSupply}</Td>
+                                                        <Td>
+                                                            <Badge>Vente non commencée</Badge>
+                                                        </Td>
+                                                    </Tr>
+                                                )
+                                            })}
+                                            {/* <Tr>
                                                 <Td>Actif #1</Td>
                                                 <Td>200.000</Td>
                                                 <Td>AFT</Td>
@@ -118,7 +235,7 @@ const AdminBoard = () => {
                                                 <Td>
                                                     <Badge colorScheme="red">Vente annulée</Badge>
                                                 </Td>
-                                            </Tr>
+                                            </Tr> */}
                                         </Tbody>
                                     </Table>
                                 </TableContainer>
@@ -128,8 +245,8 @@ const AdminBoard = () => {
                             <Heading size='md'>Actions sur les actifs</Heading>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>Actions sur les actifs</TableCaption>
+                                    <Table variant='striped' minH={assets.length > 0 ? '0' : '150'}>
+                                        <TableCaption>{assets.length > 0 ? "Actions sur les actifs " : "Aucun actif n'a été créé pour le moment"}</TableCaption>
                                         <Thead>
                                             <Tr>
                                                 <Th>Titre</Th>
@@ -139,7 +256,29 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            <Tr>
+                                        {assets.length > 0 && assets.map(({ name }, index) => {
+                                                return (
+                                                    <Tr key={`${index}${name}`}>
+                                                        <Td>{name}</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' size='xs'>
+                                                                Commencer
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Commencer
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' isDisabled size='xs'>
+                                                                Annuler
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                )
+                                            })}
+                                            {/* <Tr>
                                                 <Td>Asset #1</Td>
                                                 <Td>
                                                     <Button
@@ -242,13 +381,21 @@ const AdminBoard = () => {
                                                         Annuler
                                                     </Button>
                                                 </Td>
-                                            </Tr>
+                                            </Tr> */}
                                         </Tbody>
                                     </Table>
                                 </TableContainer>
                             </Card>
                         </Box>
-                        <AddNewAsset />
+                        <AddNewAsset
+                            assetName={assetName}
+                            assetSymbol={assetSymbol}
+                            assetTotalSupply={assetTotalSupply}
+                            createAsset={createAsset}
+                            setAssetName={setAssetName}
+                            setAssetSymbol ={setAssetTokenSymbol}
+                            setAssetTotalSupply={setAssetTotalSupply}
+                        />
                     </TabPanel>
                     <TabPanel>
                         <Box mt='10'>

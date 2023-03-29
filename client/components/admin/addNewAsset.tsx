@@ -15,65 +15,58 @@ import {
     NumberInputStepper,
     VStack,
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { FC, FormEvent } from 'react'
 
-const AddNewAsset = () => {
-    const [assetName, setAssetName] = useState('')
-    const [tokenName, setTokenName] = useState('')
-    const [totalSupply, setTotalSupply] = useState(0)
-    const [tokenSymbol, setTokenSymbol] = useState('')
+type AddNewAssetProps = {
+    assetName: string
+    assetSymbol: string
+    assetTotalSupply: number
+    createAsset: (event: FormEvent) => void
+    setAssetName: (value: string) => void
+    setAssetSymbol: (value: string) => void
+    setAssetTotalSupply: (value: number) => void
+}
 
+const AddNewAsset: FC<AddNewAssetProps> = ({
+    assetName,
+    assetSymbol,
+    assetTotalSupply,
+    createAsset,
+    setAssetName,
+    setAssetSymbol,
+    setAssetTotalSupply
+}) => {
     const isAssetNameError = assetName === ''
-    const isTokenNameError = tokenName === ''
-    const isTotalSupplyError = totalSupply < 1
-    const isTokenSymbolError = tokenSymbol === ''
-
-    const handleSubmit = (e: any) => {
-        e.preventDefault()
-        console.log('Form values:', { assetName, tokenName, totalSupply, tokenSymbol })
-    }
+    const isAssetSymbolError = assetSymbol === ''
+    const isAssetTotalSupplyError = assetTotalSupply < 1
 
     return (
         <Box mt='10'>
             <Heading size='md'>Ajouter un nouvel actif</Heading>
                 <Card borderRadius='2xl' mt='4' padding='4'>
-                    <Box as='form' onSubmit={handleSubmit}>
+                    <Box as='form' onSubmit={createAsset}>
                         <VStack align='flex-end' spacing={4}>
                             <FormControl isInvalid={isAssetNameError}>
-                                <FormLabel>Titre de l&apos;actif</FormLabel>
+                                <FormLabel>Nom de l&apos;actif</FormLabel>
                                 <Input
                                     onChange={(e) => setAssetName(e.target.value)}
                                     value={assetName}
                                 />
                                 {!isAssetNameError ? (
                                     <FormHelperText>
-                                        Le titre de l&apos;actif doit être le plus court possible.
+                                        Le nom de l&apos;actif doit être le plus court possible.
                                     </FormHelperText>
                                 ) : (
-                                    <FormErrorMessage>Le titre de l&apos;actif est obligatoire.</FormErrorMessage>
+                                    <FormErrorMessage>Le nom de l&apos;actif est obligatoire.</FormErrorMessage>
                                 )}
                             </FormControl>
-                            <FormControl isInvalid={isTokenNameError}>
-                                <FormLabel>Nom du token</FormLabel>
-                                <Input
-                                    onChange={(e) => setTokenName(e.target.value)}
-                                    value={tokenName}
-                                />
-                                {!isTokenNameError ? (
-                                    <FormHelperText>
-                                        Le nom du token doit être le plus court possible.
-                                    </FormHelperText>
-                                ) : (
-                                    <FormErrorMessage>Le nom du token est obligatoire.</FormErrorMessage>
-                                )}
-                            </FormControl>
-                            <FormControl isInvalid={isTokenSymbolError}>
+                            <FormControl isInvalid={isAssetSymbolError}>
                                 <FormLabel>Symbol du token</FormLabel>
                                 <Input
-                                    onChange={(e) => setTokenSymbol(e.target.value)}
-                                    value={tokenSymbol}
+                                    onChange={(e) => setAssetSymbol(e.target.value)}
+                                    value={assetSymbol}
                                 />
-                                {!isTokenSymbolError ? (
+                                {!isAssetSymbolError ? (
                                     <FormHelperText>
                                         Le symbol du token doit être le plus court possible.
                                     </FormHelperText>
@@ -81,12 +74,12 @@ const AddNewAsset = () => {
                                     <FormErrorMessage>Le symbol du token est obligatoire.</FormErrorMessage>
                                 )}
                             </FormControl>
-                            <FormControl isInvalid={isTotalSupplyError}>
+                            <FormControl isInvalid={isAssetTotalSupplyError}>
                                 <FormLabel>Nombre total de token</FormLabel>
                                 <NumberInput
                                     defaultValue={0}
                                     min={1}
-                                    onChange={(e: any) => setTotalSupply(e)}
+                                    onChange={(e: any) => setAssetTotalSupply(e)}
                                     step={1}
                                 >
                                     <NumberInputField />
@@ -95,7 +88,7 @@ const AddNewAsset = () => {
                                         <NumberDecrementStepper />
                                     </NumberInputStepper>
                                 </NumberInput>
-                                {!isTotalSupplyError ? (
+                                {!isAssetTotalSupplyError ? (
                                     <FormHelperText>
                                         Le nombre total de token doit être supérieur ou égal à 1.
                                     </FormHelperText>
@@ -107,13 +100,12 @@ const AddNewAsset = () => {
                                 colorScheme='teal'
                                 isDisabled={
                                     isAssetNameError ||
-                                    isTokenSymbolError ||
-                                    isTokenSymbolError ||
-                                    isTotalSupplyError
+                                    isAssetSymbolError ||
+                                    isAssetTotalSupplyError
                                 }
                                 type='submit'
                             >
-                                Ajouter
+                                Créer un actif
                             </Button>
                     </VStack>
                 </Box>
