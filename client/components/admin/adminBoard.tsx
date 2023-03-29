@@ -68,6 +68,10 @@ const AdminBoard = () => {
 
         if (!signer) return
 
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
         try {
             const contract = new ethers.Contract(contractAddress, abi, signer)
             const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
@@ -94,6 +98,10 @@ const AdminBoard = () => {
     }
 
     const getAssets = async () => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
         const contract = new ethers.Contract(contractAddress, abi, provider)
 
         contract.on("AssetCreated", async () => {
@@ -118,6 +126,10 @@ const AdminBoard = () => {
     }
 
     const fetchAndFormatAssets = async () => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
         const contract = new ethers.Contract(contractAddress, abi, provider)
         const result = await contract.getAssets()
         const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({

@@ -23,8 +23,12 @@ const Set = () => {
     const [number, setNumber] = useState<string>('')
     const toast = useToast()
 
-    const setTheNumber = async() => {
+    const setTheNumber = async () => {
         if (!signer) return
+
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
 
         try {
             const contract = new ethers.Contract(contractAddress, abi, signer)

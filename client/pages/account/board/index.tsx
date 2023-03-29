@@ -13,8 +13,7 @@ const Board = () => {
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
     useEffect(() => {
-        const adminAddressAccount = process.env.NEXT_PUBLIC_HARDHAT_ADMIN_ACCOUNT_0
-        // const adminAddressAccount = process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_1
+        const adminAddressAccount = process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO
         setIsAdmin(address === adminAddressAccount)
     }, [address]);
   

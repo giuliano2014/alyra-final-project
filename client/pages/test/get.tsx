@@ -14,6 +14,10 @@ const Get = () => {
     const [number, setNumber] = useState(null)
 
     const getTheNumber = async () => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
         const contract = new ethers.Contract(contractAddress, abi, provider)
         let smartContractValue = await contract.get()
         setNumber(smartContractValue.toString())
