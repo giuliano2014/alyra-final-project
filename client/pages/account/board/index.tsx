@@ -13,9 +13,15 @@ const Board = () => {
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
     useEffect(() => {
-        const adminAddressAccount = process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO
-        setIsAdmin(address === adminAddressAccount)
-    }, [address]);
+        const adminAddresses = [
+            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_ARNAUD,
+            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GARY,
+            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO,
+            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO_LOCALHOST
+        ]
+    
+        setIsAdmin(adminAddresses.includes(address))
+    }, [address])
   
     return (
         <>
