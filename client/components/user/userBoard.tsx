@@ -1,7 +1,10 @@
+import { contractAddress, abi } from '@/contracts/financialVehicle'
 import {
     Box,
+    Button,
     Card,
     Heading,
+    Stack,
     Tab,
     Table,
     TableCaption,
@@ -14,10 +17,52 @@ import {
     Td,
     Th,
     Thead,
-    Tr
+    Tr,
+    useToast
 } from '@chakra-ui/react'
+import { ethers } from 'ethers'
+import { FormEvent, useState } from 'react'
+import { useAccount, useSigner } from 'wagmi'
 
 const UserBoard = () => {
+    const { address } = useAccount()
+    const { data: signer } = useSigner()
+    const [isKycPending, setIsKycPending] = useState(false)
+    const toast = useToast()
+
+    const askForKycValidation = async (event: FormEvent) => {
+        event.preventDefault()
+        try {
+            if (!signer) return
+
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(contractAddress, abi, signer)
+            const transaction = await contract.askForKycValidation(address)
+            await transaction.wait()
+            setIsKycPending(true)
+            toast({
+                title: 'Bravo',
+                description: 'Votre demande a bien été prise en compte',
+                status: 'success',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+        catch (error: any) {
+            console.log(error)
+            toast({
+                title: 'Oops :(',
+                description: "Une erreur s'est produite",
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+    }
+
     return (
         <>
             <Box mt='16' textAlign='center'>
@@ -69,6 +114,28 @@ const UserBoard = () => {
                         <Box mt='10'>
                             <Heading size='md'>Mon KYC</Heading>
                         </Box>
+                        <Card borderRadius='2xl' mt='4' padding='4'>
+                            <Box
+                                alignItems='center'
+                                as='form'
+                                display='flex'
+                                justifyContent='space-between'
+                                onSubmit={askForKycValidation}
+                            >
+                                <Heading size='sm'>Demande de validation de mon KYC</Heading>
+                                <Stack direction='row' spacing={4}>
+                                    <Button
+                                        colorScheme='teal'
+                                        isLoading={isKycPending}
+                                        loadingText='Demande en cours de traitement'
+                                        type='submit'
+                                        variant='solid'
+                                    >
+                                        Validation
+                                    </Button>
+                                </Stack>
+                            </Box>
+                        </Card>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

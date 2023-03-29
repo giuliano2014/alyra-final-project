@@ -10,6 +10,19 @@ export const abi = [
         "anonymous": false,
         "inputs": [
         {
+            "indexed": false,
+            "internalType": "address",
+            "name": "userAddress",
+            "type": "address"
+        }
+        ],
+        "name": "AskForKycValidation",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+        {
             "components": [
             {
                 "internalType": "address",
@@ -40,6 +53,32 @@ export const abi = [
         ],
         "name": "AssetCreated",
         "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+        {
+            "indexed": false,
+            "internalType": "address",
+            "name": "userAddress",
+            "type": "address"
+        }
+        ],
+        "name": "KycValidated",
+        "type": "event"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+        }
+        ],
+        "name": "askForKycValidation",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
         "inputs": [
@@ -121,12 +160,49 @@ export const abi = [
     {
         "inputs": [
         {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+        }
+        ],
+        "name": "isValidatedKyc",
+        "outputs": [
+        {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+        }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
             "internalType": "uint256",
             "name": "x",
             "type": "uint256"
         }
         ],
         "name": "set",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+        },
+        {
+            "internalType": "bool",
+            "name": "_isValidated",
+            "type": "bool"
+        }
+        ],
+        "name": "validateKyc",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

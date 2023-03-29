@@ -12,9 +12,13 @@ contract FinancialVehicle {
         uint256 totalSupply;
     }
 
+    event AskForKycValidation(address userAddress);
     event AssetCreated(Asset);
+    event KycValidated(address userAddress);
 
-    uint data;
+    mapping (address => bool) kycValidated;
+
+    uint data; // To remove
     address immutable tokenImplementation;
     Asset[] private assets;
 
@@ -34,10 +38,25 @@ contract FinancialVehicle {
         return assets;
     }
 
+    function askForKycValidation(address _address) external {
+        emit AskForKycValidation(_address);
+    }
+
+    function isValidatedKyc(address _address) external view returns(bool) {
+        return kycValidated[_address];
+    }
+
+    function validateKyc(address _address, bool _isValidated) external {
+        kycValidated[_address] = _isValidated;
+        emit KycValidated(_address);
+    }
+
+    // To remove
     function get() public view returns (uint) {
         return data;
     }
 
+    // To remove
     function set(uint x) public {
         data = x;
     }
