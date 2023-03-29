@@ -158,7 +158,9 @@ const AdminBoard = () => {
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
                                     <Table variant='striped' minH={assets.length > 0 ? '0' : '150'}>
-                                        <TableCaption>{assets.length > 0 ? "Métriques des actifs" : "Aucun actif n'a été créé pour le moment"}</TableCaption>
+                                        <TableCaption>
+                                            {assets.length > 0 ? "Métriques des actifs" : "Aucun actif n'a été créé pour le moment"}
+                                        </TableCaption>
                                         <Thead>
                                             <Tr>
                                                 <Th>Nom</Th>
@@ -243,8 +245,8 @@ const AdminBoard = () => {
                             <Heading size='md'>Actions sur les actifs</Heading>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>Actions sur les actifs</TableCaption>
+                                    <Table variant='striped' minH={assets.length > 0 ? '0' : '150'}>
+                                        <TableCaption>{assets.length > 0 ? "Actions sur les actifs " : "Aucun actif n'a été créé pour le moment"}</TableCaption>
                                         <Thead>
                                             <Tr>
                                                 <Th>Titre</Th>
@@ -254,7 +256,29 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            <Tr>
+                                        {assets.length > 0 && assets.map(({ name }, index) => {
+                                                return (
+                                                    <Tr key={`${index}${name}`}>
+                                                        <Td>{name}</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' size='xs'>
+                                                                Commencer
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' isDisabled size='xs'>
+                                                                Commencer
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' isDisabled size='xs'>
+                                                                Annuler
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                )
+                                            })}
+                                            {/* <Tr>
                                                 <Td>Asset #1</Td>
                                                 <Td>
                                                     <Button
@@ -357,7 +381,7 @@ const AdminBoard = () => {
                                                         Annuler
                                                     </Button>
                                                 </Td>
-                                            </Tr>
+                                            </Tr> */}
                                         </Tbody>
                                     </Table>
                                 </TableContainer>
