@@ -6,10 +6,10 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
  
 contract FinancialVehicle {
     struct Asset {
-        address tokenAddress;
+        address assetAddress;
         string name;
         string symbol;
-        uint256 initialSupply;
+        uint256 totalSupply;
     }
 
     event AssetCreated(Asset);
@@ -22,11 +22,11 @@ contract FinancialVehicle {
         tokenImplementation = address(new ERC20PresetFixedSupplyUpgradeable());
     }
 
-    function createAsset(string calldata _name, string calldata _symbol, uint256 _initialSupply) external returns (address) {
+    function createAsset(string calldata _name, string calldata _symbol, uint256 _totalSupply) external returns (address) {
         address clone = Clones.clone(tokenImplementation);
-        ERC20PresetFixedSupplyUpgradeable(clone).initialize(_name, _symbol, _initialSupply, msg.sender);
-        emit AssetCreated(Asset(clone, _name, _symbol, _initialSupply));
-        assets.push(Asset(clone, _name, _symbol, _initialSupply));
+        ERC20PresetFixedSupplyUpgradeable(clone).initialize(_name, _symbol, _totalSupply, msg.sender);
+        emit AssetCreated(Asset(clone, _name, _symbol, _totalSupply));
+        assets.push(Asset(clone, _name, _symbol, _totalSupply));
         return clone;
     }
 

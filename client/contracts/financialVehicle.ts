@@ -1,4 +1,5 @@
 export const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3" // localhost
+// export const contractAddress = "0xB289b6f73527A49405ed8c6D958E915E591873D6" // sepolia
 
 export const abi = [
     {
@@ -13,7 +14,7 @@ export const abi = [
             "components": [
             {
                 "internalType": "address",
-                "name": "tokenAddress",
+                "name": "assetAddress",
                 "type": "address"
             },
             {
@@ -28,7 +29,7 @@ export const abi = [
             },
             {
                 "internalType": "uint256",
-                "name": "initialSupply",
+                "name": "totalSupply",
                 "type": "uint256"
             }
             ],
@@ -55,7 +56,7 @@ export const abi = [
         },
         {
             "internalType": "uint256",
-            "name": "_initialSupply",
+            "name": "_totalSupply",
             "type": "uint256"
         }
         ],
@@ -91,7 +92,7 @@ export const abi = [
             "components": [
             {
                 "internalType": "address",
-                "name": "tokenAddress",
+                "name": "assetAddress",
                 "type": "address"
             },
             {
@@ -106,7 +107,7 @@ export const abi = [
             },
             {
                 "internalType": "uint256",
-                "name": "initialSupply",
+                "name": "totalSupply",
                 "type": "uint256"
             }
             ],

@@ -34,7 +34,7 @@ const AddNewAsset: FC<AddNewAssetProps> = ({
     createAsset,
     setAssetName,
     setAssetSymbol,
-    setAssetTotalSupply,
+    setAssetTotalSupply
 }) => {
     const isAssetNameError = assetName === ''
     const isAssetTotalSupplyError = assetTotalSupply < 1

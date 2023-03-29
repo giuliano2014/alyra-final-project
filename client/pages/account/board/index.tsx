@@ -14,6 +14,7 @@ const Board = () => {
 
     useEffect(() => {
         const adminAddressAccount = process.env.NEXT_PUBLIC_HARDHAT_ADMIN_ACCOUNT_0
+        // const adminAddressAccount = process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_1
         setIsAdmin(address === adminAddressAccount)
     }, [address]);
   

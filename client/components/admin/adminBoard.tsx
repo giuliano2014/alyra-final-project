@@ -20,7 +20,7 @@ import {
     Switch,
     useToast
 } from '@chakra-ui/react'
-import { ChangeEventHandler, useEffect, useState } from 'react'
+import { ChangeEventHandler, FormEvent, useEffect, useState } from 'react'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
 import { useProvider, useSigner } from 'wagmi'
@@ -32,8 +32,14 @@ type Asset = {
     tokenAddress: string;
     name: string;
     symbol: string;
-    initialSupply: number;
+    totalSupply: ethers.BigNumber;
 }
+
+type FormattedAsset = {
+    name: string;
+    symbol: string;
+    totalSupply: string;
+};
 
 const AdminBoard = () => {
     const provider = useProvider()
@@ -41,7 +47,7 @@ const AdminBoard = () => {
     const [assetName, setAssetName] = useState('')
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [assetSymbol, setAssetTokenSymbol] = useState('')
-    const [assets, setAssets] = useState<Asset[]>([])
+    const [assets, setAssets] = useState<FormattedAsset[]>([])
     const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({
         0: false,
         1: true,
@@ -57,7 +63,7 @@ const AdminBoard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const createAsset = async (event: any) => {
+    const createAsset = async (event: FormEvent) => {
         event.preventDefault()
 
         if (!signer) return
@@ -79,7 +85,7 @@ const AdminBoard = () => {
             console.log(error)
             toast({
                 title: 'Error',
-                description: `An error occurred. ${error.message}`,
+                description: `An error occurred`,
                 status: 'error',
                 duration: 5000,
                 isClosable: true
@@ -91,11 +97,13 @@ const AdminBoard = () => {
         const contract = new ethers.Contract(contractAddress, abi, provider)
 
         contract.on("AssetCreated", async () => {
-            const result = await contract.getAssets()
-            const reversedResult = [...result].reverse()
+            const reversedResult = await fetchAndFormatAssets()
             setAssets(reversedResult)
             scrollToTop()
         })
+
+        const reversedResult = await fetchAndFormatAssets()
+        setAssets(reversedResult)
     }
 
     const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
@@ -107,6 +115,18 @@ const AdminBoard = () => {
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    const fetchAndFormatAssets = async () => {
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        const result = await contract.getAssets()
+        const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({
+            name,
+            symbol,
+            totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
+        }))
+        const reversedResult = [...formattedResult].reverse()
+        return reversedResult
     }
   
     return (
@@ -138,14 +158,14 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            {assets.length > 0 && assets.map(({ name, symbol, initialSupply }, index) => {
+                                            {assets.length > 0 && assets.map(({ name, symbol, totalSupply }, index) => {
                                                 return (
                                                     <Tr key={`${index}${name}${symbol}`}>
                                                         <Td>{name}</Td>
-                                                        <Td>{ethers.utils.formatUnits(initialSupply, 18)}</Td>
+                                                        <Td>{totalSupply}</Td>
                                                         <Td>{symbol}</Td>
                                                         <Td>0</Td>
-                                                        <Td>{ethers.utils.formatUnits(initialSupply, 18)}</Td>
+                                                        <Td>{totalSupply}</Td>
                                                         <Td>
                                                             <Badge>Vente non commencée</Badge>
                                                         </Td>
