@@ -12,13 +12,18 @@ contract FinancialVehicle {
         uint256 totalSupply;
     }
 
+    struct User {
+        address userAddress;
+        bool validated;
+        string status; // "done" | "in progress"
+    }
+
     event AskForKycValidation(address userAddress);
     event AssetCreated(Asset);
     event KycValidated(address userAddress);
 
-    mapping (address => bool) kycValidated;
+    mapping (address => User) public kyc;
 
-    uint data; // To remove
     address immutable tokenImplementation;
     Asset[] private assets;
 
@@ -38,26 +43,35 @@ contract FinancialVehicle {
         return assets;
     }
 
-    function askForKycValidation(address _address) external {
-        emit AskForKycValidation(_address);
+    function askForKycValidation() external { // Use msg.sender
+        require(kyc[msg.sender].userAddress != msg.sender, "Address already exists in KYC mapping");
+        kyc[msg.sender] = User({userAddress: msg.sender, validated: false, status: "in progress"});
+        emit AskForKycValidation(msg.sender);
     }
 
-    function isValidatedKyc(address _address) external view returns(bool) {
-        return kycValidated[_address];
+    // function askForKycValidation(address _address) external { // Use msg.sender
+    //     require(kyc[_address].userAddress != _address, "Address already exists in KYC mapping");
+    //     kyc[_address] = User({userAddress: _address, validated: false, status: "in progress"});
+    //     emit AskForKycValidation(_address);
+    // }
+
+
+    // To remove
+    function getKyc(address _address) external view returns (User memory) {
+        return kyc[_address];
     }
 
-    function validateKyc(address _address, bool _isValidated) external {
-        kycValidated[_address] = _isValidated;
+    function validateKyc(address _address) external {
+        kyc[_address].validated = true;
+        kyc[_address].status = "done";
         emit KycValidated(_address);
+        // emit AskForKycValidation(_address);
     }
 
-    // To remove
-    function get() public view returns (uint) {
-        return data;
-    }
-
-    // To remove
-    function set(uint x) public {
-        data = x;
+    function notValidateKyc(address _address) external {
+        kyc[_address].validated = false;
+        kyc[_address].status = "done";
+        emit KycValidated(_address);
+        // emit AskForKycValidation(_address);
     }
 }

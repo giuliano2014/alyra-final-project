@@ -20,7 +20,7 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import { ChangeEventHandler, FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
@@ -48,21 +48,23 @@ const AdminBoard = () => {
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
-    const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({})
-    // const [switchStatesTest, setSwitchStatesTest] = useState<Record<string, boolean>>({
-    //     0: false,
-    //     1: true,
-    //     2: false,
-    //     3: true,
-    //     4: true,
-    //     5: false
-    // })
     const toast = useToast()
 
     useEffect(() => {
         getAskForKycValidation()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [askForKycValidationEvents])
+    }, [])
+
+    useEffect(() => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        contract.on("AskForKycValidation", async () => {
+            getAskForKycValidation()
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     useEffect(() => {
         getAssets()
@@ -152,22 +154,54 @@ const AdminBoard = () => {
         }
     }
     
-    const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
-        console.log('event', event.target.checked)
-        setSwitchStates({
-            ...switchStates,
-            [event.target.name]: event.target.checked
-        })
+    const validateKyc = async (address: string) => {
+        try {
+            if (!signer) return
+
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(contractAddress, abi, signer)
+            await contract.validateKyc(address)
+        }
+        catch (error: any) {
+            console.log(error)
+        }
     }
 
-    // const handleSwitchChangeTest: ChangeEventHandler<HTMLInputElement> = (event): void => {
-    //     console.log('event', event.target.checked)
-    //     setSwitchStatesTest({
-    //         ...switchStates,
-    //         [event.target.name]: event.target.checked
-    //     })
-    // }
+    const notValidateKyc = async (address: string) => {
+        try {
+            if (!signer) return
 
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(contractAddress, abi, signer)
+            await contract.notValidateKyc(address)
+        }
+        catch (error: any) {
+            console.log(error)
+        }
+    }
+
+    const getKyc = async (address: string) => {
+        try {
+            if (!signer) return
+
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(contractAddress, abi, signer)
+            await contract.getKyc(address)
+        }
+        catch (error: any) {
+            console.log(error)
+        }
+    }
+      
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -179,29 +213,20 @@ const AdminBoard = () => {
             }
             const contract = new ethers.Contract(contractAddress, abi, provider)
             const eventFilter = contract.filters.AskForKycValidation()
-    
-            // Récupérez tous les événements depuis le début
             const pastEvents = await contract.queryFilter(eventFilter, 0)
-            setAskForKycValidationEvents(pastEvents)
+            const pastEventsAddresses = pastEvents.map(({ args }) => args?.userAddress)
+
+            let test: any = []
+            pastEventsAddresses.forEach(async (address) => {
+                const kyc = await contract.getKyc(address)
+                test.push(kyc)
+            })
+            console.log('test', test)
+            setAskForKycValidationEvents(test)
         } catch (error) {
             console.error("Error getting AskForKycValidation events:", error)
         }
     }
-
-    // useEffect(() => {
-    //     unwatch()
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [])
-
-    // const unwatch = watchContractEvent({
-    //     address: contractAddress as any,
-    //     abi: abi,
-    //     eventName: 'AskForKycValidation',
-    // }, (node, label, owner) => {
-    //     console.log('node', node)
-    //     console.log('label', label)
-    //     console.log('owner', owner)
-    // })
     
     return (
         <>
@@ -460,12 +485,20 @@ const AdminBoard = () => {
                         />
                     </TabPanel>
                     <TabPanel>
+                        {/* To remove */}
+                        <Button
+                            colorScheme='teal'
+                            onClick={() => getKyc("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")}
+                            type='button'
+                            variant='solid'
+                        >
+                            KYC valid
+                        </Button>
+                        {/* End */}
                         <Kyc
                             askForKycValidationEvents={askForKycValidationEvents}
-                            handleSwitchChange={handleSwitchChange}
-                            // handleSwitchChangeTest={handleSwitchChangeTest}
-                            switchStates={switchStates}
-                            // switchStatesTest={switchStatesTest}
+                            validateKyc={validateKyc}
+                            notValidateKyc={notValidateKyc}
                         />
                     </TabPanel>
                 </TabPanels>

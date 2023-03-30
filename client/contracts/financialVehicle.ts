@@ -2,209 +2,231 @@ export const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 export const abi = [
     {
-        "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
     },
     {
-        "anonymous": false,
-        "inputs": [
+      "anonymous": false,
+      "inputs": [
         {
-            "indexed": false,
-            "internalType": "address",
-            "name": "userAddress",
-            "type": "address"
+          "indexed": false,
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
         }
-        ],
-        "name": "AskForKycValidation",
-        "type": "event"
+      ],
+      "name": "AskForKycValidation",
+      "type": "event"
     },
     {
-        "anonymous": false,
-        "inputs": [
+      "anonymous": false,
+      "inputs": [
         {
-            "components": [
+          "components": [
             {
-                "internalType": "address",
-                "name": "assetAddress",
-                "type": "address"
+              "internalType": "address",
+              "name": "assetAddress",
+              "type": "address"
             },
             {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
             },
             {
-                "internalType": "string",
-                "name": "symbol",
-                "type": "string"
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
             },
             {
-                "internalType": "uint256",
-                "name": "totalSupply",
-                "type": "uint256"
+              "internalType": "uint256",
+              "name": "totalSupply",
+              "type": "uint256"
             }
-            ],
-            "indexed": false,
-            "internalType": "struct FinancialVehicle.Asset",
-            "name": "",
-            "type": "tuple"
+          ],
+          "indexed": false,
+          "internalType": "struct FinancialVehicle.Asset",
+          "name": "",
+          "type": "tuple"
         }
-        ],
-        "name": "AssetCreated",
-        "type": "event"
+      ],
+      "name": "AssetCreated",
+      "type": "event"
     },
     {
-        "anonymous": false,
-        "inputs": [
+      "anonymous": false,
+      "inputs": [
         {
-            "indexed": false,
-            "internalType": "address",
-            "name": "userAddress",
-            "type": "address"
+          "indexed": false,
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
         }
-        ],
-        "name": "KycValidated",
-        "type": "event"
+      ],
+      "name": "KycValidated",
+      "type": "event"
     },
     {
-        "inputs": [
-        {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
-        }
-        ],
-        "name": "askForKycValidation",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+      "inputs": [],
+      "name": "askForKycValidation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
-        "inputs": [
+      "inputs": [
         {
-            "internalType": "string",
-            "name": "_name",
-            "type": "string"
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
         },
         {
-            "internalType": "string",
-            "name": "_symbol",
-            "type": "string"
+          "internalType": "string",
+          "name": "_symbol",
+          "type": "string"
         },
         {
-            "internalType": "uint256",
-            "name": "_totalSupply",
-            "type": "uint256"
+          "internalType": "uint256",
+          "name": "_totalSupply",
+          "type": "uint256"
         }
-        ],
-        "name": "createAsset",
-        "outputs": [
+      ],
+      "name": "createAsset",
+      "outputs": [
         {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
-        "inputs": [],
-        "name": "get",
-        "outputs": [
+      "inputs": [],
+      "name": "getAssets",
+      "outputs": [
         {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-        }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getAssets",
-        "outputs": [
-        {
-            "components": [
+          "components": [
             {
-                "internalType": "address",
-                "name": "assetAddress",
-                "type": "address"
+              "internalType": "address",
+              "name": "assetAddress",
+              "type": "address"
             },
             {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
             },
             {
-                "internalType": "string",
-                "name": "symbol",
-                "type": "string"
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
             },
             {
-                "internalType": "uint256",
-                "name": "totalSupply",
-                "type": "uint256"
+              "internalType": "uint256",
+              "name": "totalSupply",
+              "type": "uint256"
             }
-            ],
-            "internalType": "struct FinancialVehicle.Asset[]",
-            "name": "",
-            "type": "tuple[]"
+          ],
+          "internalType": "struct FinancialVehicle.Asset[]",
+          "name": "",
+          "type": "tuple[]"
         }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
-        "inputs": [
+      "inputs": [
         {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
         }
-        ],
-        "name": "isValidatedKyc",
-        "outputs": [
+      ],
+      "name": "getKyc",
+      "outputs": [
         {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
+          "components": [
+            {
+              "internalType": "address",
+              "name": "userAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "validated",
+              "type": "bool"
+            },
+            {
+              "internalType": "string",
+              "name": "status",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct FinancialVehicle.User",
+          "name": "",
+          "type": "tuple"
         }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
-        "inputs": [
+      "inputs": [
         {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
-        ],
-        "name": "set",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
+      ],
+      "name": "kyc",
+      "outputs": [
         {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
         },
         {
-            "internalType": "bool",
-            "name": "_isValidated",
-            "type": "bool"
+          "internalType": "bool",
+          "name": "validated",
+          "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
         }
-        ],
-        "name": "validateKyc",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "notValidateKyc",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "validateKyc",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
-]
+  ]

@@ -1,5 +1,5 @@
-import { contractAddress, abi } from '@/contracts/financialVehicle'
 import {
+    Badge,
     Box,
     Button,
     Card,
@@ -21,14 +21,34 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import { FormEvent, useState } from 'react'
-import { useAccount, useSigner } from 'wagmi'
+import { FormEvent, useEffect, useState } from 'react'
+import { useAccount, useProvider, useSigner } from 'wagmi'
+
+import { contractAddress, abi } from '@/contracts/financialVehicle'
 
 const UserBoard = () => {
     const { address } = useAccount()
+    const provider = useProvider()
     const { data: signer } = useSigner()
-    const [isKycPending, setIsKycPending] = useState(false)
+    const [status, setStatus] = useState('')
+    const [validated, setValidated] = useState(false)
     const toast = useToast()
+
+    useEffect(() => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        contract.on("AskForKycValidation", async () => {
+            getKyc()
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
+        getKyc()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [address])
 
     const askForKycValidation = async (event: FormEvent) => {
         event.preventDefault()
@@ -40,9 +60,9 @@ const UserBoard = () => {
             }
     
             const contract = new ethers.Contract(contractAddress, abi, signer)
-            const transaction = await contract.askForKycValidation(address)
-            await transaction.wait()
-            setIsKycPending(true)
+            const transaction = await contract.askForKycValidation()
+            await transaction.wait() // ???
+
             toast({
                 title: 'Bravo',
                 description: 'Votre demande a bien été prise en compte',
@@ -60,6 +80,50 @@ const UserBoard = () => {
                 duration: 5000,
                 isClosable: true
             })
+        }
+    }
+
+    const fetchKyc = async () => {
+        try {
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(contractAddress, abi, provider)
+            const result = await contract.getKyc(address)
+            return result
+        } catch (error) {
+            console.error("Error fetching KYC:", error)
+        }
+    }
+
+    const getKyc = async () => {
+        try {
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(contractAddress, abi, provider)
+    
+            contract.on("KycValidated", async () => {
+                const result = await fetchKyc()
+                if (result) {
+                    setValidated(result.validated)
+                    setStatus(result.status)
+                } else {
+                    console.error("Error fetching KYC.")
+                }
+            })
+    
+            const result = await fetchKyc()
+            if (result) {
+                setValidated(result.validated)
+                setStatus(result.status)
+            } else {
+                console.error("Error fetching KYC.")
+            }
+        } catch (error) {
+            console.error("Error getting KYC:", error)
         }
     }
 
@@ -114,6 +178,17 @@ const UserBoard = () => {
                         <Box mt='10'>
                             <Heading size='md'>Mon KYC</Heading>
                         </Box>
+                        {/* To remove */}
+                        <Button
+                            colorScheme='teal'
+                            // onClick={() => getKyc("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")}
+                            onClick={() => getKyc(address ?? "0x70997970C51812dc3A010C7d01b50e0d17dc79C8")}
+                            type='button'
+                            variant='solid'
+                        >
+                            KYC valid
+                        </Button>
+                        {/* End */}
                         <Card borderRadius='2xl' mt='4' padding='4'>
                             <Box
                                 alignItems='center'
@@ -124,15 +199,30 @@ const UserBoard = () => {
                             >
                                 <Heading size='sm'>Demande de validation de mon KYC</Heading>
                                 <Stack direction='row' spacing={4}>
-                                    <Button
-                                        colorScheme='teal'
-                                        isLoading={isKycPending}
-                                        loadingText='Demande en cours de traitement'
-                                        type='submit'
-                                        variant='solid'
-                                    >
-                                        Validation
-                                    </Button>
+                                    {status !== "in progress" && status !== "done" &&
+                                        <Button
+                                            size='sm'
+                                            colorScheme='teal'
+                                            type='submit'
+                                            variant='solid'
+                                        >
+                                            Validation
+                                        </Button>
+                                    }
+                                    {!validated && status === "in progress" &&
+                                        <Button
+                                            size='sm'
+                                            colorScheme='teal'
+                                            isLoading={true}
+                                            loadingText='Demande en cours de traitement'
+                                            type='submit'
+                                            variant='solid'
+                                        >
+                                            Validation
+                                        </Button>
+                                    }
+                                    {validated && status === "done" && <Badge colorScheme="green">Validé</Badge>}
+                                    {!validated && status === "done" && <Badge colorScheme="red">Votre KYC a été refusé</Badge>}
                                 </Stack>
                             </Box>
                         </Card>
