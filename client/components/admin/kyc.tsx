@@ -16,23 +16,23 @@ import {
 import { FC } from "react"
 
 type KycProps = {
-    askForKycValidationEvents: any[]
-    validateKyc: (userAddress: string) => void
-    notValidateKyc: (userAddress: string) => void
+    kycValidations: any[]
+    validateKyc: (id: string, isValidated: boolean) => void
 }
 
 const Kyc: FC<KycProps>  = ({
-    askForKycValidationEvents,
-    validateKyc,
-    notValidateKyc
+    kycValidations,
+    validateKyc
 }) => {
     return (
         <Box mt='10'>
             <Heading size='md'>Statut des KYC</Heading>
             <Card borderRadius='2xl' mt='4'>
                 <TableContainer>
-                    <Table variant='striped' minH={askForKycValidationEvents.length > 0 ? 'auto' : '150'}>
-                        <TableCaption>{askForKycValidationEvents.length > 0 ? 'Statut des KYC' : 'Aucune demande de KYC en cours'}</TableCaption>
+                    <Table variant='striped' minH={kycValidations.length > 0 ? 'auto' : '150'}>
+                        <TableCaption>
+                            {kycValidations.length > 0 ? 'Statut des KYC' : 'Aucune demande de KYC en cours'}
+                        </TableCaption>
                         <Thead>
                             <Tr>
                                 <Th>Numéro de demande</Th>
@@ -42,14 +42,23 @@ const Kyc: FC<KycProps>  = ({
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {askForKycValidationEvents.length > 0 && askForKycValidationEvents.map(({ userAddress, validated, status }, index) => (
-                                <Tr key={index}>
-                                    <Td>#{index + 1}</Td>
+                            {kycValidations.length > 0 && kycValidations.map(({ 
+                                id,
+                                userAddress,
+                                isValidated,
+                                validationStatus
+                            }) => (
+                                <Tr key={id}>
+                                    <Td>{id}</Td>
                                     <Td>{userAddress.slice(0, 5)}...{userAddress.slice(-4)}</Td>
                                     <Td>
-                                        {validated && <Badge colorScheme="green">Validé</Badge>}
-                                        {!validated && status !== "in progress" && <Badge colorScheme="red">Résusé</Badge>}
-                                        {!validated && status === "in progress" && <Badge colorScheme="orange">En attente</Badge>}
+                                        {isValidated && <Badge colorScheme="green">Validé</Badge>}
+                                        {!isValidated && validationStatus !== "in progress" &&
+                                            <Badge colorScheme="red">Refusé</Badge>
+                                        }
+                                        {!isValidated && validationStatus === "in progress" &&
+                                            <Badge colorScheme="orange">En attente</Badge>
+                                        }
                                     </Td>
                                     <Td isNumeric>
                                         
@@ -57,7 +66,7 @@ const Kyc: FC<KycProps>  = ({
                                         size='sm'
                                             mr='4'
                                             colorScheme='red'
-                                            onClick={() => notValidateKyc(userAddress)}
+                                            onClick={() => validateKyc(id, false)}
                                             variant='solid'
                                         >
                                             Refuser
@@ -65,7 +74,7 @@ const Kyc: FC<KycProps>  = ({
                                         <Button
                                             size='sm'
                                             colorScheme='teal'
-                                            onClick={() => validateKyc(userAddress)}
+                                            onClick={() => validateKyc(id, true)}
                                             variant='solid'
                                         >
                                             Valider

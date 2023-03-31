@@ -20,7 +20,7 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import { FormEvent, useCallback, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
@@ -43,11 +43,11 @@ type FormattedAsset = {
 const AdminBoard = () => {
     const provider = useProvider()
     const { data: signer } = useSigner()
-    const [askForKycValidationEvents, setAskForKycValidationEvents] = useState<any[]>([])
     const [assetName, setAssetName] = useState('')
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
+    const [kycValidations, setKycValidations] = useState<any[]>([])
     const toast = useToast()
 
     useEffect(() => {
@@ -78,7 +78,7 @@ const AdminBoard = () => {
             })
         }
         catch (error: any) {
-            console.log(error)
+            console.error(error)
             toast({
                 title: 'Error',
                 description: `An error occurred`,
@@ -137,74 +137,84 @@ const AdminBoard = () => {
             console.error("Error getting assets:", error)
         }
     }
-    
-    const validateKyc = async (address: string) => {
-        try {
-            if (!signer) return
-
-            if (!contractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(contractAddress, abi, signer)
-            const result = await contract.validateKyc(address)
-            await result.wait()
-        }
-        catch (error: any) {
-            console.log(error)
-        }
-    }
-
-    const notValidateKyc = async (address: string) => {
-        try {
-            if (!signer) return
-
-            if (!contractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(contractAddress, abi, signer)
-            const result = await contract.notValidateKyc(address)
-            await result.wait()
-        }
-        catch (error: any) {
-            console.log(error)
-        }
-    }
-
-    const getAskForKycValidation = useCallback(async () => {
-        if (!contractAddress) return
-    
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-    
-        const eventFilter = contract.filters.AskForKycValidation()
-        const pastEvents = await contract.queryFilter(eventFilter, 0)
-        const pastEventsAddresses = pastEvents.map(({ args }) => args?.userAddress)
-    
-        const kycPromises = pastEventsAddresses.map((address) => contract.getKyc(address))
-        const kycList = await Promise.all(kycPromises)
-        console.log('kycList', kycList)
-        setAskForKycValidationEvents(kycList)
-      }, [provider])
-    
-      useEffect(() => {
-        getAskForKycValidation()
-        
-        if (!contractAddress) return
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        contract.on("AskForKycValidation", getAskForKycValidation)
-        contract.on("KycValidated", getAskForKycValidation)
-    
-        return () => {
-          contract.off("AskForKycValidation", getAskForKycValidation)
-          contract.off("KycValidated", getAskForKycValidation)
-        }
-      }, [getAskForKycValidation, provider])
       
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-    
+
+    useEffect(() => {
+        getKycValidations()
+    }, [])
+
+    const getKycValidations = async () => {
+        const query = `
+            query KycValidations {
+                kycValidations {
+                    id
+                    isValidated
+                    userAddress
+                    validationStatus
+                }
+            }
+        `
+
+        const res = await fetch(
+            'https://api-eu-central-1-shared-euc1-02.hygraph.com/v2/clfwkwcvk59xf01up8vej50qw/master',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE2ODAyNzczNTgsImF1ZCI6WyJodHRwczovL2FwaS1ldS1jZW50cmFsLTEtc2hhcmVkLWV1YzEtMDIuaHlncmFwaC5jb20vdjIvY2xmd2t3Y3ZrNTl4ZjAxdXA4dmVqNTBxdy9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC5ncmFwaGNtcy5jb20vIiwic3ViIjoiMTY2M2Q0N2ItNzg1NC00M2Y4LTk2NzUtMzRiM2NlYTc0ZjAzIiwianRpIjoiY2xmd3ByNzRxNW9maTAxdWlmcmRyZmd1biJ9.yrBtKTSc7UP3uZ1edrsLEQjKB0aErkv1CPwZKG2PEWXj6rb9uYUzLvblj1XeT6iA45kl_usH08sq9Qj7XHRcoQouQF_gAW8KFI4Z6EyW0h0t2Q7DEVeZ2NQhMyM-oz4LHk7q7AT1OyKG4EYX43O0xRrN5DraK2BFpGsdFo2WVoqiXvmvU0XAN_jJkFlaXZCMz2aH8a1OgZOWfAn4e9Q_d4GNsEZPtlGko3epeUlm0g0Eml9UR-03aIbVGQS9FQeWhlYeaums6jnkiCZ0XOd4MWKyqaAFSoai8Fn-QEMWxwxBaLN768GSR1JPgYw_3cql8Q48q6dK5qbkMT4lHL3iT37G28EHxbSJWGlvnKEvHfVyBIELSWZ02BfG-3x_kGz1gQqWVUMkFRoV1R7zStTdp-Y-l2EpSsRjp7f6CHWYEPYk9zctgo86CTAFNHTmpA0xznMtAMRwiIKrUSAhwPljYidkW-ZrzvIMspy9ptN1HjmZvPxo6-DgsGHHgWKMBFe4y8UjwG1ToylkP6L_kDCYLKa27eOvmX80O27BtslJWZszzyJl24V2MHMJ9qY-Lm-4Kns7ZKVDXZrJ7hYzeXG-ICYrP7U6WH5PaY9qImAo95lX-z6zDXtmSQ30Z4qBxvBLUnDU89dL4ZmhoAtbJNhVA6PPvWBx_d76uBH8e871HpE',
+                },
+                body: JSON.stringify({ query })
+            }
+        )
+
+        const data = await res.json()
+        setKycValidations(data.data.kycValidations)
+    }
+
+    const validateKyc = async (id: string, isValidated: boolean) => {
+        const mutation = `
+            mutation UpdateKycValidation($isValidated: Boolean!, $validationStatus: String!, $id: ID!) {
+                updateKycValidation(
+                    where: { id: $id }
+                    data: {
+                        isValidated: $isValidated,
+                        validationStatus: $validationStatus
+                    }
+                ) {
+                    id
+                }
+            }
+        `
+        
+        const variables = {
+            isValidated: isValidated,
+            validationStatus: "done",
+            id: id
+        }
+        
+        try {
+            const res = await fetch(
+            'https://api-eu-central-1-shared-euc1-02.hygraph.com/v2/clfwkwcvk59xf01up8vej50qw/master', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdjbXMtbWFpbi1wcm9kdWN0aW9uIn0.eyJ2ZXJzaW9uIjozLCJpYXQiOjE2ODAyNzczNTgsImF1ZCI6WyJodHRwczovL2FwaS1ldS1jZW50cmFsLTEtc2hhcmVkLWV1YzEtMDIuaHlncmFwaC5jb20vdjIvY2xmd2t3Y3ZrNTl4ZjAxdXA4dmVqNTBxdy9tYXN0ZXIiLCJtYW5hZ2VtZW50LW5leHQuZ3JhcGhjbXMuY29tIl0sImlzcyI6Imh0dHBzOi8vbWFuYWdlbWVudC5ncmFwaGNtcy5jb20vIiwic3ViIjoiMTY2M2Q0N2ItNzg1NC00M2Y4LTk2NzUtMzRiM2NlYTc0ZjAzIiwianRpIjoiY2xmd3ByNzRxNW9maTAxdWlmcmRyZmd1biJ9.yrBtKTSc7UP3uZ1edrsLEQjKB0aErkv1CPwZKG2PEWXj6rb9uYUzLvblj1XeT6iA45kl_usH08sq9Qj7XHRcoQouQF_gAW8KFI4Z6EyW0h0t2Q7DEVeZ2NQhMyM-oz4LHk7q7AT1OyKG4EYX43O0xRrN5DraK2BFpGsdFo2WVoqiXvmvU0XAN_jJkFlaXZCMz2aH8a1OgZOWfAn4e9Q_d4GNsEZPtlGko3epeUlm0g0Eml9UR-03aIbVGQS9FQeWhlYeaums6jnkiCZ0XOd4MWKyqaAFSoai8Fn-QEMWxwxBaLN768GSR1JPgYw_3cql8Q48q6dK5qbkMT4lHL3iT37G28EHxbSJWGlvnKEvHfVyBIELSWZ02BfG-3x_kGz1gQqWVUMkFRoV1R7zStTdp-Y-l2EpSsRjp7f6CHWYEPYk9zctgo86CTAFNHTmpA0xznMtAMRwiIKrUSAhwPljYidkW-ZrzvIMspy9ptN1HjmZvPxo6-DgsGHHgWKMBFe4y8UjwG1ToylkP6L_kDCYLKa27eOvmX80O27BtslJWZszzyJl24V2MHMJ9qY-Lm-4Kns7ZKVDXZrJ7hYzeXG-ICYrP7U6WH5PaY9qImAo95lX-z6zDXtmSQ30Z4qBxvBLUnDU89dL4ZmhoAtbJNhVA6PPvWBx_d76uBH8e871HpE',
+            },
+            body: JSON.stringify({
+                query: mutation,
+                variables
+            })
+            })
+        
+            await res.json()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return (
         <>
             <Box mt='16' textAlign='center'>
@@ -463,9 +473,8 @@ const AdminBoard = () => {
                     </TabPanel>
                     <TabPanel>
                         <Kyc
-                            askForKycValidationEvents={askForKycValidationEvents}
+                            kycValidations={kycValidations}
                             validateKyc={validateKyc}
-                            notValidateKyc={notValidateKyc}
                         />
                     </TabPanel>
                 </TabPanels>
