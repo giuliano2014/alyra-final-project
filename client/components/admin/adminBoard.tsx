@@ -20,7 +20,7 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
@@ -49,22 +49,6 @@ const AdminBoard = () => {
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
     const toast = useToast()
-
-    useEffect(() => {
-        getAskForKycValidation()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    useEffect(() => {
-        if (!contractAddress) {
-            throw new Error("contractAddress is not defined")
-        }
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        contract.on("AskForKycValidation", async () => {
-            getAskForKycValidation()
-        })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
     useEffect(() => {
         getAssets()
@@ -186,46 +170,37 @@ const AdminBoard = () => {
         }
     }
 
-    const getKyc = async (address: string) => {
-        try {
-            if (!signer) return
-
-            if (!contractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(contractAddress, abi, signer)
-            await contract.getKyc(address)
+    const getAskForKycValidation = useCallback(async () => {
+        if (!contractAddress) return
+    
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+    
+        const eventFilter = contract.filters.AskForKycValidation()
+        const pastEvents = await contract.queryFilter(eventFilter, 0)
+        const pastEventsAddresses = pastEvents.map(({ args }) => args?.userAddress)
+    
+        const kycPromises = pastEventsAddresses.map((address) => contract.getKyc(address))
+        const kycList = await Promise.all(kycPromises)
+        console.log('kycList', kycList)
+        setAskForKycValidationEvents(kycList)
+      }, [provider])
+    
+      useEffect(() => {
+        getAskForKycValidation()
+        
+        if (!contractAddress) return
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        contract.on("AskForKycValidation", getAskForKycValidation)
+        contract.on("KycValidated", getAskForKycValidation)
+    
+        return () => {
+          contract.off("AskForKycValidation", getAskForKycValidation)
+          contract.off("KycValidated", getAskForKycValidation)
         }
-        catch (error: any) {
-            console.log(error)
-        }
-    }
+      }, [getAskForKycValidation, provider])
       
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
-    const getAskForKycValidation = async () => {
-        try {
-            if (!contractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-            const contract = new ethers.Contract(contractAddress, abi, provider)
-            const eventFilter = contract.filters.AskForKycValidation()
-            const pastEvents = await contract.queryFilter(eventFilter, 0)
-            const pastEventsAddresses = pastEvents.map(({ args }) => args?.userAddress)
-
-            let test: any = []
-            pastEventsAddresses.forEach(async (address) => {
-                const kyc = await contract.getKyc(address)
-                test.push(kyc)
-            })
-            console.log('test', test)
-            setAskForKycValidationEvents(test)
-        } catch (error) {
-            console.error("Error getting AskForKycValidation events:", error)
-        }
     }
     
     return (
@@ -485,16 +460,6 @@ const AdminBoard = () => {
                         />
                     </TabPanel>
                     <TabPanel>
-                        {/* To remove */}
-                        <Button
-                            colorScheme='teal'
-                            onClick={() => getKyc("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")}
-                            type='button'
-                            variant='solid'
-                        >
-                            KYC valid
-                        </Button>
-                        {/* End */}
                         <Kyc
                             askForKycValidationEvents={askForKycValidationEvents}
                             validateKyc={validateKyc}

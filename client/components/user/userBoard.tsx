@@ -178,17 +178,6 @@ const UserBoard = () => {
                         <Box mt='10'>
                             <Heading size='md'>Mon KYC</Heading>
                         </Box>
-                        {/* To remove */}
-                        <Button
-                            colorScheme='teal'
-                            // onClick={() => getKyc("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")}
-                            onClick={() => getKyc(address ?? "0x70997970C51812dc3A010C7d01b50e0d17dc79C8")}
-                            type='button'
-                            variant='solid'
-                        >
-                            KYC valid
-                        </Button>
-                        {/* End */}
                         <Card borderRadius='2xl' mt='4' padding='4'>
                             <Box
                                 alignItems='center'
