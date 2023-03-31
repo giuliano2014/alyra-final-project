@@ -40,15 +40,53 @@ const UserBoard = () => {
         }
         const contract = new ethers.Contract(contractAddress, abi, provider)
         contract.on("AskForKycValidation", async () => {
+            console.log("AskForKycValidation event received:");
             getKyc()
         })
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
+        console.log('UserBoard useEffect address', address)
         getKyc()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
+
+    // useEffect(() => {
+    //     console.log('UserBoard useEffect provider', provider)
+    //     console.log('UserBoard useEffect address', address)
+    //     getKyc()
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [address, provider])
+
+    useEffect(() => {
+        if (!contractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+        contract.on("KycValidated", async (userAddress, validated, status, event) => {
+            // console.log("KycValidated event received:");
+            // console.log("KycValidated event  User Address:", userAddress);
+            // console.log("Validated:", validated);
+            // console.log("Status:", status);
+            // console.log("Event:", event);
+            // console.log("KycValidated event address connected account => ", address)
+            try {
+                if (userAddress === address) {
+                    const result = await contract.getKyc(address)
+                    console.log('KycValidated update the kYC component')
+                    setValidated(result.validated)
+                    setStatus(result.status)
+                } else {
+                    console.log('KycValidated not update the kYC component')
+                    return
+                }
+              } catch (error) {
+                console.error("Error fetching KYC:", error)
+              }
+          });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const askForKycValidation = async (event: FormEvent) => {
         event.preventDefault()
@@ -61,7 +99,10 @@ const UserBoard = () => {
     
             const contract = new ethers.Contract(contractAddress, abi, signer)
             const transaction = await contract.askForKycValidation()
-            await transaction.wait() // ???
+            const result = await transaction.wait()
+
+            // setValidated(result.validated)
+            // setStatus(result.status)
 
             toast({
                 title: 'Bravo',
@@ -83,50 +124,22 @@ const UserBoard = () => {
         }
     }
 
-    const fetchKyc = async () => {
-        try {
-            if (!contractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-    
-            const contract = new ethers.Contract(contractAddress, abi, provider)
-            const result = await contract.getKyc(address)
-            return result
-        } catch (error) {
-            console.error("Error fetching KYC:", error)
+      const getKyc = async () => {
+        if (!contractAddress) {
+          throw new Error("contractAddress is not defined")
         }
-    }
-
-    const getKyc = async () => {
+      
+        const contract = new ethers.Contract(contractAddress, abi, provider)
+      
         try {
-            if (!contractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-    
-            const contract = new ethers.Contract(contractAddress, abi, provider)
-    
-            contract.on("KycValidated", async () => {
-                const result = await fetchKyc()
-                if (result) {
-                    setValidated(result.validated)
-                    setStatus(result.status)
-                } else {
-                    console.error("Error fetching KYC.")
-                }
-            })
-    
-            const result = await fetchKyc()
-            if (result) {
-                setValidated(result.validated)
-                setStatus(result.status)
-            } else {
-                console.error("Error fetching KYC.")
-            }
+          const result = await contract.getKyc(address)
+          setValidated(result.validated)
+          setStatus(result.status)
         } catch (error) {
-            console.error("Error getting KYC:", error)
+          console.error("Error fetching KYC:", error)
         }
-    }
-
+      }
+      
     return (
         <>
             <Box mt='16' textAlign='center'>

@@ -147,7 +147,8 @@ const AdminBoard = () => {
             }
 
             const contract = new ethers.Contract(contractAddress, abi, signer)
-            await contract.validateKyc(address)
+            const result = await contract.validateKyc(address)
+            await result.wait()
         }
         catch (error: any) {
             console.log(error)
@@ -163,7 +164,8 @@ const AdminBoard = () => {
             }
 
             const contract = new ethers.Contract(contractAddress, abi, signer)
-            await contract.notValidateKyc(address)
+            const result = await contract.notValidateKyc(address)
+            await result.wait()
         }
         catch (error: any) {
             console.log(error)
