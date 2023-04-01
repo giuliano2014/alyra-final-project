@@ -29,7 +29,7 @@ const Kyc: FC<KycProps>  = ({
             <Heading size='md'>Statut des KYC</Heading>
             <Card borderRadius='2xl' mt='4'>
                 <TableContainer>
-                    <Table variant='striped' minH={kycValidations.length > 0 ? 'auto' : '150'}>
+                    <Table variant='striped'>
                         <TableCaption>
                             {kycValidations.length > 0 ? 'Statut des KYC' : 'Aucune demande de KYC en cours'}
                         </TableCaption>
@@ -47,9 +47,9 @@ const Kyc: FC<KycProps>  = ({
                                 userAddress,
                                 isValidated,
                                 validationStatus
-                            }) => (
+                            }, index) => (
                                 <Tr key={id}>
-                                    <Td>{id}</Td>
+                                    <Td>#{index + 1}</Td>
                                     <Td>{userAddress.slice(0, 5)}...{userAddress.slice(-4)}</Td>
                                     <Td>
                                         {isValidated && <Badge colorScheme="green">Validé</Badge>}
@@ -68,6 +68,7 @@ const Kyc: FC<KycProps>  = ({
                                             colorScheme='red'
                                             onClick={() => validateKyc(id, false)}
                                             variant='solid'
+                                            isDisabled={!isValidated && validationStatus !== "in progress"}
                                         >
                                             Refuser
                                         </Button>
@@ -76,6 +77,7 @@ const Kyc: FC<KycProps>  = ({
                                             colorScheme='teal'
                                             onClick={() => validateKyc(id, true)}
                                             variant='solid'
+                                            isDisabled={isValidated}
                                         >
                                             Valider
                                         </Button>
