@@ -17,29 +17,28 @@ import {
     Th,
     Thead,
     Tr,
-    Switch,
     useToast
 } from '@chakra-ui/react'
-import { ChangeEventHandler, FormEvent, useEffect, useState } from 'react'
+import { ethers } from 'ethers'
+import { FormEvent, useEffect, useState } from 'react'
+import { useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
-import { useProvider, useSigner } from 'wagmi'
-import { ethers } from 'ethers'
-
+import Kyc from '@/components/admin/kyc'
 import { abi, contractAddress } from '@/contracts/financialVehicle'
 
 type Asset = {
-    tokenAddress: string;
-    name: string;
-    symbol: string;
-    totalSupply: ethers.BigNumber;
+    tokenAddress: string
+    name: string
+    symbol: string
+    totalSupply: ethers.BigNumber
 }
 
 type FormattedAsset = {
-    name: string;
-    symbol: string;
-    totalSupply: string;
-};
+    name: string
+    symbol: string
+    totalSupply: string
+}
 
 const AdminBoard = () => {
     const provider = useProvider()
@@ -48,14 +47,8 @@ const AdminBoard = () => {
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
-    const [switchStates, setSwitchStates] = useState<Record<string, boolean>>({
-        0: false,
-        1: true,
-        2: false,
-        3: true,
-        4: true,
-        5: false
-    })
+    const [isLoading, setIsLoading] = useState(false)
+    const [kycValidations, setKycValidations] = useState<any[]>([])
     const toast = useToast()
 
     useEffect(() => {
@@ -63,16 +56,20 @@ const AdminBoard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    useEffect(() => {
+        getKycValidations()
+    }, [isLoading])
+
     const createAsset = async (event: FormEvent) => {
         event.preventDefault()
 
-        if (!signer) return
-
-        if (!contractAddress) {
-            throw new Error("contractAddress is not defined")
-        }
-
         try {
+            if (!signer) return
+
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
             const contract = new ethers.Contract(contractAddress, abi, signer)
             const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
             const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
@@ -86,7 +83,7 @@ const AdminBoard = () => {
             })
         }
         catch (error: any) {
-            console.log(error)
+            console.error(error)
             toast({
                 title: 'Error',
                 description: `An error occurred`,
@@ -98,49 +95,133 @@ const AdminBoard = () => {
     }
 
     const fetchAndFormatAssets = async () => {
-        if (!contractAddress) {
-            throw new Error("contractAddress is not defined")
+        try {
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(contractAddress, abi, provider)
+            const result = await contract.getAssets()
+            const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({
+                name,
+                symbol,
+                totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
+            }))
+            const reversedResult = [...formattedResult].reverse()
+            return reversedResult
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
         }
-
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-        const result = await contract.getAssets()
-        const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({
-            name,
-            symbol,
-            totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
-        }))
-        const reversedResult = [...formattedResult].reverse()
-        return reversedResult
     }
-
+    
     const getAssets = async () => {
-        if (!contractAddress) {
-            throw new Error("contractAddress is not defined")
-        }
-
-        const contract = new ethers.Contract(contractAddress, abi, provider)
-
-        contract.on("AssetCreated", async () => {
+        try {
+            if (!contractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(contractAddress, abi, provider)
+    
+            contract.on("AssetCreated", async () => {
+                const reversedResult = await fetchAndFormatAssets()
+                if (reversedResult) {
+                    setAssets(reversedResult)
+                    scrollToTop()
+                } else {
+                    console.error("Error fetching and formatting assets.")
+                }
+            })
+    
             const reversedResult = await fetchAndFormatAssets()
-            setAssets(reversedResult)
-            scrollToTop()
-        })
-
-        const reversedResult = await fetchAndFormatAssets()
-        setAssets(reversedResult)
+            if (reversedResult) {
+                setAssets(reversedResult)
+            } else {
+                console.error("Error fetching and formatting assets.")
+            }
+        } catch (error) {
+            console.error("Error getting assets:", error)
+        }
     }
 
-    const handleSwitchChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
-        setSwitchStates({
-            ...switchStates,
-            [event.target.name]: event.target.checked
-        })
+    const getKycValidations = async () => {
+        const query = `
+            query KycValidations {
+                kycValidations {
+                    id
+                    isValidated
+                    userAddress
+                    validationStatus
+                }
+            }
+        `
+
+        const res = await fetch(
+            process.env.NEXT_PUBLIC_HYGRAPH_API_URL || '',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_HYGRAPH_TOKEN}`
+                },
+                body: JSON.stringify({ query })
+            }
+        )
+
+        const data = await res.json()
+        setKycValidations(data.data.kycValidations)
     }
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  
+
+    const validateKyc = async (id: string, isValidated: boolean) => {
+        setIsLoading(true)
+
+        const mutation = `
+            mutation UpdateKycValidation($isValidated: Boolean!, $validationStatus: String!, $id: ID!) {
+                updateKycValidation(
+                    where: { id: $id }
+                    data: {
+                        isValidated: $isValidated,
+                        validationStatus: $validationStatus
+                    }
+                ) {
+                    id
+                }
+            }
+        `
+        
+        const variables = {
+            isValidated: isValidated,
+            validationStatus: "done",
+            id: id
+        }
+        
+        try {
+            const res = await fetch(
+                process.env.NEXT_PUBLIC_HYGRAPH_API_URL || '',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${process.env.NEXT_PUBLIC_HYGRAPH_TOKEN}`
+                    },
+                    body: JSON.stringify({
+                        query: mutation,
+                        variables
+                    })
+                }
+            )
+        
+            await res.json()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     return (
         <>
             <Box mt='16' textAlign='center'>
@@ -157,7 +238,7 @@ const AdminBoard = () => {
                             <Heading size='md'>Métriques des actifs</Heading>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
-                                    <Table variant='striped' minH={assets.length > 0 ? '0' : '150'}>
+                                    <Table variant='striped'>
                                         <TableCaption>
                                             {assets.length > 0 ? "Métriques des actifs" : "Aucun actif n'a été créé pour le moment"}
                                         </TableCaption>
@@ -245,7 +326,7 @@ const AdminBoard = () => {
                             <Heading size='md'>Actions sur les actifs</Heading>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
-                                    <Table variant='striped' minH={assets.length > 0 ? '0' : '150'}>
+                                    <Table variant='striped'>
                                         <TableCaption>{assets.length > 0 ? "Actions sur les actifs " : "Aucun actif n'a été créé pour le moment"}</TableCaption>
                                         <Thead>
                                             <Tr>
@@ -398,109 +479,10 @@ const AdminBoard = () => {
                         />
                     </TabPanel>
                     <TabPanel>
-                        <Box mt='10'>
-                            <Heading size='md'>Statut des KYC</Heading>
-                            <Card borderRadius='2xl' mt='4'>
-                                <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>Statut des KYC</TableCaption>
-                                        <Thead>
-                                            <Tr>
-                                                <Th>Adresses des utilisateurs</Th>
-                                                <Th>Statut</Th>
-                                                <Th isNumeric>Validation</Th>
-                                            </Tr>
-                                        </Thead>
-                                        <Tbody>
-                                            <Tr>
-                                                <Td>0xf39...2266</Td>
-                                                <Td>
-                                                    <Badge colorScheme="red">Pas valide</Badge>
-                                                </Td>
-                                                <Td isNumeric>
-                                                    <Switch
-                                                        colorScheme="teal" 
-                                                        isChecked={switchStates[0]}
-                                                        name='0'
-                                                        onChange={handleSwitchChange}
-                                                    />
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>0xt76...5312</Td>
-                                                <Td>
-                                                    <Badge colorScheme="green">Valide</Badge>
-                                                </Td>
-                                                <Td isNumeric>
-                                                    <Switch
-                                                        colorScheme="teal" 
-                                                        isChecked={switchStates[1]}
-                                                        name='1'
-                                                        onChange={handleSwitchChange}
-                                                    />
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>0xa87...5287</Td>
-                                                <Td>
-                                                    <Badge colorScheme="red">Pas valide</Badge>
-                                                </Td>
-                                                <Td isNumeric>
-                                                    <Switch
-                                                        colorScheme="teal" 
-                                                        isChecked={switchStates[2]}
-                                                        name='2'
-                                                        onChange={handleSwitchChange}
-                                                    />
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>0xb79...0956</Td>
-                                                <Td>
-                                                    <Badge colorScheme="green">Valide</Badge>
-                                                </Td>
-                                                <Td isNumeric>
-                                                    <Switch
-                                                        colorScheme="teal" 
-                                                        isChecked={switchStates[3]}
-                                                        name='3'
-                                                        onChange={handleSwitchChange}
-                                                    />
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>0xx4...6342</Td>
-                                                <Td>
-                                                    <Badge colorScheme="green">Valide</Badge>
-                                                </Td>
-                                                <Td isNumeric>
-                                                    <Switch
-                                                        colorScheme="teal" 
-                                                        isChecked={switchStates[4]}
-                                                        name='4'
-                                                        onChange={handleSwitchChange}
-                                                    />
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>0xh87...3207</Td>
-                                                <Td>
-                                                    <Badge colorScheme="red">Pas valide</Badge>
-                                                </Td>
-                                                <Td isNumeric>
-                                                    <Switch
-                                                        colorScheme="teal" 
-                                                        isChecked={switchStates[5]}
-                                                        name='5'
-                                                        onChange={handleSwitchChange}
-                                                    />
-                                                </Td>
-                                            </Tr>
-                                        </Tbody>
-                                    </Table>
-                                </TableContainer>
-                            </Card>
-                        </Box>
+                        <Kyc
+                            kycValidations={kycValidations}
+                            validateKyc={validateKyc}
+                        />
                     </TabPanel>
                 </TabPanels>
             </Tabs>

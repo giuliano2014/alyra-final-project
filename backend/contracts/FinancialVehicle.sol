@@ -14,7 +14,6 @@ contract FinancialVehicle {
 
     event AssetCreated(Asset);
 
-    uint data;
     address immutable tokenImplementation;
     Asset[] private assets;
 
@@ -32,13 +31,5 @@ contract FinancialVehicle {
 
     function getAssets() external view returns (Asset[] memory) {
         return assets;
-    }
-
-    function get() public view returns (uint) {
-        return data;
-    }
-
-    function set(uint x) public {
-        data = x;
     }
 }

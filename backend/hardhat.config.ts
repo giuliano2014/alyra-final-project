@@ -29,7 +29,7 @@ const config: HardhatUserConfig = {
         sepolia: {
             url: `https://sepolia.infura.io/v3/${process.env.INFURA_ALYRA_PROJECTS_API_KEY}`,
             accounts: [process.env.ACCOUNT_1_PRIVATE_KEY || ""],
-          }
+        }
     },
     solidity: "0.8.19",
 };
