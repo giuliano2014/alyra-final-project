@@ -17,7 +17,8 @@ const Board = () => {
             process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_ARNAUD,
             process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GARY,
             process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO,
-            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO_LOCALHOST
+            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO_LOCALHOST,
+            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_VINCENT
         ]
     
         setIsAdmin(adminAddresses.includes(address))
