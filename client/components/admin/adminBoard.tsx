@@ -27,6 +27,7 @@ import AddNewAsset from '@/components/admin/addNewAsset'
 import Kyc from '@/components/admin/kyc'
 import { abi, contractAddress } from '@/contracts/financialVehicle'
 import { financialVehicleBestAbi, financialVehicleBestContractAddress } from '@/contracts/financialVehicleBest'
+import { assetAbi, assetContractAddress } from '@/contracts/asset'
 
 type Asset = {
     tokenAddress: string
@@ -234,6 +235,20 @@ const AdminBoard = () => {
         }
     }
 
+    const getName = async (address: string) => {
+        try {
+            if (!assetContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(address, assetAbi, provider)
+            const result = await contract.name()
+            console.log(result)
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
     const getKycValidations = async () => {
         const query = `
             query KycValidations {
@@ -423,19 +438,21 @@ const AdminBoard = () => {
                                         <TableCaption>{assets.length > 0 ? "Actions sur les actifs " : "Aucun actif n'a été créé pour le moment"}</TableCaption>
                                         <Thead>
                                             <Tr>
-                                                <Th>Titre</Th>
+                                                <Th>Address</Th>
+                                                <Th>Nom</Th>
                                                 <Th>Phase 1</Th>
                                                 <Th>Phase 2</Th>
                                                 <Th>Annulation</Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                        {assets.length > 0 && assets.map(({ name }, index) => {
+                                        {assets.length > 0 && assets.map(({ assetAddress, name }, index) => {
                                                 return (
-                                                    <Tr key={`${index}${name}`}>
+                                                    <Tr key={assetAddress}>
+                                                        <Td>{assetAddress}</Td>
                                                         <Td>{name}</Td>
                                                         <Td>
-                                                            <Button colorScheme='teal' size='xs'>
+                                                            <Button colorScheme='teal' size='xs' onClick={() => getName(assetAddress)}>
                                                                 Commencer
                                                             </Button>
                                                         </Td>
