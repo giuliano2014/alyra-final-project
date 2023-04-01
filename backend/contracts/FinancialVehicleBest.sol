@@ -6,10 +6,17 @@ import "./Asset.sol";
 
 contract FinancialVehiculeBest {
 
+    struct Token {
+        address assetAddress;
+        string name;
+        string symbol;
+        uint256 totalSupply;
+    }
+
     address internal _master;
     event AssetCreated(address, string, string, uint256);
 
-    Asset[] public assets;
+    Token[] public assets;
 
     constructor(address master) {
         _master = master;
@@ -27,8 +34,15 @@ contract FinancialVehiculeBest {
         clone = Asset(Clones.clone(_master));
         clone.initialize(name, symbol, amount);
         emit AssetCreated(address(clone), name, symbol, amount);
-        assets.push(clone);
+        // assets.push(clone);
+        assets.push(Token(address(clone), name, symbol, amount));
         return clone;
+
+
+    }
+
+    function getAssets() external view returns (Token[] memory) {
+        return assets;
     }
 
 }
