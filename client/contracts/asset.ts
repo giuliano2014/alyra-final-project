@@ -201,17 +201,17 @@ export const assetAbi = [
         "inputs": [
         {
             "internalType": "string",
-            "name": "tokenName",
+            "name": "_name",
             "type": "string"
         },
         {
             "internalType": "string",
-            "name": "tokenSymbol",
+            "name": "_symbol",
             "type": "string"
         },
         {
             "internalType": "uint256",
-            "name": "totalSupply",
+            "name": "_totalSupply",
             "type": "uint256"
         }
         ],

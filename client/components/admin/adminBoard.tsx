@@ -25,12 +25,11 @@ import { useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
 import Kyc from '@/components/admin/kyc'
-import { abi, contractAddress } from '@/contracts/financialVehicle'
-import { financialVehicleBestAbi, financialVehicleBestContractAddress } from '@/contracts/financialVehicleBest'
 import { assetAbi, assetContractAddress } from '@/contracts/asset'
+import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
 
 type Asset = {
-    tokenAddress: string
+    assetAddress: string
     name: string
     symbol: string
     totalSupply: ethers.BigNumber
@@ -60,11 +59,6 @@ const AdminBoard = () => {
     }, [])
 
     useEffect(() => {
-        getAssets2()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    useEffect(() => {
         getKycValidations()
     }, [isLoading])
 
@@ -74,11 +68,11 @@ const AdminBoard = () => {
         try {
             if (!signer) return
 
-            if (!contractAddress) {
+            if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
 
-            const contract = new ethers.Contract(contractAddress, abi, signer)
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
             const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
             await transaction.wait()
@@ -104,13 +98,14 @@ const AdminBoard = () => {
 
     const fetchAndFormatAssets = async () => {
         try {
-            if (!contractAddress) {
+            if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
-    
-            const contract = new ethers.Contract(contractAddress, abi, provider)
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
             const result = await contract.getAssets()
-            const formattedResult: FormattedAsset[] = result.map(({ name, symbol, totalSupply }: Asset) => ({
+            const formattedResult = result.map(({ assetAddress, name, symbol, totalSupply }: Asset) => ({
+                assetAddress,
                 name,
                 symbol,
                 totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
@@ -124,11 +119,11 @@ const AdminBoard = () => {
     
     const getAssets = async () => {
         try {
-            if (!contractAddress) {
+            if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
-    
-            const contract = new ethers.Contract(contractAddress, abi, provider)
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
     
             contract.on("AssetCreated", async () => {
                 const reversedResult = await fetchAndFormatAssets()
@@ -151,91 +146,7 @@ const AdminBoard = () => {
         }
     }
 
-    const createAsset2 = async (event: FormEvent) => {
-        event.preventDefault()
-
-        try {
-            if (!signer) return
-
-            if (!financialVehicleBestContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleBestContractAddress, financialVehicleBestAbi, signer)
-            const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
-            const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
-            await transaction.wait()
-            toast({
-                title: 'Congratulations',
-                description: 'A new actif has been created !',
-                status: 'success',
-                duration: 5000,
-                isClosable: true
-            })
-        }
-        catch (error: any) {
-            console.error(error)
-            toast({
-                title: 'Error',
-                description: `An error occurred`,
-                status: 'error',
-                duration: 5000,
-                isClosable: true
-            })
-        }
-    }
-
-    const fetchAndFormatAssets2 = async () => {
-        try {
-            if (!financialVehicleBestContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleBestContractAddress, financialVehicleBestAbi, provider)
-            const result = await contract.getAssets()
-            const formattedResult: FormattedAsset[] = result.map(({ assetAddress, name, symbol, totalSupply }: Asset) => ({
-                assetAddress,
-                name,
-                symbol,
-                totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
-            }))
-            const reversedResult = [...formattedResult].reverse()
-            return reversedResult
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-    
-    const getAssets2 = async () => {
-        try {
-            if (!financialVehicleBestContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleBestContractAddress, financialVehicleBestAbi, provider)
-    
-            contract.on("AssetCreated", async () => {
-                const reversedResult = await fetchAndFormatAssets2()
-                if (reversedResult) {
-                    setAssets(reversedResult)
-                    scrollToTop()
-                } else {
-                    console.error("Error fetching and formatting assets.")
-                }
-            })
-    
-            const reversedResult = await fetchAndFormatAssets2()
-            if (reversedResult) {
-                setAssets(reversedResult)
-            } else {
-                console.error("Error fetching and formatting assets.")
-            }
-        } catch (error) {
-            console.error("Error getting assets:", error)
-        }
-    }
-
-    const getName = async (address: string) => {
+    const getName = async (address: string) => { // TODO: remove this function
         try {
             if (!assetContractAddress) {
                 throw new Error("contractAddress is not defined")
@@ -360,7 +271,7 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            {assets.length > 0 && assets.map(({ assetAddress, name, symbol, totalSupply }, index) => {
+                                            {assets.length > 0 && assets.map(({ assetAddress, name, symbol, totalSupply }) => {
                                                 return (
                                                     <Tr key={assetAddress}>
                                                         <Td>{assetAddress}</Td>
@@ -446,7 +357,7 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                        {assets.length > 0 && assets.map(({ assetAddress, name }, index) => {
+                                        {assets.length > 0 && assets.map(({ assetAddress, name }) => {
                                                 return (
                                                     <Tr key={assetAddress}>
                                                         <Td>{assetAddress}</Td>
@@ -582,7 +493,7 @@ const AdminBoard = () => {
                             assetName={assetName}
                             assetSymbol={assetSymbol}
                             assetTotalSupply={assetTotalSupply}
-                            createAsset={createAsset2}
+                            createAsset={createAsset}
                             setAssetName={setAssetName}
                             setAssetSymbol ={setAssetTokenSymbol}
                             setAssetTotalSupply={setAssetTotalSupply}

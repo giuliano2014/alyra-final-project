@@ -1,8 +1,14 @@
-export const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+export const financialVehicleContractAddress = process.env.NEXT_PUBLIC_FINANCIAL_VEHICLE_CONTRACT_ADDRESS
 
-export const abi = [
+export const financialVehicleAbi = [
     {
-        "inputs": [],
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_master",
+            "type": "address"
+        }
+        ],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
@@ -10,36 +16,66 @@ export const abi = [
         "anonymous": false,
         "inputs": [
         {
-            "components": [
-            {
-                "internalType": "address",
-                "name": "assetAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "symbol",
-                "type": "string"
-            },
-            {
-                "internalType": "uint256",
-                "name": "totalSupply",
-                "type": "uint256"
-            }
-            ],
             "indexed": false,
-            "internalType": "struct FinancialVehicle.Asset",
+            "internalType": "address",
             "name": "",
-            "type": "tuple"
+            "type": "address"
+        },
+        {
+            "indexed": false,
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+        },
+        {
+            "indexed": false,
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+        },
+        {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
         }
         ],
         "name": "AssetCreated",
         "type": "event"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }
+        ],
+        "name": "assets",
+        "outputs": [
+        {
+            "internalType": "address",
+            "name": "assetAddress",
+            "type": "address"
+        },
+        {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+        },
+        {
+            "internalType": "uint256",
+            "name": "totalSupply",
+            "type": "uint256"
+        }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "inputs": [
@@ -62,8 +98,8 @@ export const abi = [
         "name": "createAsset",
         "outputs": [
         {
-            "internalType": "address",
-            "name": "",
+            "internalType": "contract Asset",
+            "name": "clone",
             "type": "address"
         }
         ],
@@ -97,7 +133,7 @@ export const abi = [
                 "type": "uint256"
             }
             ],
-            "internalType": "struct FinancialVehicle.Asset[]",
+            "internalType": "struct FinancialVehicle.Token[]",
             "name": "",
             "type": "tuple[]"
         }

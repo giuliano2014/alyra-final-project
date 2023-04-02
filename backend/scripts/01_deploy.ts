@@ -6,13 +6,13 @@ async function main() {
 
     await asset.deployed();
 
-    const FinancialVehiculeBest = await ethers.getContractFactory("FinancialVehiculeBest");
-    const financialVehiculeBest = await FinancialVehiculeBest.deploy(asset.address);
+    const FinancialVehicle = await ethers.getContractFactory("FinancialVehicle");
+    const financialVehicle = await FinancialVehicle.deploy(asset.address);
     
-    await financialVehiculeBest.deployed();
+    await financialVehicle.deployed();
     
     console.log(`Asset have been deployed to address : ${asset.address}`);
-    console.log(`FinancialVehiculeBest have been deployed to address : ${financialVehiculeBest.address}`);
+    console.log(`FinancialVehicle have been deployed to address : ${financialVehicle.address}`);
 }
 
 main().catch((error) => {

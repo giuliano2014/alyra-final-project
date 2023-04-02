@@ -6,24 +6,31 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract Asset is ERC20, Initializable {
 
-    string private _tokenName;
-    string private _tokenSymbol;
+    string private name_;
+    string private symbol_;
 
     constructor() ERC20("", "") {
         _disableInitializers();
     }
 
-    function initialize(string memory tokenName, string memory tokenSymbol, uint256 totalSupply) external initializer {
-        _tokenName = tokenName;
-        _tokenSymbol = tokenSymbol;
-        _mint(msg.sender, totalSupply);
+    function initialize( // @TODO: onlyOwner and admins
+        string calldata _name,
+        string calldata _symbol,
+        uint256 _totalSupply
+    ) 
+        external
+        initializer
+    {
+        name_ = _name;
+        symbol_ = _symbol;
+        _mint(msg.sender, _totalSupply);
     }
 
     /**
      * @dev Returns the name of the token.
      */
     function name() public view virtual override returns (string memory) {
-        return _tokenName;
+        return name_;
     }
 
     /**
@@ -31,7 +38,6 @@ contract Asset is ERC20, Initializable {
      * name.
      */
     function symbol() public view virtual override returns (string memory) {
-        return _tokenSymbol;
+        return symbol_;
     }
-    
 }
