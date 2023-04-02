@@ -44,6 +44,19 @@ export const financialVehicleAbi = [
         "type": "event"
     },
     {
+        "inputs": [],
+        "name": "asset",
+        "outputs": [
+        {
+            "internalType": "contract Asset",
+            "name": "",
+            "type": "address"
+        }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
         {
             "internalType": "uint256",
@@ -139,6 +152,59 @@ export const financialVehicleAbi = [
         }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_assetAddress",
+            "type": "address"
+        },
+        {
+            "internalType": "address",
+            "name": "_account",
+            "type": "address"
+        }
+        ],
+        "name": "getBalance",
+        "outputs": [
+        {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_from",
+            "type": "address"
+        },
+        {
+            "internalType": "address",
+            "name": "_to",
+            "type": "address"
+        },
+        {
+            "internalType": "uint256",
+            "name": "_amount",
+            "type": "uint256"
+        }
+        ],
+        "name": "transferFrom",
+        "outputs": [
+        {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+        }
+        ],
+        "stateMutability": "nonpayable",
         "type": "function"
     }
 ]

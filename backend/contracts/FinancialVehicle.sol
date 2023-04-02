@@ -16,6 +16,7 @@ contract FinancialVehicle {
     event AssetCreated(address, string, string, uint256);
 
     address internal master;
+    Asset public asset;
     Token[] public assets; // TODO: private
 
     constructor(address _master) {
@@ -39,5 +40,13 @@ contract FinancialVehicle {
 
     function getAssets() external view returns (Token[] memory) {
         return assets;
+    }
+
+    function getBalance(address _assetAddress, address _account) external view returns (uint256) {
+        return Asset(_assetAddress).balanceOf(_account);
+    }
+
+    function transferFrom(address _from, address _to, uint256 _amount) external returns (bool) {
+        return Asset(_from).transferFrom(_from, _to, _amount);
     }
 }

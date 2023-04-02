@@ -146,15 +146,84 @@ const AdminBoard = () => {
         }
     }
 
-    const getName = async (address: string) => { // TODO: remove this function
+    const getBalance = async (assetAddress: string, accountAddress: string) => { // TODO: remove this function
         try {
-            if (!assetContractAddress) {
+            if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
     
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+            const result = await contract.getBalance(assetAddress, accountAddress)
+            console.log('getBalance', result)
+            console.log('getBalance formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    const transferFrom = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: remove this function
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const amountBigNumber = ethers.utils.parseUnits(amount.toString(), 'ether')
+            const result = await contract.transferFrom(assetAddress, accountAddress, amountBigNumber)
+            console.log('transferFrom', result)
+            console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    // From Asset Contract
+    const getName = async (address: string) => { // TODO: remove this function
+        try {
             const contract = new ethers.Contract(address, assetAbi, provider)
             const result = await contract.name()
             console.log(result)
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    // From Asset Contract
+    const getBalanceBis = async (assetAddress: string, accountAddress: string) => { // TODO: remove this function
+        try {
+            const contract = new ethers.Contract(assetAddress, assetAbi, provider)
+            const result = await contract.balanceOf(accountAddress)
+            console.log('getBalance', result)
+            console.log('getBalance formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    // From Asset Contract
+    const transfer = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: remove this function
+        try {
+            if (!signer) return
+            const contract = new ethers.Contract(assetAddress, assetAbi, signer)
+            const amountBigNumber = ethers.utils.parseUnits(amount.toString(), 'ether')
+            const result = await contract.transfer(accountAddress, amountBigNumber)
+            console.log('transfer', result)
+            console.log('transfer formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    // From Asset Contract
+    const transferFromBis = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: remove this function
+        try {
+            if (!signer) return
+            const contract = new ethers.Contract(assetAddress, assetAbi, signer)
+            const amountBigNumber = ethers.utils.parseUnits(amount.toString(), 'ether')
+            const result = await contract.transferFrom(assetAddress, accountAddress, amountBigNumber)
+            console.log('transferFrom', result)
+            console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
@@ -363,7 +432,42 @@ const AdminBoard = () => {
                                                         <Td>{assetAddress}</Td>
                                                         <Td>{name}</Td>
                                                         <Td>
-                                                            <Button colorScheme='teal' size='xs' onClick={() => getName(assetAddress)}>
+                                                            <Button
+                                                                colorScheme='teal'
+                                                                size='xs'
+                                                                onClick={() => getBalance(assetAddress, financialVehicleContractAddress || '')}
+                                                            >
+                                                                getBalance
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button
+                                                                colorScheme='teal'
+                                                                size='xs'
+                                                                onClick={() => transfer(assetAddress, '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 80)}
+                                                            >
+                                                                transfer
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button
+                                                                colorScheme='red'
+                                                                size='xs'
+                                                                onClick={() => transferFrom(assetAddress, '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC', 80)}
+                                                            >
+                                                                transferFrom 
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                )
+                                            })}
+                                            {/* {assets.length > 0 && assets.map(({ assetAddress, name }) => {
+                                                return (
+                                                    <Tr key={assetAddress}>
+                                                        <Td>{assetAddress}</Td>
+                                                        <Td>{name}</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' size='xs'>
                                                                 Commencer
                                                             </Button>
                                                         </Td>
@@ -379,7 +483,7 @@ const AdminBoard = () => {
                                                         </Td>
                                                     </Tr>
                                                 )
-                                            })}
+                                            })} */}
                                             {/* <Tr>
                                                 <Td>Asset #1</Td>
                                                 <Td>
