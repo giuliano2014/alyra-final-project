@@ -63,7 +63,7 @@ const Kyc: FC<KycProps>  = ({
                                     <Td isNumeric>
                                         
                                         <Button
-                                        size='sm'
+                                            size='sm'
                                             mr='4'
                                             colorScheme='red'
                                             isDisabled={!isValidated && validationStatus !== "in progress"}

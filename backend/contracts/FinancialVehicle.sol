@@ -1,35 +1,43 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/presets/ERC20PresetFixedSupplyUpgradeable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
- 
+import "./Asset.sol";
+
 contract FinancialVehicle {
-    struct Asset {
+
+    struct Token {
         address assetAddress;
         string name;
         string symbol;
         uint256 totalSupply;
     }
 
-    event AssetCreated(Asset);
+    event AssetCreated(address, string, string, uint256);
 
-    address immutable tokenImplementation;
-    Asset[] private assets;
+    address internal master;
+    Token[] public assets; // TODO: private
 
-    constructor() {
-        tokenImplementation = address(new ERC20PresetFixedSupplyUpgradeable());
+    constructor(address _master) {
+        master = _master;
     }
 
-    function createAsset(string calldata _name, string calldata _symbol, uint256 _totalSupply) external returns (address) {
-        address clone = Clones.clone(tokenImplementation);
-        ERC20PresetFixedSupplyUpgradeable(clone).initialize(_name, _symbol, _totalSupply, msg.sender);
-        emit AssetCreated(Asset(clone, _name, _symbol, _totalSupply));
-        assets.push(Asset(clone, _name, _symbol, _totalSupply));
+    function createAsset( // TODO: onlyOwner and admins
+        string calldata _name,
+        string calldata _symbol,
+        uint256 _totalSupply
+    )
+        external
+        returns (Asset clone)
+    {
+        clone = Asset(Clones.clone(master));
+        clone.initialize(_name, _symbol, _totalSupply);
+        emit AssetCreated(address(clone), _name, _symbol, _totalSupply);
+        assets.push(Token(address(clone), _name, _symbol, _totalSupply));
         return clone;
     }
 
-    function getAssets() external view returns (Asset[] memory) {
+    function getAssets() external view returns (Token[] memory) {
         return assets;
     }
 }
