@@ -169,10 +169,14 @@ const AdminBoard = () => {
                 throw new Error("contractAddress is not defined")
             }
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            const amountBigNumber = ethers.utils.parseUnits(amount.toString(), 'ether')
-            const result = await contract.transferFrom(assetAddress, accountAddress, amountBigNumber)
+            const amountBigNumber = ethers.utils.parseEther(amount.toString()).toString()
+            console.log('amountBigNumber', amountBigNumber)
+
+            // const approval = await contract.approve(assetAddress, amountBigNumber)
+            // await approval.wait()
+            const result = await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
             console.log('transferFrom', result)
-            console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+            // console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
@@ -221,7 +225,8 @@ const AdminBoard = () => {
             if (!signer) return
             const contract = new ethers.Contract(assetAddress, assetAbi, signer)
             const amountBigNumber = ethers.utils.parseUnits(amount.toString(), 'ether')
-            const result = await contract.transferFrom(assetAddress, accountAddress, amountBigNumber)
+            // await contract.approve(assetAddress, accountAddress, amountBigNumber)
+            const result = await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
             console.log('transferFrom', result)
             console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {

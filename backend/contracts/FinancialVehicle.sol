@@ -33,6 +33,8 @@ contract FinancialVehicle {
     {
         clone = Asset(Clones.clone(master));
         clone.initialize(_name, _symbol, _totalSupply);
+        // clone.approve(address(this), type(uint256).max);
+        clone.approve(address(this), _totalSupply);
         emit AssetCreated(address(clone), _name, _symbol, _totalSupply);
         assets.push(Token(address(clone), _name, _symbol, _totalSupply));
         return clone;
@@ -46,7 +48,21 @@ contract FinancialVehicle {
         return Asset(_assetAddress).balanceOf(_account);
     }
 
-    function transferFrom(address _from, address _to, uint256 _amount) external returns (bool) {
-        return Asset(_from).transferFrom(_from, _to, _amount);
+    // C'est le véhicule financier qui approuve le transfert de tokens
+    // function approve(address _assetAddress, uint256 _amount) external returns (bool) { // TODO: onlyOwner and admins
+    //     return Asset(_assetAddress).approve(address(this), _amount);
+    // }
+
+    function withdraw(address _assetAddress, address _to, uint256 _amount) external returns (bool) {
+        return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
+    }
+
+    function buyToken(address _assetAddress, uint256 _amount) external payable returns (bool) {
+        require(msg.value == _amount * Asset(_assetAddress).price(), "Not enough ETH");
+        return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
+    }
+
+    function getPrice(address _assetAddress) external view returns (uint256) {
+        return Asset(_assetAddress).price();
     }
 }

@@ -40,4 +40,8 @@ contract Asset is ERC20, Initializable {
     function symbol() public view virtual override returns (string memory) {
         return symbol_;
     }
+
+    function price() public view virtual returns (uint256) {
+        return 0.01 ether;
+    }
 }

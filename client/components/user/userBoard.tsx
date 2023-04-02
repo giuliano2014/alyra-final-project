@@ -21,13 +21,16 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useProvider, useSigner } from 'wagmi'
+import { ethers } from 'ethers'
+import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
 
 const UserBoard = () => {
     const { address } = useAccount()
     const [status, setStatus] = useState('')
     const [validated, setValidated] = useState(false)
     const toast = useToast()
+    const { data: signer } = useSigner()
 
     useEffect(() => {
         getKycValidationByAddress()
@@ -127,6 +130,26 @@ const UserBoard = () => {
         setStatus(data?.data?.kycValidations[0]?.validationStatus)
     }
 
+    const buyToken = async (assetAddress: string, amount: number) => { // TODO: remove this function
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const price = await contract.getPrice(assetAddress)
+            // const amountBigNumber = ethers.utils.parseEther((amount).toString()).mul(ethers.BigNumber.from('0.01')).toString()
+            const amountBigNumber = ethers.utils.parseEther(amount.toString())
+            console.log('amountBigNumber', ethers.utils.formatEther(amountBigNumber))
+            const priceBigNumber = amountBigNumber.mul(price)
+            const result = await contract.buyToken(assetAddress, amountBigNumber.toString(), { value: priceBigNumber.toString() })
+            console.log('buyToken', result)
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
     return (
         <>
             <Box mt='16' textAlign='center'>
@@ -141,6 +164,15 @@ const UserBoard = () => {
                     <TabPanel>
                         <Box mt='10'>
                             <Heading size='md'>Mes actifs</Heading>
+                            <Button
+                                size='sm'
+                                colorScheme='teal'
+                                type='submit'
+                                variant='solid'
+                                onClick={() => buyToken('0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07', 80)}
+                            >
+                                Buy 80 tokens
+                            </Button>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
                                     <Table variant='striped'>
