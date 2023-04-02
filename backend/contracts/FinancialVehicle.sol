@@ -14,16 +14,17 @@ contract FinancialVehicle {
     }
 
     event AssetCreated(address, string, string, uint256);
+    event Received(uint value);
 
     address internal master;
-    Asset public asset;
+    // Asset public asset;
     Token[] public assets; // TODO: private
 
     constructor(address _master) {
         master = _master;
     }
 
-    function createAsset( // TODO: onlyOwner and admins
+    function createAsset( // TODO: onlyOwner and admins with onlyRole(DEFAULT_ADMIN_ROLE)
         string calldata _name,
         string calldata _symbol,
         uint256 _totalSupply
@@ -58,11 +59,47 @@ contract FinancialVehicle {
     }
 
     function buyToken(address _assetAddress, uint256 _amount) external payable returns (bool) {
-        require(msg.value == _amount * Asset(_assetAddress).price(), "Not enough ETH");
+        require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
-    function getPrice(address _assetAddress) external view returns (uint256) {
-        return Asset(_assetAddress).price();
+    function buyTokens(address _assetAddress, uint256 _amount) external payable {
+        uint256 etherAmount = Asset(_assetAddress).price(_amount);
+        require(msg.value == etherAmount, "Incorrect ether amount");
+
+        Asset asset = Asset(_assetAddress);
+
+        uint256 allowance = asset.allowance(msg.sender, address(this));
+        require(allowance >= _amount, "Not enough allowance");
+
+        if (allowance != type(uint256).max) {
+            asset.approve(address(this), type(uint256).max);
+        }
+
+        asset.transferFrom(msg.sender, address(this), _amount);
+
+        // payable(address(this)).transfer(etherAmount);
+
+        // Optional: Transfer the ether to the seller
+        // payable(asset.seller()).transfer(etherAmount);
+
+        // Optional: Mint new tokens for the buyer
+        // myToken.mint(msg.sender, _amount);
+    }
+
+    function getPrice(address _assetAddress) external pure returns (uint256) {
+        return Asset(_assetAddress).price(1 ether);
+    }
+
+    function getBalanceOfFactory() public view returns (uint256) {
+        return address(this).balance;
+    }
+
+    fallback() external payable {
+        emit Received(msg.value);
+    }
+    
+    receive() external payable {
+        emit Received(msg.value);
     }
 }

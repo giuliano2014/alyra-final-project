@@ -41,7 +41,8 @@ contract Asset is ERC20, Initializable {
         return symbol_;
     }
 
-    function price() public view virtual returns (uint256) {
-        return 0.01 ether;
+    function price(uint256 amount) public pure virtual returns (uint256) {
+        require(amount > 100, "Amount must be greater than 100");
+        return amount * 1 wei;
     }
 }

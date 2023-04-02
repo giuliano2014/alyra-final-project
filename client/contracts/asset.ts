@@ -234,7 +234,13 @@ export const assetAbi = [
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
       "name": "price",
       "outputs": [
         {
@@ -243,7 +249,7 @@ export const assetAbi = [
           "type": "uint256"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     },
     {

@@ -161,19 +161,36 @@ const AdminBoard = () => {
         }
     }
 
-    const transferFrom = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: remove this function
+    const getBalanceOfFactory = async () => { // TODO: remove this function
+        try {
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+            const result = await contract.getBalanceOfFactory()
+            console.log('getBalanceOfFactory =>', result)
+            console.log('getBalanceOfFactory formatted =>', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: move this function in the right component
         try {
             if (!signer) return
 
             if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
+
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             const amountBigNumber = ethers.utils.parseEther(amount.toString()).toString()
             console.log('amountBigNumber', amountBigNumber)
 
             // const approval = await contract.approve(assetAddress, amountBigNumber)
             // await approval.wait()
+
             const result = await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
             console.log('transferFrom', result)
             // console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
@@ -193,19 +210,7 @@ const AdminBoard = () => {
         }
     }
 
-    // From Asset Contract
-    const getBalanceBis = async (assetAddress: string, accountAddress: string) => { // TODO: remove this function
-        try {
-            const contract = new ethers.Contract(assetAddress, assetAbi, provider)
-            const result = await contract.balanceOf(accountAddress)
-            console.log('getBalance', result)
-            console.log('getBalance formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
-    // From Asset Contract
+    // From Asset Contract does not work
     const transfer = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: remove this function
         try {
             if (!signer) return
@@ -214,21 +219,6 @@ const AdminBoard = () => {
             const result = await contract.transfer(accountAddress, amountBigNumber)
             console.log('transfer', result)
             console.log('transfer formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
-    // From Asset Contract
-    const transferFromBis = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: remove this function
-        try {
-            if (!signer) return
-            const contract = new ethers.Contract(assetAddress, assetAbi, signer)
-            const amountBigNumber = ethers.utils.parseUnits(amount.toString(), 'ether')
-            // await contract.approve(assetAddress, accountAddress, amountBigNumber)
-            const result = await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
-            console.log('transferFrom', result)
-            console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
@@ -327,6 +317,13 @@ const AdminBoard = () => {
                     <TabPanel>
                         <Box mt='10'>
                             <Heading size='md'>Métriques des actifs</Heading>
+                            <Button
+                                colorScheme='teal'
+                                size='xs'
+                                onClick={() => getBalanceOfFactory()}
+                            >
+                                getBalanceOfFactory
+                            </Button>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
                                     <Table variant='striped'>
@@ -447,20 +444,20 @@ const AdminBoard = () => {
                                                         </Td>
                                                         <Td>
                                                             <Button
+                                                                colorScheme='red'
+                                                                size='xs'
+                                                                onClick={() => withdraw(assetAddress, '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 190)}
+                                                            >
+                                                                withdraw 
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button
                                                                 colorScheme='teal'
                                                                 size='xs'
                                                                 onClick={() => transfer(assetAddress, '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 80)}
                                                             >
                                                                 transfer
-                                                            </Button>
-                                                        </Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='red'
-                                                                size='xs'
-                                                                onClick={() => transferFrom(assetAddress, '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC', 80)}
-                                                            >
-                                                                transferFrom 
                                                             </Button>
                                                         </Td>
                                                     </Tr>

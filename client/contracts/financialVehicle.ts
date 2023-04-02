@@ -44,17 +44,21 @@ export const financialVehicleAbi = [
       "type": "event"
     },
     {
-      "inputs": [],
-      "name": "asset",
-      "outputs": [
+      "anonymous": false,
+      "inputs": [
         {
-          "internalType": "contract Asset",
-          "name": "",
-          "type": "address"
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
         }
       ],
-      "stateMutability": "view",
-      "type": "function"
+      "name": "Received",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
     },
     {
       "inputs": [
@@ -111,6 +115,24 @@ export const financialVehicleAbi = [
           "type": "bool"
         }
       ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_assetAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "buyTokens",
+      "outputs": [],
       "stateMutability": "payable",
       "type": "function"
     },
@@ -203,6 +225,19 @@ export const financialVehicleAbi = [
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getBalanceOfFactory",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -218,7 +253,7 @@ export const financialVehicleAbi = [
           "type": "uint256"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -249,5 +284,9 @@ export const financialVehicleAbi = [
       ],
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
     }
   ]
