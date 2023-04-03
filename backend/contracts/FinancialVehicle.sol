@@ -18,10 +18,20 @@ contract FinancialVehicle {
 
     address internal master;
     // Asset public asset;
-    Token[] public assets; // TODO: private
+    Token[] private assets;
 
     constructor(address _master) {
         master = _master;
+    }
+
+    // C'est le véhicule financier qui approuve le transfert de tokens
+    // function approve(address _assetAddress, uint256 _amount) external returns (bool) { // TODO: onlyOwner and admins
+    //     return Asset(_assetAddress).approve(address(this), _amount);
+    // }
+
+    function buyToken(address _assetAddress, uint256 _amount) external payable returns (bool) {
+        require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
+        return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
     function createAsset( // TODO: onlyOwner and admins with onlyRole(DEFAULT_ADMIN_ROLE)
@@ -49,50 +59,16 @@ contract FinancialVehicle {
         return Asset(_assetAddress).balanceOf(_account);
     }
 
-    // C'est le véhicule financier qui approuve le transfert de tokens
-    // function approve(address _assetAddress, uint256 _amount) external returns (bool) { // TODO: onlyOwner and admins
-    //     return Asset(_assetAddress).approve(address(this), _amount);
-    // }
-
-    function withdraw(address _assetAddress, address _to, uint256 _amount) external returns (bool) {
-        return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
-    }
-
-    function buyToken(address _assetAddress, uint256 _amount) external payable returns (bool) {
-        require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
-        return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
-    }
-
-    function buyTokens(address _assetAddress, uint256 _amount) external payable {
-        uint256 etherAmount = Asset(_assetAddress).price(_amount);
-        require(msg.value == etherAmount, "Incorrect ether amount");
-
-        Asset asset = Asset(_assetAddress);
-
-        uint256 allowance = asset.allowance(msg.sender, address(this));
-        require(allowance >= _amount, "Not enough allowance");
-
-        if (allowance != type(uint256).max) {
-            asset.approve(address(this), type(uint256).max);
-        }
-
-        asset.transferFrom(msg.sender, address(this), _amount);
-
-        // payable(address(this)).transfer(etherAmount);
-
-        // Optional: Transfer the ether to the seller
-        // payable(asset.seller()).transfer(etherAmount);
-
-        // Optional: Mint new tokens for the buyer
-        // myToken.mint(msg.sender, _amount);
+    function getBalanceOfFactory() public view returns (uint256) {
+        return address(this).balance;
     }
 
     function getPrice(address _assetAddress) external pure returns (uint256) {
         return Asset(_assetAddress).price(1 ether);
     }
 
-    function getBalanceOfFactory() public view returns (uint256) {
-        return address(this).balance;
+    function withdraw(address _assetAddress, address _to, uint256 _amount) external returns (bool) {
+        return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
     }
 
     fallback() external payable {

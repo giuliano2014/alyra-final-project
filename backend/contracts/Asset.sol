@@ -26,11 +26,9 @@ contract Asset is ERC20, Initializable {
         _mint(msg.sender, _totalSupply);
     }
 
-    /**
-     * @dev Returns the name of the token.
-     */
-    function name() public view virtual override returns (string memory) {
-        return name_;
+    function price(uint256 amount) public pure virtual returns (uint256) {
+        require(amount > 100, "Amount must be greater than 100");
+        return amount * 1 wei;
     }
 
     /**
@@ -39,10 +37,5 @@ contract Asset is ERC20, Initializable {
      */
     function symbol() public view virtual override returns (string memory) {
         return symbol_;
-    }
-
-    function price(uint256 amount) public pure virtual returns (uint256) {
-        require(amount > 100, "Amount must be greater than 100");
-        return amount * 1 wei;
     }
 }

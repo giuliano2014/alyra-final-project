@@ -176,54 +176,6 @@ const AdminBoard = () => {
         }
     }
 
-    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: move this function in the right component
-        try {
-            if (!signer) return
-
-            if (!financialVehicleContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            const amountBigNumber = ethers.utils.parseEther(amount.toString()).toString()
-            console.log('amountBigNumber', amountBigNumber)
-
-            // const approval = await contract.approve(assetAddress, amountBigNumber)
-            // await approval.wait()
-
-            const result = await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
-            console.log('transferFrom', result)
-            // console.log('transferFrom formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
-    // From Asset Contract
-    const getName = async (address: string) => { // TODO: remove this function
-        try {
-            const contract = new ethers.Contract(address, assetAbi, provider)
-            const result = await contract.name()
-            console.log(result)
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
-    // From Asset Contract does not work
-    const transfer = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: remove this function
-        try {
-            if (!signer) return
-            const contract = new ethers.Contract(assetAddress, assetAbi, signer)
-            const amountBigNumber = ethers.utils.parseUnits(amount.toString(), 'ether')
-            const result = await contract.transfer(accountAddress, amountBigNumber)
-            console.log('transfer', result)
-            console.log('transfer formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
     const getKycValidations = async () => {
         const query = `
             query KycValidations {
@@ -300,6 +252,26 @@ const AdminBoard = () => {
             console.error(error)
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: move this function in the right component
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const amountBigNumber = ethers.utils.parseEther(amount.toString()).toString()
+
+            // const approval = await contract.approve(assetAddress, amountBigNumber)
+            // await approval.wait()
+
+            await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
         }
     }
 
@@ -452,18 +424,14 @@ const AdminBoard = () => {
                                                             </Button>
                                                         </Td>
                                                         <Td>
-                                                            <Button
-                                                                colorScheme='teal'
-                                                                size='xs'
-                                                                onClick={() => transfer(assetAddress, '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 80)}
-                                                            >
-                                                                transfer
+                                                            <Button colorScheme='red' isDisabled size='xs'>
+                                                                Annuler
                                                             </Button>
                                                         </Td>
                                                     </Tr>
                                                 )
                                             })}
-                                            {/* {assets.length > 0 && assets.map(({ assetAddress, name }) => {
+                                            {assets.length > 0 && assets.map(({ assetAddress, name }) => {
                                                 return (
                                                     <Tr key={assetAddress}>
                                                         <Td>{assetAddress}</Td>
@@ -485,7 +453,7 @@ const AdminBoard = () => {
                                                         </Td>
                                                     </Tr>
                                                 )
-                                            })} */}
+                                            })}
                                             {/* <Tr>
                                                 <Td>Asset #1</Td>
                                                 <Td>
