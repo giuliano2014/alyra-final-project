@@ -15,6 +15,7 @@ contract FinancialVehicle {
 
     event AssetCreated(address, string, string, uint256);
     event Received(uint value);
+    event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
 
     address internal master;
     // Asset public asset;
@@ -69,6 +70,13 @@ contract FinancialVehicle {
 
     function withdraw(address _assetAddress, address _to, uint256 _amount) external returns (bool) {
         return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
+    }
+
+    function withdrawFromFinancialVehicle(uint256 amount, address payable recipient) external { // TODO: onlyOwner and admins
+        require(address(this).balance >= amount, "Insufficient balance");
+
+        recipient.transfer(amount);
+        emit WithdrawFromFinancialVehicle(recipient, amount);
     }
 
     fallback() external payable {

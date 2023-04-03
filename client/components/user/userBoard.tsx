@@ -21,16 +21,17 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { useAccount, useProvider, useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import { ethers } from 'ethers'
+
 import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
 
 const UserBoard = () => {
     const { address } = useAccount()
+    const { data: signer } = useSigner()
     const [status, setStatus] = useState('')
     const [validated, setValidated] = useState(false)
     const toast = useToast()
-    const { data: signer } = useSigner()
 
     useEffect(() => {
         getKycValidationByAddress()
@@ -121,7 +122,7 @@ const UserBoard = () => {
             // const result = await contract.buyToken(assetAddress, "1000", { value: ethers.utils.parseEther("10") })
 
             const result = await contract.buyToken(assetAddress, ethers.utils.parseEther("150").toString(), { value: ethers.utils.parseEther("150") })
-            console.log('buyToken', result)
+            // console.log('buyToken', result)
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
@@ -179,7 +180,7 @@ const UserBoard = () => {
                                 colorScheme='teal'
                                 type='submit'
                                 variant='solid'
-                                onClick={() => buyToken('0x07C5cAdA64A6c63c140Af510633ba168425e2ba1', 150)}
+                                onClick={() => buyToken('0x3838c6D296C855D311572EbD7256527FA982Ff13', 150)}
                             >
                                 Buy 150 tokens
                             </Button>

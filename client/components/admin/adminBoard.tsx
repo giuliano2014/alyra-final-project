@@ -3,6 +3,7 @@ import {
     Box,
     Button,
     Card,
+    effect,
     Heading,
     Tab,
     Table,
@@ -46,6 +47,8 @@ const AdminBoard = () => {
     const provider = useProvider()
     const { data: signer } = useSigner()
     const [assetName, setAssetName] = useState('')
+    const [recipientAddress, setRecipientAddress] = useState('')
+    const [withdrawAmount, setWithdrawAmount] = useState(0)
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
@@ -62,6 +65,19 @@ const AdminBoard = () => {
     useEffect(() => {
         getKycValidations()
     }, [isLoading])
+
+    useEffect(() => {
+        if (!financialVehicleContractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
+        const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+
+        contract.on("WithdrawFromFinancialVehicle", async () => {
+            getBalanceOfFinancialVehicle()
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const createAsset = async (event: FormEvent) => {
         event.preventDefault()
@@ -155,8 +171,6 @@ const AdminBoard = () => {
     
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
             const result = await contract.getBalance(assetAddress, accountAddress)
-            console.log('getBalance', result)
-            console.log('getBalance formatted', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
@@ -272,6 +286,40 @@ const AdminBoard = () => {
             await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    const withdrawFromFinancialVehicle = async (event: FormEvent) => {
+        event.preventDefault()
+
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const amountBigNumber = ethers.utils.parseEther(withdrawAmount.toString()).toString()
+            await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
+            // const result = await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
+            // await result.wait()
+            toast({
+                title: 'Super !',
+                description: 'Votre retrait est en cours de traitement.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true
+            })
+        } catch (error) {
+            console.error("An error occured on withdraw from financial vehicle", error)
+            toast({
+                title: 'Oups !',
+                description: "Une erreur s'est produite :(",
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            })
         }
     }
 
@@ -577,6 +625,11 @@ const AdminBoard = () => {
                         <Fund   
                             financialVehicleBalance={financialVehicleBalance}
                             getBalanceOfFinancialVehicle={getBalanceOfFinancialVehicle}
+                            recipientAddress={recipientAddress}
+                            setRecipientAddress={setRecipientAddress}
+                            setWithdrawAmount={setWithdrawAmount}
+                            withdrawAmount={withdrawAmount}
+                            withdrawFromFinancialVehicle={withdrawFromFinancialVehicle}
                         />
                     </TabPanel>
                 </TabPanels>
