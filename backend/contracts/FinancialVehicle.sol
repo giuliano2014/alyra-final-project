@@ -59,7 +59,7 @@ contract FinancialVehicle {
         return Asset(_assetAddress).balanceOf(_account);
     }
 
-    function getBalanceOfFactory() public view returns (uint256) {
+    function getBalanceOfFinancialVehicle() external view returns (uint256) {
         return address(this).balance;
     }
 

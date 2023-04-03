@@ -120,7 +120,7 @@ const UserBoard = () => {
             // const result = await contract.buyToken(assetAddress, numberOfTokens, { value: value })
             // const result = await contract.buyToken(assetAddress, "1000", { value: ethers.utils.parseEther("10") })
 
-            const result = await contract.buyToken(assetAddress, ethers.utils.parseEther("10").toString(), { value: ethers.utils.parseEther("10") })
+            const result = await contract.buyToken(assetAddress, ethers.utils.parseEther("150").toString(), { value: ethers.utils.parseEther("150") })
             console.log('buyToken', result)
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
@@ -179,9 +179,9 @@ const UserBoard = () => {
                                 colorScheme='teal'
                                 type='submit'
                                 variant='solid'
-                                onClick={() => buyToken('0x74fcA3bE84BBd0bAE9C973Ca2d16821FEa867fE8', 1000)}
+                                onClick={() => buyToken('0x07C5cAdA64A6c63c140Af510633ba168425e2ba1', 150)}
                             >
-                                Buy 1000 tokens
+                                Buy 150 tokens
                             </Button>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>

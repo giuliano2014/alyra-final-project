@@ -24,8 +24,8 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
+import Fund from '@/components/admin/fund'
 import Kyc from '@/components/admin/kyc'
-import { assetAbi, assetContractAddress } from '@/contracts/asset'
 import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
 
 type Asset = {
@@ -49,6 +49,7 @@ const AdminBoard = () => {
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
+    const [financialVehicleBalance, setFinancialVehicleBalance] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [kycValidations, setKycValidations] = useState<any[]>([])
     const toast = useToast()
@@ -161,16 +162,15 @@ const AdminBoard = () => {
         }
     }
 
-    const getBalanceOfFactory = async () => { // TODO: remove this function
+    const getBalanceOfFinancialVehicle = async () => {
         try {
             if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
     
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
-            const result = await contract.getBalanceOfFactory()
-            console.log('getBalanceOfFactory =>', result)
-            console.log('getBalanceOfFactory formatted =>', parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+            const result = await contract.getBalanceOfFinancialVehicle()
+            setFinancialVehicleBalance(parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
@@ -284,18 +284,12 @@ const AdminBoard = () => {
                 <TabList>
                     <Tab>Gestion des actifs</Tab>
                     <Tab>Gestion des KYC</Tab>
+                    <Tab>Gestion des fonds</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
                         <Box mt='10'>
                             <Heading size='md'>Métriques des actifs</Heading>
-                            <Button
-                                colorScheme='teal'
-                                size='xs'
-                                onClick={() => getBalanceOfFactory()}
-                            >
-                                getBalanceOfFactory
-                            </Button>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
                                     <Table variant='striped'>
@@ -577,6 +571,12 @@ const AdminBoard = () => {
                         <Kyc
                             kycValidations={kycValidations}
                             validateKyc={validateKyc}
+                        />
+                    </TabPanel>
+                    <TabPanel>
+                        <Fund   
+                            financialVehicleBalance={financialVehicleBalance}
+                            getBalanceOfFinancialVehicle={getBalanceOfFinancialVehicle}
                         />
                     </TabPanel>
                 </TabPanels>
