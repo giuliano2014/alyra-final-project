@@ -3,6 +3,7 @@ import {
     Box,
     Button,
     Card,
+    effect,
     Heading,
     Tab,
     Table,
@@ -24,8 +25,8 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
+import Fund from '@/components/admin/fund'
 import Kyc from '@/components/admin/kyc'
-import { assetAbi, assetContractAddress } from '@/contracts/asset'
 import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
 
 type Asset = {
@@ -46,9 +47,12 @@ const AdminBoard = () => {
     const provider = useProvider()
     const { data: signer } = useSigner()
     const [assetName, setAssetName] = useState('')
+    const [recipientAddress, setRecipientAddress] = useState('')
+    const [withdrawAmount, setWithdrawAmount] = useState(0)
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
+    const [financialVehicleBalance, setFinancialVehicleBalance] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [kycValidations, setKycValidations] = useState<any[]>([])
     const toast = useToast()
@@ -61,6 +65,19 @@ const AdminBoard = () => {
     useEffect(() => {
         getKycValidations()
     }, [isLoading])
+
+    useEffect(() => {
+        if (!financialVehicleContractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+
+        const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+
+        contract.on("WithdrawFromFinancialVehicle", async () => {
+            getBalanceOfFinancialVehicle()
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const createAsset = async (event: FormEvent) => {
         event.preventDefault()
@@ -146,15 +163,28 @@ const AdminBoard = () => {
         }
     }
 
-    const getName = async (address: string) => { // TODO: remove this function
+    const getBalance = async (assetAddress: string, accountAddress: string) => { // TODO: remove this function
         try {
-            if (!assetContractAddress) {
+            if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
     
-            const contract = new ethers.Contract(address, assetAbi, provider)
-            const result = await contract.name()
-            console.log(result)
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+            const result = await contract.getBalance(assetAddress, accountAddress)
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    const getBalanceOfFinancialVehicle = async () => {
+        try {
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+    
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+            const result = await contract.getBalanceOfFinancialVehicle()
+            setFinancialVehicleBalance(parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
@@ -239,6 +269,60 @@ const AdminBoard = () => {
         }
     }
 
+    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: move this function in the right component
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const amountBigNumber = ethers.utils.parseEther(amount.toString()).toString()
+
+            // const approval = await contract.approve(assetAddress, amountBigNumber)
+            // await approval.wait()
+
+            await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    const withdrawFromFinancialVehicle = async (event: FormEvent) => {
+        event.preventDefault()
+
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const amountBigNumber = ethers.utils.parseEther(withdrawAmount.toString()).toString()
+            await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
+            // const result = await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
+            // await result.wait()
+            toast({
+                title: 'Super !',
+                description: 'Votre retrait est en cours de traitement.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true
+            })
+        } catch (error) {
+            console.error("An error occured on withdraw from financial vehicle", error)
+            toast({
+                title: 'Oups !',
+                description: "Une erreur s'est produite :(",
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+    }
+
     return (
         <>
             <Box mt='16' textAlign='center'>
@@ -248,6 +332,7 @@ const AdminBoard = () => {
                 <TabList>
                     <Tab>Gestion des actifs</Tab>
                     <Tab>Gestion des KYC</Tab>
+                    <Tab>Gestion des fonds</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
@@ -363,7 +448,38 @@ const AdminBoard = () => {
                                                         <Td>{assetAddress}</Td>
                                                         <Td>{name}</Td>
                                                         <Td>
-                                                            <Button colorScheme='teal' size='xs' onClick={() => getName(assetAddress)}>
+                                                            <Button
+                                                                colorScheme='teal'
+                                                                size='xs'
+                                                                onClick={() => getBalance(assetAddress, financialVehicleContractAddress || '')}
+                                                            >
+                                                                getBalance
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button
+                                                                colorScheme='red'
+                                                                size='xs'
+                                                                onClick={() => withdraw(assetAddress, '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 190)}
+                                                            >
+                                                                withdraw 
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button colorScheme='red' isDisabled size='xs'>
+                                                                Annuler
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                )
+                                            })}
+                                            {assets.length > 0 && assets.map(({ assetAddress, name }) => {
+                                                return (
+                                                    <Tr key={assetAddress}>
+                                                        <Td>{assetAddress}</Td>
+                                                        <Td>{name}</Td>
+                                                        <Td>
+                                                            <Button colorScheme='teal' size='xs'>
                                                                 Commencer
                                                             </Button>
                                                         </Td>
@@ -503,6 +619,17 @@ const AdminBoard = () => {
                         <Kyc
                             kycValidations={kycValidations}
                             validateKyc={validateKyc}
+                        />
+                    </TabPanel>
+                    <TabPanel>
+                        <Fund   
+                            financialVehicleBalance={financialVehicleBalance}
+                            getBalanceOfFinancialVehicle={getBalanceOfFinancialVehicle}
+                            recipientAddress={recipientAddress}
+                            setRecipientAddress={setRecipientAddress}
+                            setWithdrawAmount={setWithdrawAmount}
+                            withdrawAmount={withdrawAmount}
+                            withdrawFromFinancialVehicle={withdrawFromFinancialVehicle}
                         />
                     </TabPanel>
                 </TabPanels>
