@@ -18,7 +18,9 @@ import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import { useProvider } from 'wagmi'
 
+import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 type Asset = {
     assetAddress: string
@@ -35,13 +37,13 @@ type FormattedAsset = {
 }
 
 const Assets = () => {
+    const isAccountConnected = useIsAccountConnected()
     const provider = useProvider()
     const [assets, setAssets] = useState<FormattedAsset[]>([])
 
     useEffect(() => {
         getAssets()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [assets, isAccountConnected])
 
     const fetchAndFormatAssets = async () => {
         try {
@@ -104,7 +106,12 @@ const Assets = () => {
                 <Heading size='xl'>Nos actifs</Heading>
                 <Text fontSize='xl' mt='10'>Multipliez votre exposition à vos crypto actifs préférés.</Text>
                 <Text fontSize='xl'>Parcourez nos produits ou sélectionnez un actif.</Text>
-                {assets.length === 0 && (
+                {!isAccountConnected &&
+                    <Box mt='10'>
+                        <AccountNotConnectedWarning />
+                    </Box>
+                }
+                {isAccountConnected && assets.length === 0 && (
                     <Heading mt='10' size='md'>Actuellement, aucun actif à la vente...</Heading>
                 )}
             </Box>
