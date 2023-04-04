@@ -21,14 +21,10 @@ import {
     useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { useAccount, useSigner } from 'wagmi'
-import { ethers } from 'ethers'
-
-import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
+import { useAccount } from 'wagmi'
 
 const UserBoard = () => {
     const { address } = useAccount()
-    const { data: signer } = useSigner()
     const [status, setStatus] = useState('')
     const [validated, setValidated] = useState(false)
     const toast = useToast()

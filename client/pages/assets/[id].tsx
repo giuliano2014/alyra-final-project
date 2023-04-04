@@ -5,6 +5,10 @@ import {
     CardBody,
     CardHeader,
     Divider,
+    FormControl,
+    FormErrorMessage,
+    FormHelperText,
+    FormLabel,
     Heading,
     Input,
     InputGroup,
@@ -13,11 +17,7 @@ import {
     Stack,
     StackDivider,
     Text,
-    useToast,
-    FormControl,
-    FormHelperText,
-    FormLabel,
-    FormErrorMessage,
+    useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import Head from 'next/head'
@@ -157,19 +157,19 @@ const SingleAsset = () => {
                                 <InputGroup size='md'>
                                     <Input
                                         defaultValue={0}
-                                        pr='6.5rem'
-                                        type='number'
-                                        onChange={(e: any) => setNumberOfToken(e.target.value)}
                                         min={1}
+                                        onChange={(e: any) => setNumberOfToken(e.target.value)}
+                                        pr='6.5rem'
                                         step={1}
+                                        type='number'
                                     />
                                     <InputRightElement width='6.5rem'>
                                         <Button
                                             h='1.75rem'
-                                            size='sm'
                                             isDisabled={
                                                 isNumberOfTokenError
                                             }
+                                            size='sm'
                                             type='submit'
                                         >
                                             Acheter
