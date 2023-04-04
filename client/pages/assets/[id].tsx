@@ -1,4 +1,7 @@
 import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
     Button,
     Box,
     Card,
@@ -13,16 +16,12 @@ import {
     Input,
     InputGroup,
     InputRightElement,
+    Link,
     SimpleGrid,
     Stack,
     StackDivider,
     Text,
-    useToast,
-    Alert,
-    AlertIcon,
-    Link,
-    AlertDescription,
-    AlertTitle
+    useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import Head from 'next/head'
@@ -31,38 +30,27 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useAccount, useSigner } from 'wagmi'
 import NextLink from 'next/link'
 
-import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
-import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
+import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
+import useAdminCheck from '@/hooks/useAdminCheck'
+import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const SingleAsset = () => {
     const { address } = useAccount()
     const router = useRouter()
     const { id } = router.query
+    const isAdmin = useAdminCheck()
     const isAccountConnected = useIsAccountConnected()
     const { data: signer } = useSigner()
-    const [isAdmin, setIsAdmin] = useState<boolean>(false)
+    const [isValidated, setIsValidated] = useState(false)
     const [numberOfToken, setNumberOfToken] = useState(0)
     const toast = useToast()
 
     const isNumberOfTokenError = numberOfToken < 1
 
-    const [isValidated, setIsValidated] = useState(false)
-
-    useEffect(() => {
-        const adminAddresses = [
-            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_ARNAUD,
-            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GARY,
-            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO,
-            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_GIULIANO_LOCALHOST,
-            process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_VINCENT
-        ]
-    
-        setIsAdmin(adminAddresses.includes(address))
-    }, [address])
-
     useEffect(() => {
         getKycValidationByAddress()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
   
     const buyToken = async (event: FormEvent) => {
@@ -257,7 +245,7 @@ const SingleAsset = () => {
                                     <Stack mt='5'>
                                         <Alert status='warning'>
                                             <AlertIcon />
-                                            Veuillez vous connecter à un compte utilisateur, non administrateur.
+                                            Veuillez vous connecter avec un compte utilisateur, non administrateur.
                                         </Alert>
                                     </Stack>
                                 }
