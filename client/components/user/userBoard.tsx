@@ -98,36 +98,6 @@ const UserBoard = () => {
         }
     }
 
-    const buyToken = async (assetAddress: string, amount: number) => {
-        try {
-            if (!signer) return
-    
-            if (!financialVehicleContractAddress) {
-                throw new Error("financialVehicleContractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-
-            // const price = await contract.getPrice(assetAddress)
-            // const amountBigNumber = ethers.utils.parseEther(amount.toString())
-            // console.log('amountBigNumber', amountBigNumber.toString())
-
-            // const numberOfTokens = ethers.utils.parseUnits(amount.toString(), 18)
-            // console.log('numberOfTokens', numberOfTokens.toString())
-    
-            // const value = ethers.utils.parseEther((amount * 0.01).toString())
-            // console.log('value', value.toString())
-    
-            // const result = await contract.buyToken(assetAddress, numberOfTokens, { value: value })
-            // const result = await contract.buyToken(assetAddress, "1000", { value: ethers.utils.parseEther("10") })
-
-            const result = await contract.buyToken(assetAddress, ethers.utils.parseEther("150").toString(), { value: ethers.utils.parseEther("150") })
-            // console.log('buyToken', result)
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
     const getKycValidationByAddress = async () => {
         const query = `
             query KycValidations($userAddress: String!) {
@@ -175,15 +145,6 @@ const UserBoard = () => {
                     <TabPanel>
                         <Box mt='10'>
                             <Heading size='md'>Mes actifs</Heading>
-                            <Button
-                                size='sm'
-                                colorScheme='teal'
-                                type='submit'
-                                variant='solid'
-                                onClick={() => buyToken('0x3838c6D296C855D311572EbD7256527FA982Ff13', 150)}
-                            >
-                                Buy 150 tokens
-                            </Button>
                             <Card borderRadius='2xl' mt='4'>
                                 <TableContainer>
                                     <Table variant='striped'>

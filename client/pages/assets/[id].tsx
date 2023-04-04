@@ -5,7 +5,6 @@ import {
     CardBody,
     CardHeader,
     Divider,
-    Flex,
     Heading,
     Input,
     InputGroup,
@@ -14,13 +13,81 @@ import {
     Stack,
     StackDivider,
     Text,
+    useToast,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    FormErrorMessage,
 } from '@chakra-ui/react'
+import { ethers } from 'ethers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { FormEvent, useState } from 'react'
+import { useSigner } from 'wagmi'
+
+import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
 
 const SingleAsset = () => {
     const router = useRouter()
     const { id } = router.query
+    const { data: signer } = useSigner()
+    const [numberOfToken, setNumberOfToken] = useState(0)
+    const toast = useToast()
+
+    const isNumberOfTokenError = numberOfToken < 1
+
+    const buyToken = async (event: FormEvent) => { // TODO: dynamically pass asset address, on line 74
+        event.preventDefault()
+
+        try {
+            if (!signer) return
+    
+            if (!financialVehicleContractAddress) {
+                throw new Error("financialVehicleContractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+
+            // const price = await contract.getPrice(assetAddress)
+            // const amountBigNumber = ethers.utils.parseEther(amount.toString())
+            // console.log('amountBigNumber', amountBigNumber.toString())
+
+            // const numberOfTokens = ethers.utils.parseUnits(amount.toString(), 18)
+            // console.log('numberOfTokens', numberOfTokens.toString())
+    
+            // const value = ethers.utils.parseEther((amount * 0.01).toString())
+            // console.log('value', value.toString())
+    
+            // const result = await contract.buyToken(assetAddress, numberOfTokens, { value: value })
+            // const result = await contract.buyToken(assetAddress, "1000", { value: ethers.utils.parseEther("10") })
+
+            // const result = await contract.buyToken(assetAddress, ethers.utils.parseEther("150").toString(), { value: ethers.utils.parseEther("150") })
+
+            const formattedNumberOfToken = ethers.utils.parseEther(numberOfToken.toString()).toString()
+
+            await contract.buyToken(
+                '0xCafac3dD18aC6c6e92c921884f9E4176737C052c',
+                formattedNumberOfToken,
+                { value: formattedNumberOfToken }
+            )
+            toast({
+                title: 'Bravo !',
+                description: `Votre achat de ${numberOfToken} token(s), a bien été effectué.`,
+                status: 'success',
+                duration: 5000,
+                isClosable: true
+            })
+        } catch (error) {
+            console.error("An error occured on buy token :", error)
+            toast({
+                title: 'Oups !',
+                description: "Une erreur s'est produite :(",
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            })
+        }
+    }
 
     return (
         <>
@@ -80,28 +147,45 @@ const SingleAsset = () => {
                 </Card>
                 <Card borderRadius='2xl'>
                     <CardHeader>
-                        <Heading size='md'>Buy Asset Token</Heading>
+                        <Heading size='md'>Acheter des tokens</Heading>
                     </CardHeader>
                     <Divider color='#e2e8f0' />
                     <CardBody>
-                        <Box>
-                            <Heading size='xs' textTransform='uppercase'>
-                                Deposit ETH
-                            </Heading>
-                            <InputGroup mt='4' size='md'>
-                                <Input
-                                    placeholder='0 ETH'
-                                    pr='4.5rem'
-                                    type='number'
-                                />
-                                <InputRightElement width='4.5rem'>
-                                    <Button h='1.75rem' size='sm'>
-                                        Buy
-                                    </Button>
-                                </InputRightElement>
-                            </InputGroup>
+                        <Box as='form' onSubmit={buyToken}>
+                            <FormControl isInvalid={isNumberOfTokenError}>
+                                <FormLabel fontSize='sm'>Entrez le nombre de token que vous souhaitez acheter</FormLabel>
+                                <InputGroup size='md'>
+                                    <Input
+                                        defaultValue={0}
+                                        pr='6.5rem'
+                                        type='number'
+                                        onChange={(e: any) => setNumberOfToken(e.target.value)}
+                                        min={1}
+                                        step={1}
+                                    />
+                                    <InputRightElement width='6.5rem'>
+                                        <Button
+                                            h='1.75rem'
+                                            size='sm'
+                                            isDisabled={
+                                                isNumberOfTokenError
+                                            }
+                                            type='submit'
+                                        >
+                                            Acheter
+                                        </Button>
+                                    </InputRightElement>
+                                </InputGroup>
+                                {isNumberOfTokenError ? (
+                                    <FormErrorMessage>Le nombre total de token est obligatoire et doit être supérieur ou égal à 1.</FormErrorMessage>
+                                ) : (
+                                    <FormHelperText>
+                                        Le nombre total de token doit être supérieur ou égal à 1.
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
                         </Box>
-                        <Card bg='#F3F7F9' borderRadius='2xl' mt='4'>
+                        {/* <Card bg='#F3F7F9' borderRadius='2xl' mt='4'>
                             <CardBody>
                                 <Heading size='xs'>Order information</Heading>
                                 <Flex gap='4' justifyContent='space-between'>
@@ -153,7 +237,7 @@ const SingleAsset = () => {
                                     Buying ETH
                                 </Text>
                             </CardBody>
-                        </Card>
+                        </Card> */}
                     </CardBody>
                 </Card>
             </SimpleGrid>
