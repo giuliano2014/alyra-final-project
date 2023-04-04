@@ -25,10 +25,10 @@ import {
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import Head from 'next/head'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
 import { useAccount, useSigner } from 'wagmi'
-import NextLink from 'next/link'
 
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
@@ -37,10 +37,10 @@ import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const SingleAsset = () => {
     const { address } = useAccount()
-    const router = useRouter()
-    const { id } = router.query
     const isAdmin = useAdminCheck()
     const isAccountConnected = useIsAccountConnected()
+    const router = useRouter()
+    const { id } = router.query
     const { data: signer } = useSigner()
     const [isValidated, setIsValidated] = useState(false)
     const [numberOfToken, setNumberOfToken] = useState(0)
@@ -234,7 +234,9 @@ const SingleAsset = () => {
                                         </InputRightElement>
                                     </InputGroup>
                                     {isNumberOfTokenError ? (
-                                        <FormErrorMessage>Le nombre total de token est obligatoire et doit être supérieur ou égal à 1.</FormErrorMessage>
+                                        <FormErrorMessage>
+                                            Le nombre total de token est obligatoire et doit être supérieur ou égal à 1.
+                                        </FormErrorMessage>
                                     ) : (
                                         <FormHelperText>
                                             Le nombre total de token doit être supérieur ou égal à 1.
@@ -254,7 +256,8 @@ const SingleAsset = () => {
                                         <Alert status='error'>
                                             <AlertIcon />
                                             <AlertTitle fontWeight='normal'>
-                                                Pour acheter des tokens, faites une demande de validation de KYC, <Link as={NextLink} href='/account/board'>ici</Link>.
+                                                Pour acheter des tokens, faites une demande de validation de KYC,{" "}
+                                                <Link as={NextLink} href='/account/board'>ici</Link>.
                                             </AlertTitle>
                                         </Alert>
                                     </Stack>

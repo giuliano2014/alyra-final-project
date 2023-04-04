@@ -18,10 +18,9 @@ import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import { useProvider } from 'wagmi'
 
+import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
-import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
-
 
 type Asset = {
     assetAddress: string
@@ -44,7 +43,6 @@ const Assets = () => {
 
     useEffect(() => {
         getAssets()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [assets, isAccountConnected])
 
     const fetchAndFormatAssets = async () => {
