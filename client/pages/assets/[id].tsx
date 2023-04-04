@@ -19,13 +19,17 @@ import {
     Text,
     useToast,
     Alert,
-    AlertIcon
+    AlertIcon,
+    Link,
+    AlertDescription,
+    AlertTitle
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
 import { useAccount, useSigner } from 'wagmi'
+import NextLink from 'next/link'
 
 import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
@@ -43,6 +47,8 @@ const SingleAsset = () => {
 
     const isNumberOfTokenError = numberOfToken < 1
 
+    const [isValidated, setIsValidated] = useState(false)
+
     useEffect(() => {
         const adminAddresses = [
             process.env.NEXT_PUBLIC_ADMIN_ACCOUNT_ARNAUD,
@@ -53,6 +59,10 @@ const SingleAsset = () => {
         ]
     
         setIsAdmin(adminAddresses.includes(address))
+    }, [address])
+
+    useEffect(() => {
+        getKycValidationByAddress()
     }, [address])
   
     const buyToken = async (event: FormEvent) => {
@@ -107,6 +117,38 @@ const SingleAsset = () => {
                 isClosable: true
             })
         }
+    }
+
+    const getKycValidationByAddress = async () => {
+        const query = `
+            query KycValidations($userAddress: String!) {
+                kycValidations(where: { userAddress: $userAddress }) {
+                    isValidated
+                    userAddress
+                    validationStatus
+                }
+            }
+        `
+    
+        const res = await fetch(
+            process.env.NEXT_PUBLIC_HYGRAPH_API_URL || '',
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_HYGRAPH_TOKEN}`
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: {
+                        userAddress: address
+                    }
+                })
+            }
+        )
+    
+        const data = await res.json()
+        setIsValidated(data?.data?.kycValidations[0]?.isValidated)
     }
 
     return (
@@ -216,6 +258,16 @@ const SingleAsset = () => {
                                         <Alert status='warning'>
                                             <AlertIcon />
                                             Veuillez vous connecter à un compte utilisateur, non administrateur.
+                                        </Alert>
+                                    </Stack>
+                                }
+                                {!isValidated && !isAdmin &&
+                                     <Stack mt='5'>
+                                        <Alert status='error'>
+                                            <AlertIcon />
+                                            <AlertTitle fontWeight='normal'>
+                                                Pour acheter des tokens, faites une demande de validation de KYC, <Link as={NextLink} href='/account/board'>ici</Link>.
+                                            </AlertTitle>
                                         </Alert>
                                     </Stack>
                                 }
