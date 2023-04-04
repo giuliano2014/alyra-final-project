@@ -36,7 +36,7 @@ const SingleAsset = () => {
 
     const isNumberOfTokenError = numberOfToken < 1
 
-    const buyToken = async (event: FormEvent) => { // TODO: dynamically pass asset address, on line 74
+    const buyToken = async (event: FormEvent) => {
         event.preventDefault()
 
         try {
@@ -66,10 +66,11 @@ const SingleAsset = () => {
             const formattedNumberOfToken = ethers.utils.parseEther(numberOfToken.toString()).toString()
 
             await contract.buyToken(
-                '0xCafac3dD18aC6c6e92c921884f9E4176737C052c',
+                id,
                 formattedNumberOfToken,
                 { value: formattedNumberOfToken }
             )
+
             toast({
                 title: 'Bravo !',
                 description: `Votre achat de ${numberOfToken} token(s), a bien été effectué.`,
