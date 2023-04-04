@@ -104,61 +104,66 @@ const Assets = () => {
                 <Heading size='xl'>Nos actifs</Heading>
                 <Text fontSize='xl' mt='10'>Multipliez votre exposition à vos crypto actifs préférés.</Text>
                 <Text fontSize='xl'>Parcourez nos produits ou sélectionnez un actif.</Text>
+                {assets.length === 0 && (
+                    <Heading mt='10' size='md'>Actuellement, aucun actif à la vente...</Heading>
+                )}
             </Box>
-            <SimpleGrid minChildWidth='xs' mt='20' spacing='40px'>
-                {assets.map(({ assetAddress, name, symbol, totalSupply }) => (
-                    <Card borderRadius='2xl' w='100%' key={assetAddress}>
-                        <CardHeader>
-                            <Heading size='md'>{name}</Heading>
-                        </CardHeader>
-                        <CardBody>
-                            <Stack divider={<StackDivider />} spacing='4'>
-                                <Box>
-                                    <Heading size='xs' textTransform='uppercase'>
-                                        Nature de l&apos;actif
-                                    </Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        Portefeuille diversifié d’actifs forestiers
-                                    </Text>
-                                </Box>
-                                <Card bg='teal.100' borderRadius='2xl'>
-                                    <CardBody textAlign='center'>
-                                        <Text>Avec 100 USDC 👇</Text>
-                                        <Heading size='xs'>Obtenez 1 {symbol}</Heading>
-                                    </CardBody>
-                                </Card>
-                                <Box>
-                                    <Heading size='xs' textTransform='uppercase'>
-                                        Nom du token de l&apos;actif
-                                    </Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        {symbol}
-                                    </Text>
-                                </Box>
-                                <Box>
-                                    <Heading size='xs' textTransform='uppercase'>
-                                        Nombre de token émis
-                                    </Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        {totalSupply}
-                                    </Text>
-                                </Box>  
-                            </Stack>
-                        </CardBody>
-                        <Divider color='#e2e8f0' />
-                        <CardFooter justifyContent='end'>
-                            <Button
-                                as={NextLink}
-                                color='white'
-                                colorScheme='blue'
-                                href={`/assets/${assetAddress}`}
-                            >
-                                En savoir plus
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                ))}
-            </SimpleGrid>
+            {assets.length > 0 && (
+                <SimpleGrid minChildWidth='xs' mt='20' spacing='40px'>
+                    {assets.map(({ assetAddress, name, symbol, totalSupply }) => (
+                        <Card borderRadius='2xl' w='100%' key={assetAddress}>
+                            <CardHeader>
+                                <Heading size='md'>{name}</Heading>
+                            </CardHeader>
+                            <CardBody>
+                                <Stack divider={<StackDivider />} spacing='4'>
+                                    <Box>
+                                        <Heading size='xs' textTransform='uppercase'>
+                                            Nature de l&apos;actif
+                                        </Heading>
+                                        <Text fontSize='sm' pt='2'>
+                                            Portefeuille diversifié d’actifs forestiers
+                                        </Text>
+                                    </Box>
+                                    <Card bg='teal.100' borderRadius='2xl'>
+                                        <CardBody textAlign='center'>
+                                            <Text>Avec 100 USDC 👇</Text>
+                                            <Heading size='xs'>Obtenez 1 {symbol}</Heading>
+                                        </CardBody>
+                                    </Card>
+                                    <Box>
+                                        <Heading size='xs' textTransform='uppercase'>
+                                            Nom du token de l&apos;actif
+                                        </Heading>
+                                        <Text fontSize='sm' pt='2'>
+                                            {symbol}
+                                        </Text>
+                                    </Box>
+                                    <Box>
+                                        <Heading size='xs' textTransform='uppercase'>
+                                            Nombre de token émis
+                                        </Heading>
+                                        <Text fontSize='sm' pt='2'>
+                                            {totalSupply}
+                                        </Text>
+                                    </Box>  
+                                </Stack>
+                            </CardBody>
+                            <Divider color='#e2e8f0' />
+                            <CardFooter justifyContent='end'>
+                                <Button
+                                    as={NextLink}
+                                    color='white'
+                                    colorScheme='blue'
+                                    href={`/assets/${assetAddress}`}
+                                >
+                                    En savoir plus
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </SimpleGrid>
+            )}
         </>
     )
 }
