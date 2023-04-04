@@ -171,6 +171,7 @@ const AdminBoard = () => {
     
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
             const result = await contract.getBalance(assetAddress, accountAddress)
+            console.log("getBalance", parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
         }
