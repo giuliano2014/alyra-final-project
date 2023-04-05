@@ -31,7 +31,6 @@ const UserBoard = () => {
 
     useEffect(() => {
         getKycValidationByAddress()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
     const askForKycValidation = async (e: any) => {
@@ -130,7 +129,7 @@ const UserBoard = () => {
     return (
         <>
             <Box mt='16' textAlign='center'>
-                <Heading size='xl'>Tableau de bord</Heading>
+                <Heading size='xl'>Portefeuille</Heading>
             </Box>
             <Tabs colorScheme='purple' isLazy  mt='20' variant='soft-rounded'>
                 <TabList>

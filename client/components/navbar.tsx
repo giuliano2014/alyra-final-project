@@ -18,25 +18,13 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import NextLink from 'next/link'
 import React, { useState } from 'react'
 
+import useAdminCheck from '@/hooks/useAdminCheck'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Navbar = () => {
+    const isAdmin = useAdminCheck()
     const isAccountConnected = useIsAccountConnected()
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-
-    // const { address, connector, isConnected, isReconnecting, isDisconnected } = useAccount({
-    //     onConnect: () => {
-    //         console.log('onConnect isConnected', isConnected)
-    //         console.log('onConnect isDisconnected', isDisconnected)
-    //         console.log('onConnect isReconnecting', isReconnecting)
-    //     },
-    //     onDisconnect: () => {
-    //         console.log('onDisconnect isConnected', isConnected)
-    //         console.log('onDisconnect isDisconnected', isDisconnected)
-    //         console.log('onDisconnect isReconnecting', isReconnecting)
-    //     }
-    // })
 
     const handleMobileMenu = () => {
         setMobileMenuOpen(!isMobileMenuOpen)
@@ -61,7 +49,7 @@ const Navbar = () => {
                                 Accueil
                             </Button>
                             <Button as={NextLink} href='/assets' variant='ghost'>
-                                Actifs
+                                Investir
                             </Button>
                             <Menu>
                                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
@@ -86,7 +74,9 @@ const Navbar = () => {
                                     variant='outline'
                                 />
                                 <MenuList>
-                                    <MenuItem as={NextLink} href='/account/board'>Tableau de bord</MenuItem>
+                                    <MenuItem as={NextLink} href='/account/board'>
+                                        {isAdmin ? "Tableau de bord" : "Portefeuille"}
+                                    </MenuItem>
                                     <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
                                     <MenuItem as={NextLink} href='/account/settings'>Paramètres</MenuItem>
                                 </MenuList>
