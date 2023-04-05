@@ -2,9 +2,12 @@
 pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./Asset.sol";
 
-contract FinancialVehicle {
+contract FinancialVehicle is AccessControl {
+
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     struct Token {
         address assetAddress;
@@ -21,8 +24,20 @@ contract FinancialVehicle {
     // Asset public asset;
     Token[] private assets;
 
-    constructor(address _master) {
+    modifier onlyAdmin() {
+        require(
+            hasRole(ADMIN_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
+            "You are not an admin"
+        );
+        _;
+    }
+
+    constructor(address _master, address[] memory admins) {
         master = _master;
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        for (uint256 i = 0; i < admins.length; i++) {
+            _setupRole(ADMIN_ROLE, admins[i]);
+        }
     }
 
     // C'est le véhicule financier qui approuve le transfert de tokens
@@ -30,17 +45,21 @@ contract FinancialVehicle {
     //     return Asset(_assetAddress).approve(address(this), _amount);
     // }
 
+    // TODO: only user, not admins and owner
+    // TODO: use asset, line 24
     function buyToken(address _assetAddress, uint256 _amount) external payable returns (bool) {
         require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
-    function createAsset( // TODO: onlyOwner and admins with onlyRole(DEFAULT_ADMIN_ROLE)
+     // TODO: use asset, line 24
+    function createAsset(
         string calldata _name,
         string calldata _symbol,
         uint256 _totalSupply
     )
         external
+        onlyAdmin
         returns (Asset clone)
     {
         clone = Asset(Clones.clone(master));
@@ -56,23 +75,23 @@ contract FinancialVehicle {
         return assets;
     }
 
-    function getBalance(address _assetAddress, address _account) external view returns (uint256) {
+    function getBalance(address _assetAddress, address _account) external view returns (uint256) {  // TODO: use asset, line 24
         return Asset(_assetAddress).balanceOf(_account);
     }
 
-    function getBalanceOfFinancialVehicle() external view returns (uint256) {
+    function getBalanceOfFinancialVehicle() external view onlyAdmin returns (uint256) {
         return address(this).balance;
     }
 
-    function getPrice(address _assetAddress) external pure returns (uint256) {
+    function getPrice(address _assetAddress) external pure returns (uint256) {  // TODO: remove this unused function
         return Asset(_assetAddress).price(1 ether);
     }
 
-    function withdraw(address _assetAddress, address _to, uint256 _amount) external returns (bool) {
+    function withdraw(address _assetAddress, address _to, uint256 _amount) external onlyAdmin returns (bool) {  // TODO: use asset, line 24
         return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
     }
 
-    function withdrawFromFinancialVehicle(uint256 amount, address payable recipient) external { // TODO: onlyOwner and admins
+    function withdrawFromFinancialVehicle(uint256 amount, address payable recipient) external onlyAdmin {
         require(address(this).balance >= amount, "Insufficient balance");
 
         recipient.transfer(amount);

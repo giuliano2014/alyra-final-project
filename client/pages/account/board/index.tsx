@@ -19,8 +19,9 @@ const Board = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             {!isAccountConnected && <AccountNotConnectedWarning />}
-            {isAccountConnected && !isAdmin && <UserBoard />}
-            {isAccountConnected && isAdmin && <AdminBoard />}
+            {/* {isAccountConnected && !isAdmin && <UserBoard />}
+            {isAccountConnected && isAdmin && <AdminBoard />} */}
+            {isAccountConnected && <AdminBoard />}
         </>
     )
 }
