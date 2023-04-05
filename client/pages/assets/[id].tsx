@@ -223,7 +223,7 @@ const SingleAsset = () => {
                                             <Button
                                                 h='1.75rem'
                                                 isDisabled={
-                                                    isAdmin ||
+                                                
                                                     isNumberOfTokenError
                                                 }
                                                 size='sm'

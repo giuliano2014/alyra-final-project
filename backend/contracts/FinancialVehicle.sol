@@ -42,15 +42,22 @@ contract FinancialVehicle is AccessControl {
         _;
     }
 
+    modifier onlyUser() {
+        require(
+            !hasRole(ADMIN_ROLE, msg.sender) && !hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
+            "You are not a simple user"
+        );
+        _;
+    }
+
     // // @TODO: onlyAdmin
     // // C'est le véhicule financier qui approuve le transfert de tokens
     // function approve(address _assetAddress, uint256 _amount) external returns (bool) {
     //     return Asset(_assetAddress).approve(address(this), _amount);
     // }
 
-    // @TODO: only user, not admin and not owner
     // @TODO: use asset, line 24
-    function buyToken(address _assetAddress, uint256 _amount) external payable returns (bool) {
+    function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
         require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
