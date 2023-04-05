@@ -16,6 +16,14 @@ contract FinancialVehicle is AccessControl {
         uint256 totalSupply;
     }
 
+    enum WorkflowStatus {
+        NoCurrentSellingSession,
+        SellingSessionStarted,
+        SellingSessionEnded
+    }
+
+    event WorkflowStatusChange(address assetAddress, WorkflowStatus newStatus);
+
     event AssetCreated(address, string, string, uint256);
     event Received(uint value);
     event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
@@ -23,6 +31,8 @@ contract FinancialVehicle is AccessControl {
     address internal master;
     // Asset public asset;
     Token[] private assets;
+
+    mapping(address => WorkflowStatus) sellingStatus;
 
     constructor(address _master, address[] memory _admins) {
         master = _master;
@@ -109,6 +119,22 @@ contract FinancialVehicle is AccessControl {
 
         recipient.transfer(amount);
         emit WithdrawFromFinancialVehicle(recipient, amount);
+    }
+
+    function startSellingSession(address _assetAddress) external onlyAdmin {
+        require(sellingStatus[_assetAddress] != WorkflowStatus.SellingSessionEnded, "Selling session already ended");
+        require(sellingStatus[_assetAddress] == WorkflowStatus.NoCurrentSellingSession, "Selling session already started");
+
+        sellingStatus[_assetAddress] = WorkflowStatus.SellingSessionStarted;
+        emit WorkflowStatusChange(_assetAddress, WorkflowStatus.SellingSessionStarted);
+    }
+
+    function endSellingSession(address _assetAddress) external onlyAdmin {
+        require(sellingStatus[_assetAddress] != WorkflowStatus.SellingSessionEnded, "Selling session already ended");
+        require(sellingStatus[_assetAddress] == WorkflowStatus.SellingSessionStarted, "Selling session not started yet");
+
+        sellingStatus[_assetAddress] = WorkflowStatus.SellingSessionEnded;
+        emit WorkflowStatusChange(_assetAddress,  WorkflowStatus.SellingSessionEnded);
     }
 
     fallback() external payable {

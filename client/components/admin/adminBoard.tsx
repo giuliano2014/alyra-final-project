@@ -3,7 +3,6 @@ import {
     Box,
     Button,
     Card,
-    effect,
     Heading,
     Tab,
     Table,
@@ -22,7 +21,7 @@ import {
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { FormEvent, useEffect, useState } from 'react'
-import { useProvider, useSigner } from 'wagmi'
+import { useContractEvent, useProvider, useSigner } from 'wagmi'
 
 import AddNewAsset from '@/components/admin/addNewAsset'
 import Fund from '@/components/admin/fund'
@@ -46,21 +45,26 @@ type FormattedAsset = {
 const AdminBoard = () => {
     const provider = useProvider()
     const { data: signer } = useSigner()
-    const [assetName, setAssetName] = useState('')
-    const [recipientAddress, setRecipientAddress] = useState('')
-    const [withdrawAmount, setWithdrawAmount] = useState(0)
-    const [assetTotalSupply, setAssetTotalSupply] = useState(0)
-    const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assets, setAssets] = useState<FormattedAsset[]>([])
+    const [assetName, setAssetName] = useState('')
+    const [assetSymbol, setAssetTokenSymbol] = useState('')
+    const [assetTotalSupply, setAssetTotalSupply] = useState(0)
     const [financialVehicleBalance, setFinancialVehicleBalance] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingEndSellingSessions, setIsLoadingEndSellingSessions] = useState<{ [key: string]: boolean }>({});
+    const [isLoadingStartSellingSessions, setIsLoadingStartSellingSessions] = useState<{ [key: string]: boolean }>({});
     const [kycValidations, setKycValidations] = useState<any[]>([])
+    const [recipientAddress, setRecipientAddress] = useState('')
+    const [withdrawAmount, setWithdrawAmount] = useState(0)
     const toast = useToast()
+
 
     useEffect(() => {
         getAssets()
+        console.log('isLoadingEndSellingSessions', isLoadingEndSellingSessions)
+        console.log('isLoading3', isLoadingStartSellingSessions)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [isLoadingEndSellingSessions, isLoadingStartSellingSessions])
 
     useEffect(() => {
         getKycValidations()
@@ -324,6 +328,76 @@ const AdminBoard = () => {
         }
     }
 
+    const startSellingSession = async (assetAddress: string) => {
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            await contract.startSellingSession(assetAddress)
+            setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    const endSellingSession = async (assetAddress: string) => {
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            await contract.endSellingSession(assetAddress)
+            setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    useContractEvent({
+        address: financialVehicleContractAddress as any,
+        abi: financialVehicleAbi,
+        eventName: 'WorkflowStatusChange',
+        listener(assetAddress, newStatus) {
+            console.log("WorkflowStatusChange newStatus", newStatus)
+            if (newStatus === 0) {
+                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+                setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+            }
+            if (newStatus === 1) {
+                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+                setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+            }
+            if (newStatus === 2) {
+                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+                setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+            }
+        }
+    })
+
+    // useEffect(() => {
+    //     try {
+    //         if (!signer) return
+
+    //         if (!financialVehicleContractAddress) {
+    //             throw new Error("contractAddress is not defined")
+    //         }
+
+    //         const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+    //         await contract.startSellingSession(assetAddress)
+    //         setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
+    //     } catch (error) {
+    //         console.error("Error fetching and formatting assets:", error)
+    //     }
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
+
     return (
         <>
             <Box mt='16' textAlign='center'>
@@ -367,61 +441,19 @@ const AdminBoard = () => {
                                                         <Td>0</Td>
                                                         <Td>{totalSupply}</Td>
                                                         <Td>
+                                                        {!isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
                                                             <Badge>Vente non commencée</Badge>
+                                                        )}
+                                                        {isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
+                                                            <Badge colorScheme="green">Vente en cours</Badge>
+                                                        )}
+                                                        {!isLoadingStartSellingSessions[assetAddress] && isLoadingEndSellingSessions[assetAddress] && (
+                                                            <Badge colorScheme="red">Vente clôturée</Badge>
+                                                        )}
                                                         </Td>
                                                     </Tr>
                                                 )
                                             })}
-                                            {/* <Tr>
-                                                <Td>Actif #1</Td>
-                                                <Td>200.000</Td>
-                                                <Td>AFT</Td>
-                                                <Td>130.000</Td>
-                                                <Td>70.000</Td>
-                                                <Td>
-                                                    <Badge colorScheme="orange">Vente en cours</Badge>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Actif #2</Td>
-                                                <Td>1.000.000</Td>
-                                                <Td>AST</Td>
-                                                <Td>350.000</Td>
-                                                <Td>650.000</Td>
-                                                <Td>
-                                                    <Badge colorScheme="orange">Deuxième tour</Badge>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Actif #3</Td>
-                                                <Td>50.000</Td>
-                                                <Td>ATT</Td>
-                                                <Td>50.000</Td>
-                                                <Td>0</Td>
-                                                <Td>
-                                                    <Badge colorScheme="green">Vente clôturée</Badge>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Actif #4</Td>
-                                                <Td>500.000</Td>
-                                                <Td>AQT</Td>
-                                                <Td>0</Td>
-                                                <Td>500.000</Td>
-                                                <Td>
-                                                    <Badge>Vente non commencée</Badge>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Actif #5</Td>
-                                                <Td>2.000.000</Td>
-                                                <Td>ACT</Td>
-                                                <Td>1.300.000</Td>
-                                                <Td>700.000</Td>
-                                                <Td>
-                                                    <Badge colorScheme="red">Vente annulée</Badge>
-                                                </Td>
-                                            </Tr> */}
                                         </Tbody>
                                     </Table>
                                 </TableContainer>
@@ -437,9 +469,8 @@ const AdminBoard = () => {
                                             <Tr>
                                                 <Th>Address</Th>
                                                 <Th>Nom</Th>
-                                                <Th>Phase 1</Th>
-                                                <Th>Phase 2</Th>
-                                                <Th>Annulation</Th>
+                                                <Th>Démarrer la vente</Th>
+                                                <Th>Clôturer la vente</Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
@@ -466,141 +497,37 @@ const AdminBoard = () => {
                                                                 withdraw 
                                                             </Button>
                                                         </Td>
-                                                        <Td>
-                                                            <Button colorScheme='red' isDisabled size='xs'>
-                                                                Annuler
-                                                            </Button>
-                                                        </Td>
                                                     </Tr>
                                                 )
                                             })}
-                                            {assets.length > 0 && assets.map(({ assetAddress, name }) => {
+                                            {assets.length > 0 && assets.map(({ assetAddress, name }, index) => {
                                                 return (
                                                     <Tr key={assetAddress}>
                                                         <Td>{assetAddress}</Td>
                                                         <Td>{name}</Td>
                                                         <Td>
-                                                            <Button colorScheme='teal' size='xs'>
+                                                            <Button
+                                                                colorScheme='teal'
+                                                                // isDisabled={isLoadingStartSellingSessions[assetAddress]}
+                                                                onClick={() => startSellingSession(assetAddress)}
+                                                                size='xs'
+                                                            >
                                                                 Commencer
                                                             </Button>
                                                         </Td>
                                                         <Td>
-                                                            <Button colorScheme='teal' isDisabled size='xs'>
-                                                                Commencer
-                                                            </Button>
-                                                        </Td>
-                                                        <Td>
-                                                            <Button colorScheme='red' isDisabled size='xs'>
-                                                                Annuler
+                                                            <Button
+                                                                colorScheme='red'
+                                                                // isDisabled={isLoadingEndSellingSessions[assetAddress]}
+                                                                onClick={() => endSellingSession(assetAddress)}
+                                                                size='xs'
+                                                            >
+                                                                Terminer
                                                             </Button>
                                                         </Td>
                                                     </Tr>
                                                 )
                                             })}
-                                            {/* <Tr>
-                                                <Td>Asset #1</Td>
-                                                <Td>
-                                                    <Button
-                                                        colorScheme='teal'
-                                                        isLoading
-                                                        loadingText='En cours'
-                                                        size='xs'
-                                                        spinnerPlacement='start'
-                                                        variant='outline'
-                                                    >
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' isDisabled size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='red' size='xs'>
-                                                        Annuler
-                                                    </Button>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Asset #2</Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' isDisabled size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button
-                                                        colorScheme='teal'
-                                                        isLoading
-                                                        loadingText='En cours'
-                                                        size='xs'
-                                                        spinnerPlacement='start'
-                                                        variant='outline'
-                                                    >
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='red' size='xs'>
-                                                        Annuler
-                                                    </Button>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Asset #3</Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' isDisabled size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' isDisabled size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='red' isDisabled size='xs'>
-                                                        Annuler
-                                                    </Button>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Asset #4</Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' isDisabled size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='red' isDisabled size='xs'>
-                                                        Annuler
-                                                    </Button>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Asset #5</Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' isDisabled size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='teal' isDisabled size='xs'>
-                                                        Commencer
-                                                    </Button>
-                                                </Td>
-                                                <Td>
-                                                    <Button colorScheme='red' isDisabled size='xs'>
-                                                        Annuler
-                                                    </Button>
-                                                </Td>
-                                            </Tr> */}
                                         </Tbody>
                                     </Table>
                                 </TableContainer>

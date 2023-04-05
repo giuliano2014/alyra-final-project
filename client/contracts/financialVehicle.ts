@@ -156,6 +156,25 @@ export const financialVehicleAbi = [
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "assetAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum FinancialVehicle.WorkflowStatus",
+        "name": "newStatus",
+        "type": "uint8"
+      }
+    ],
+    "name": "WorkflowStatusChange",
+    "type": "event"
+  },
+  {
     "stateMutability": "payable",
     "type": "fallback"
   },
@@ -235,6 +254,19 @@ export const financialVehicleAbi = [
         "type": "address"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_assetAddress",
+        "type": "address"
+      }
+    ],
+    "name": "endSellingSession",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -422,6 +454,19 @@ export const financialVehicleAbi = [
       }
     ],
     "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_assetAddress",
+        "type": "address"
+      }
+    ],
+    "name": "startSellingSession",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
