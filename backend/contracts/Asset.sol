@@ -13,12 +13,14 @@ contract Asset is ERC20, Initializable {
         _disableInitializers();
     }
 
-    function initialize( // @TODO: onlyOwner and admins
+    // @TODO: don't work with internal ???
+    // @TODO: onlyAdmin
+    function initialize(
         string calldata _name,
         string calldata _symbol,
         uint256 _totalSupply
     ) 
-        external
+        public
         initializer
     {
         name_ = _name;
@@ -26,16 +28,10 @@ contract Asset is ERC20, Initializable {
         _mint(msg.sender, _totalSupply);
     }
 
-    function price(uint256 amount) public pure virtual returns (uint256) {
-        require(amount > 100, "Amount must be greater than 100");
-        return amount * 1 wei;
-    }
-
-    /**
-     * @dev Returns the symbol of the token, usually a shorter version of the
-     * name.
-     */
-    function symbol() public view virtual override returns (string memory) {
-        return symbol_;
+    // @TODO: don't work with internal ???
+    // @TODO: onlyAdmin
+    function price(uint256 _amount) public pure virtual returns (uint256) {
+        require(_amount > 100, "Amount must be greater than 100");
+        return _amount * 1 wei;
     }
 }
