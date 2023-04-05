@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract Asset is ERC20, Initializable {
 
-    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-
     string private name_;
     string private symbol_;
 
@@ -15,7 +13,8 @@ contract Asset is ERC20, Initializable {
         _disableInitializers();
     }
 
-    // TODO: don't work with internal ???
+    // @TODO: don't work with internal ???
+    // @TODO: onlyAdmin
     function initialize(
         string calldata _name,
         string calldata _symbol,
@@ -29,7 +28,9 @@ contract Asset is ERC20, Initializable {
         _mint(msg.sender, _totalSupply);
     }
 
-    function price(uint256 _amount) public pure virtual returns (uint256) { // TODO: don't work with internal ???
+    // @TODO: don't work with internal ???
+    // @TODO: onlyAdmin
+    function price(uint256 _amount) public pure virtual returns (uint256) {
         require(_amount > 100, "Amount must be greater than 100");
         return _amount * 1 wei;
     }
