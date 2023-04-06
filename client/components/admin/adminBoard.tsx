@@ -58,13 +58,10 @@ const AdminBoard = () => {
     const [withdrawAmount, setWithdrawAmount] = useState(0)
     const toast = useToast()
 
-
     useEffect(() => {
         getAssets()
-        console.log('isLoadingEndSellingSessions', isLoadingEndSellingSessions)
-        console.log('isLoadingStartSellingSessions', isLoadingStartSellingSessions)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoadingEndSellingSessions, isLoadingStartSellingSessions])
+    }, [])
 
     useEffect(() => {
         getKycValidations()
@@ -381,22 +378,44 @@ const AdminBoard = () => {
         }
     })
 
-    // useEffect(() => {
-    //     try {
-    //         if (!signer) return
+    useEffect(() => {
+        async function fetchPastEvents() {
+            try {
+                if (!signer) return
+            
+                if (!financialVehicleContractAddress) {
+                    throw new Error("contractAddress is not defined")
+                }
+            
+                const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+                const filter = contract.filters.WorkflowStatusChange();
+                const events = await contract.queryFilter(filter);
+            
+                events.forEach((event) => {
+                    const { assetAddress, newStatus } = event.args;
 
-    //         if (!financialVehicleContractAddress) {
-    //             throw new Error("contractAddress is not defined")
-    //         }
-
-    //         const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-    //         await contract.startSellingSession(assetAddress)
-    //         setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
-    //     } catch (error) {
-    //         console.error("Error fetching and formatting assets:", error)
-    //     }
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
+                    if (newStatus === 0) {
+                        setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+                        setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+                    }
+                    if (newStatus === 1) {
+                        setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+                        setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+                    }
+                    if (newStatus === 2) {
+                        setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+                        setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+                    }
+                })
+        
+            } catch (error) {
+                console.error("Error fetching and formatting assets:", error)
+            }
+        }
+        
+        fetchPastEvents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [startSellingSession])
 
     return (
         <>
@@ -474,7 +493,7 @@ const AdminBoard = () => {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                        {assets.length > 0 && assets.map(({ assetAddress, name }) => {
+                                            {/* {assets.length > 0 && assets.map(({ assetAddress, name }) => {
                                                 return (
                                                     <Tr key={assetAddress}>
                                                         <Td>{assetAddress}</Td>
@@ -499,7 +518,7 @@ const AdminBoard = () => {
                                                         </Td>
                                                     </Tr>
                                                 )
-                                            })}
+                                            })} */}
                                             {assets.length > 0 && assets.map(({ assetAddress, name }, index) => {
                                                 return (
                                                     <Tr key={assetAddress}>
