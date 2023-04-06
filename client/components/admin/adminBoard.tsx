@@ -62,7 +62,7 @@ const AdminBoard = () => {
     useEffect(() => {
         getAssets()
         console.log('isLoadingEndSellingSessions', isLoadingEndSellingSessions)
-        console.log('isLoading3', isLoadingStartSellingSessions)
+        console.log('isLoadingStartSellingSessions', isLoadingStartSellingSessions)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoadingEndSellingSessions, isLoadingStartSellingSessions])
 
@@ -375,7 +375,7 @@ const AdminBoard = () => {
                 setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
             }
             if (newStatus === 2) {
-                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
                 setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
             }
         }
@@ -447,7 +447,7 @@ const AdminBoard = () => {
                                                         {isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
                                                             <Badge colorScheme="green">Vente en cours</Badge>
                                                         )}
-                                                        {!isLoadingStartSellingSessions[assetAddress] && isLoadingEndSellingSessions[assetAddress] && (
+                                                        {isLoadingStartSellingSessions[assetAddress] && isLoadingEndSellingSessions[assetAddress] && (
                                                             <Badge colorScheme="red">Vente clôturée</Badge>
                                                         )}
                                                         </Td>
@@ -508,7 +508,7 @@ const AdminBoard = () => {
                                                         <Td>
                                                             <Button
                                                                 colorScheme='teal'
-                                                                // isDisabled={isLoadingStartSellingSessions[assetAddress]}
+                                                                isDisabled={isLoadingStartSellingSessions[assetAddress]}
                                                                 onClick={() => startSellingSession(assetAddress)}
                                                                 size='xs'
                                                             >
@@ -518,7 +518,7 @@ const AdminBoard = () => {
                                                         <Td>
                                                             <Button
                                                                 colorScheme='red'
-                                                                // isDisabled={isLoadingEndSellingSessions[assetAddress]}
+                                                                isDisabled={isLoadingEndSellingSessions[assetAddress]}
                                                                 onClick={() => endSellingSession(assetAddress)}
                                                                 size='xs'
                                                             >
