@@ -28,7 +28,7 @@ import Head from 'next/head'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useContractEvent, useSigner } from 'wagmi'
 
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
@@ -44,6 +44,7 @@ const SingleAsset = () => {
     const { data: signer } = useSigner()
     const [isValidated, setIsValidated] = useState(false)
     const [numberOfToken, setNumberOfToken] = useState(0)
+    const [sellingStatus, setSellingStatus] = useState(0)
     const toast = useToast()
 
     const isNumberOfTokenError = numberOfToken < 1
@@ -52,6 +53,11 @@ const SingleAsset = () => {
         getKycValidationByAddress()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
+
+    useEffect(() => {
+        getSellingStatus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id])
   
     const buyToken = async (event: FormEvent) => {
         event.preventDefault()
@@ -89,8 +95,8 @@ const SingleAsset = () => {
             )
 
             toast({
-                title: 'Bravo !',
-                description: `Votre achat de ${numberOfToken} token(s), a bien été effectué.`,
+                title: 'Bravo :)',
+                description: `Votre achat de ${numberOfToken} token(s), a bien été effectué`,
                 status: 'success',
                 duration: 5000,
                 isClosable: true
@@ -98,8 +104,8 @@ const SingleAsset = () => {
         } catch (error) {
             console.error("An error occured on buy token :", error)
             toast({
-                title: 'Oups !',
-                description: "Une erreur s'est produite :(",
+                title: 'Oups :(',
+                description: "Une erreur s'est produite",
                 status: 'error',
                 duration: 5000,
                 isClosable: true
@@ -138,6 +144,32 @@ const SingleAsset = () => {
         const data = await res.json()
         setIsValidated(data?.data?.kycValidations[0]?.isValidated)
     }
+
+    const getSellingStatus = async () => {
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const result = await contract.getSellingStatus(id)
+            setSellingStatus(result)
+        } catch (error) {
+            console.error("An error occured on getSellingStatus :", error)
+        }
+    }
+
+    useContractEvent({
+        address: financialVehicleContractAddress as any,
+        abi: financialVehicleAbi,
+        eventName: 'SellingStatusChange',
+        listener(assetAddress, newStatus) {
+            if (assetAddress !== id) return
+            setSellingStatus(newStatus as number)
+        }
+    })
 
     return (
         <>
@@ -207,136 +239,70 @@ const SingleAsset = () => {
                         </CardHeader>
                         <Divider color='#e2e8f0' />
                         <CardBody>
-                            <Box as='form' onSubmit={buyToken}>
-                                <FormControl isInvalid={isNumberOfTokenError}>
-                                    <FormLabel fontSize='sm'>Entrez le nombre de token que vous souhaitez acheter</FormLabel>
-                                    <InputGroup size='md'>
-                                        <Input
-                                            defaultValue={0}
-                                            min={1}
-                                            onChange={(e: any) => setNumberOfToken(e.target.value)}
-                                            pr='6.5rem'
-                                            step={1}
-                                            type='number'
-                                        />
-                                        <InputRightElement width='6.5rem'>
-                                            <Button
-                                                h='1.75rem'
-                                                isDisabled={
-                                                    isAdmin ||
-                                                    isNumberOfTokenError
-                                                }
-                                                size='sm'
-                                                type='submit'
-                                            >
-                                                Acheter
-                                            </Button>
-                                        </InputRightElement>
-                                    </InputGroup>
-                                    {isNumberOfTokenError ? (
-                                        <FormErrorMessage>
-                                            Le nombre total de token est obligatoire et doit être supérieur ou égal à 1.
-                                        </FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText>
-                                            Le nombre total de token doit être supérieur ou égal à 1.
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                {isAdmin &&
-                                    <Stack mt='5'>
-                                        <Alert status='warning'>
-                                            <AlertIcon />
-                                            Veuillez vous connecter avec un compte utilisateur, non administrateur.
-                                        </Alert>
-                                    </Stack>
-                                }
-                                {!isValidated && !isAdmin &&
-                                     <Stack mt='5'>
-                                        <Alert status='error'>
-                                            <AlertIcon />
-                                            <AlertTitle fontWeight='normal'>
-                                                Pour acheter des tokens, faites une demande de validation de KYC,{" "}
-                                                <Link as={NextLink} href='/account/board'>ici</Link>.
-                                            </AlertTitle>
-                                        </Alert>
-                                    </Stack>
-                                }
-                                {/* <Stack spacing={3}>
-                                    <Alert status='error'>
-                                        <AlertIcon />
-                                        There was an error processing your request
-                                    </Alert>
-                                
-                                    <Alert status='success'>
-                                        <AlertIcon />
-                                        Data uploaded to the server. Fire on!
-                                    </Alert>
-                                
-                                    <Alert status='warning'>
-                                        <AlertIcon />
-                                        Seems your account is about expire, upgrade now
-                                    </Alert>
-                                
-                                    <Alert status='info'>
-                                        <AlertIcon />
-                                        Chakra is going live on August 30th. Get ready!
-                                    </Alert>
-                                </Stack> */}
-                            </Box>
-                            {/* <Card bg='#F3F7F9' borderRadius='2xl' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Order information</Heading>
-                                    <Flex gap='4' justifyContent='space-between'>
-                                        <Text fontSize='sm' pt='2'>
-                                            Buying ETH
-                                        </Text>
-                                        <Text fontSize='sm' pt='2'>
-                                            0.25335 ETH $461.82
-                                        </Text>
-                                    </Flex>
-                                    <Flex gap='4' justifyContent='space-between'>
-                                        <Text fontSize='sm' pt='2'>
-                                            Total collateral
-                                        </Text>
-                                        <Text textAlign='right' fontSize='sm' pt='2'>
-                                            0.00000 ETH - 1.25258 ETH
-                                        </Text>
-                                    </Flex>
-                                    <Flex gap='4' justifyContent='space-between'>
-                                        <Text fontSize='sm' pt='2'>
-                                            Transaction fee
-                                        </Text>
-                                        <Text fontSize='sm' pt='2'>
-                                            0.924257 USDC
-                                        </Text>
-                                    </Flex>
-                                </CardBody>
-                            </Card>
-                            <Card bg='teal.100' borderRadius='2xl' color='teal' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Success information</Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        Buying ETH
-                                    </Text>
-                                </CardBody>
-                            </Card>
-                            <Card bg='orange.200' borderRadius='2xl' color='orange' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Warning information</Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        Buying ETH
-                                    </Text>
-                                </CardBody>
-                            </Card>
-                            <Card bg='red.200' borderRadius='2xl' color='red' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Error information</Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        Buying ETH
-                                    </Text>
-                                </CardBody>
-                            </Card> */}
+                            {sellingStatus === 0 &&
+                                <Heading size='sm' color='gray.500'>La vente de token n&apos;a pas encore commencée pour cet actif.</Heading>
+                            }
+                            {sellingStatus === 2 &&
+                                <Heading size='sm' color='red.500'>La vente de token est clôturée pour cet actif.</Heading>
+                            }
+                            {sellingStatus === 1 &&
+                                <Box as='form' onSubmit={buyToken}>
+                                    <FormControl isInvalid={isNumberOfTokenError}>
+                                        <FormLabel fontSize='sm'>Entrez le nombre de token que vous souhaitez acheter</FormLabel>
+                                        <InputGroup size='md'>
+                                            <Input
+                                                defaultValue={0}
+                                                min={1}
+                                                onChange={(e: any) => setNumberOfToken(e.target.value)}
+                                                pr='6.5rem'
+                                                step={1}
+                                                type='number'
+                                            />
+                                            <InputRightElement width='6.5rem'>
+                                                <Button
+                                                    h='1.75rem'
+                                                    isDisabled={
+                                                        isAdmin ||
+                                                        isNumberOfTokenError
+                                                    }
+                                                    size='sm'
+                                                    type='submit'
+                                                >
+                                                    Acheter
+                                                </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
+                                        {isNumberOfTokenError ? (
+                                            <FormErrorMessage>
+                                                Le nombre total de token est obligatoire et doit être supérieur ou égal à 1.
+                                            </FormErrorMessage>
+                                        ) : (
+                                            <FormHelperText>
+                                                Le nombre total de token doit être supérieur ou égal à 1.
+                                            </FormHelperText>
+                                        )}
+                                    </FormControl>
+                                    {isAdmin &&
+                                        <Stack mt='5'>
+                                            <Alert status='warning'>
+                                                <AlertIcon />
+                                                Veuillez vous connecter avec un compte utilisateur, non administrateur.
+                                            </Alert>
+                                        </Stack>
+                                    }
+                                    {!isValidated && !isAdmin &&
+                                        <Stack mt='5'>
+                                            <Alert status='error'>
+                                                <AlertIcon />
+                                                <AlertTitle fontWeight='normal'>
+                                                    Pour acheter des tokens, faites une demande de validation de KYC,{" "}
+                                                    <Link as={NextLink} href='/account/board'>ici</Link>.
+                                                </AlertTitle>
+                                            </Alert>
+                                        </Stack>
+                                    }
+                                </Box>
+                            }
                         </CardBody>
                     </Card>
                 </SimpleGrid>

@@ -75,7 +75,7 @@ const UserBoard = () => {
             setValidated(json.data.createKycValidation.isValidated)
             setStatus(json.data.createKycValidation.validationStatus)
             toast({
-                title: 'Bravo',
+                title: 'Bravo :)',
                 description: 'Votre demande a bien été prise en compte',
                 status: 'success',
                 duration: 5000,

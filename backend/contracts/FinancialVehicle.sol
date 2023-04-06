@@ -16,9 +16,18 @@ contract FinancialVehicle is AccessControl {
         uint256 totalSupply;
     }
 
+    enum SellingStatus {
+        NoCurrentSellingSession,
+        SellingSessionStarted,
+        SellingSessionEnded
+    }
+
     event AssetCreated(address, string, string, uint256);
     event Received(uint value);
+    event SellingStatusChange(address assetAddress, SellingStatus newStatus);
     event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
+
+    mapping(address => SellingStatus) sellingStatus;
 
     address internal master;
     // Asset public asset;
@@ -81,6 +90,14 @@ contract FinancialVehicle is AccessControl {
         return clone;
     }
 
+    function endSellingSession(address _assetAddress) external onlyAdmin {
+        require(sellingStatus[_assetAddress] != SellingStatus.SellingSessionEnded, "Selling session already ended");
+        require(sellingStatus[_assetAddress] == SellingStatus.SellingSessionStarted, "Selling session not started yet");
+
+        sellingStatus[_assetAddress] = SellingStatus.SellingSessionEnded;
+        emit SellingStatusChange(_assetAddress,  SellingStatus.SellingSessionEnded);
+    }
+
     function getAssets() external view returns (Token[] memory) {
         return assets;
     }
@@ -97,6 +114,18 @@ contract FinancialVehicle is AccessControl {
     // @TODO: remove this unused function
     function getPrice(address _assetAddress) external pure returns (uint256) {
         return Asset(_assetAddress).price(1 ether);
+    }
+
+    function getSellingStatus(address _assetAddress) external view returns (SellingStatus) {
+        return sellingStatus[_assetAddress];
+    }
+
+    function startSellingSession(address _assetAddress) external onlyAdmin {
+        require(sellingStatus[_assetAddress] != SellingStatus.SellingSessionEnded, "Selling session already ended");
+        require(sellingStatus[_assetAddress] == SellingStatus.NoCurrentSellingSession, "Selling session already started");
+
+        sellingStatus[_assetAddress] = SellingStatus.SellingSessionStarted;
+        emit SellingStatusChange(_assetAddress, SellingStatus.SellingSessionStarted);
     }
 
     // @TODO: use asset, line 24
