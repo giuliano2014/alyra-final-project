@@ -51,8 +51,8 @@ const AdminBoard = () => {
     const [assets, setAssets] = useState<FormattedAsset[]>([])
     const [financialVehicleBalance, setFinancialVehicleBalance] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [isLoadingEndSellingSessions, setIsLoadingEndSellingSessions] = useState<{ [key: string]: boolean }>({});
-    const [isLoadingStartSellingSessions, setIsLoadingStartSellingSessions] = useState<{ [key: string]: boolean }>({});
+    const [isLoadingEndSellingSessions, setIsLoadingEndSellingSessions] = useState<{ [key: string]: boolean }>({})
+    const [isLoadingStartSellingSessions, setIsLoadingStartSellingSessions] = useState<{ [key: string]: boolean }>({})
     const [kycValidations, setKycValidations] = useState<any[]>([])
     const [recipientAddress, setRecipientAddress] = useState('')
     const [withdrawAmount, setWithdrawAmount] = useState(0)
@@ -124,7 +124,7 @@ const AdminBoard = () => {
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             await contract.endSellingSession(assetAddress)
-            setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
+            setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }))
         } catch (error) {
             console.error("An error occurred on endSellingSession :", error)
         }
@@ -166,7 +166,7 @@ const AdminBoard = () => {
             if (events.length === 0) return
         
             events.forEach(event => {
-                const { assetAddress, newStatus } = event.args as any;
+                const { assetAddress, newStatus } = event.args as any
 
                 if (newStatus === 0) {
                     setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }))
@@ -218,7 +218,6 @@ const AdminBoard = () => {
         }
     }
 
-    // @TODO : remove this function if not used
     const getBalance = async (assetAddress: string, accountAddress: string) => {
         try {
             if (!financialVehicleContractAddress) {
@@ -227,9 +226,25 @@ const AdminBoard = () => {
     
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
             const result = await contract.getBalance(assetAddress, accountAddress)
-            console.log("getBalance", parseFloat(ethers.utils.formatUnits(result, 18)).toString())
+            const formattedResult = parseFloat(ethers.utils.formatUnits(result, 18)).toString()
+            const currentAsset = assets.find(asset => asset.assetAddress === assetAddress)
+            const numberOfTokensold = parseFloat(currentAsset?.totalSupply as string) - parseFloat(formattedResult)
+
+            toast({
+                title: `Vous avez vendu ${numberOfTokensold} ${currentAsset?.symbol} token(s)`,
+                description: `La balance restante, est de ${formattedResult} ${currentAsset?.symbol} token(s)`,
+                duration: 12000,
+                isClosable: true
+            })
         } catch (error) {
             console.error("An error occured on getBalance :", error)
+            toast({
+                title: 'Oups :(',
+                description: "Une erreur s'est produite",
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            })
         }
     }
 
@@ -289,7 +304,7 @@ const AdminBoard = () => {
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             await contract.startSellingSession(assetAddress)
-            setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
+            setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }))
         } catch (error) {
             console.error("An error occured on startSellingSession :", error)
         }
@@ -430,8 +445,6 @@ const AdminBoard = () => {
                                                 <Th>Statut</Th>
                                                 <Th>Nb total de token</Th>
                                                 <Th>Symbol du token</Th>
-                                                <Th>Nb token vendu</Th>
-                                                <Th>Nb token restant</Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
@@ -453,8 +466,6 @@ const AdminBoard = () => {
                                                         </Td>
                                                         <Td>{totalSupply}</Td>
                                                         <Td>{symbol}</Td>
-                                                        <Td>0</Td>
-                                                        <Td>{totalSupply}</Td>
                                                     </Tr>
                                                 )
                                             })}
@@ -475,35 +486,10 @@ const AdminBoard = () => {
                                                 <Th>Nom</Th>
                                                 <Th>Démarrer la vente</Th>
                                                 <Th>Clôturer la vente</Th>
+                                                <Th>Balance</Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            {/* {assets.length > 0 && assets.map(({ assetAddress, name }) => {
-                                                return (
-                                                    <Tr key={assetAddress}>
-                                                        <Td>{assetAddress}</Td>
-                                                        <Td>{name}</Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='teal'
-                                                                size='xs'
-                                                                onClick={() => getBalance(assetAddress, financialVehicleContractAddress || '')}
-                                                            >
-                                                                getBalance
-                                                            </Button>
-                                                        </Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='red'
-                                                                size='xs'
-                                                                onClick={() => withdraw(assetAddress, '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 190)}
-                                                            >
-                                                                withdraw 
-                                                            </Button>
-                                                        </Td>
-                                                    </Tr>
-                                                )
-                                            })} */}
                                             {assets.length > 0 && assets.map(({ assetAddress, name }, index) => {
                                                 return (
                                                     <Tr key={assetAddress}>
@@ -527,6 +513,15 @@ const AdminBoard = () => {
                                                                 size='xs'
                                                             >
                                                                 Terminer
+                                                            </Button>
+                                                        </Td>
+                                                        <Td>
+                                                            <Button
+                                                                colorScheme='blue'
+                                                                onClick={() => getBalance(assetAddress, financialVehicleContractAddress || '')}
+                                                                size='xs'
+                                                            >
+                                                                Consulter
                                                             </Button>
                                                         </Td>
                                                     </Tr>
