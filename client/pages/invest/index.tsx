@@ -134,7 +134,7 @@ const Assets = () => {
                                     </Box>
                                     <Card bg='teal.100' borderRadius='2xl'>
                                         <CardBody textAlign='center'>
-                                            <Text>Avec 100 USDC 👇</Text>
+                                            <Text>Avec 1 ETH 👇</Text>
                                             <Heading size='xs'>Obtenez 1 {symbol}</Heading>
                                         </CardBody>
                                     </Card>
@@ -162,7 +162,7 @@ const Assets = () => {
                                     as={NextLink}
                                     color='white'
                                     colorScheme='blue'
-                                    href={`/assets/${assetAddress}`}
+                                    href={`/invest/${assetAddress}`}
                                 >
                                     En savoir plus
                                 </Button>

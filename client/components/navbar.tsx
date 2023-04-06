@@ -48,7 +48,7 @@ const Navbar = () => {
                             <Button as={NextLink} href='/' variant='ghost'>
                                 Accueil
                             </Button>
-                            <Button as={NextLink} href='/assets' variant='ghost'>
+                            <Button as={NextLink} href='/invest' variant='ghost'>
                                 Investir
                             </Button>
                             <Menu>
@@ -57,9 +57,9 @@ const Navbar = () => {
                                 </MenuButton>
                                 <MenuList>
                                     <MenuItem as={NextLink} href='/about/team'>L&apos;équipe</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/manifest'>Le manifest</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/white-paper'>Le white Paper</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/help'>Aide</MenuItem>
+                                    <MenuItem>Le manifest</MenuItem>
+                                    <MenuItem>Le white Paper</MenuItem>
+                                    <MenuItem>Aide</MenuItem>
                                 </MenuList>
                             </Menu>
                         </Flex>
@@ -100,8 +100,8 @@ const Navbar = () => {
                         <Link href="/" mb='2'>
                             Accueil
                         </Link>
-                        <Link href="/assets" mb='2'>
-                            Actifs
+                        <Link href="/invest" mb='2'>
+                            Investir
                         </Link>
                         <Text mb='2'>
                             À propos
@@ -110,13 +110,13 @@ const Navbar = () => {
                             <Link href="/about/team" mb='2'>
                                 L&apos;équipe
                             </Link>
-                            <Link href="/about/manifest" mb='2'>
+                            <Link mb='2'>
                                 Le manifest
                             </Link>
-                            <Link href="/about/white-paper" mb='2'>
+                            <Link mb='2'>
                                 Le white Paper
                             </Link>
-                            <Link href="/about/help" mb='2'>
+                            <Link mb='2'>
                                 Aide
                             </Link>
                         </Flex>
