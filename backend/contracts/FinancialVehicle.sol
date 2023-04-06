@@ -138,6 +138,10 @@ contract FinancialVehicle is AccessControl {
         emit SellingStatusChange(_assetAddress,  SellingStatus.SellingSessionEnded);
     }
 
+    function getSellingStatus(address _assetAddress) external view returns (SellingStatus) {
+        return sellingStatus[_assetAddress];
+    }
+
     fallback() external payable {
         emit Received(msg.value);
     }

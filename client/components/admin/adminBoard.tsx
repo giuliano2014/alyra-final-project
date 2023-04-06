@@ -95,8 +95,8 @@ const AdminBoard = () => {
             const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
             await transaction.wait()
             toast({
-                title: 'Congratulations',
-                description: 'A new actif has been created !',
+                title: 'Bravo :)',
+                description: 'Votre nouvel actif a été créé',
                 status: 'success',
                 duration: 5000,
                 isClosable: true
@@ -105,8 +105,8 @@ const AdminBoard = () => {
         catch (error: any) {
             console.error(error)
             toast({
-                title: 'Error',
-                description: `An error occurred`,
+                title: 'Oops :(',
+                description: `Une erreur s'est produite`,
                 status: 'error',
                 duration: 5000,
                 isClosable: true
@@ -126,7 +126,7 @@ const AdminBoard = () => {
             await contract.endSellingSession(assetAddress)
             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occurred on endSellingSession :", error)
         }
     }
 
@@ -147,7 +147,7 @@ const AdminBoard = () => {
             const reversedResult = [...formattedResult].reverse()
             return reversedResult
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occurred on fetchAndFormatAssets :", error)
         }
     }
 
@@ -183,7 +183,7 @@ const AdminBoard = () => {
             })
     
         } catch (error) {
-            console.error("An error occurred on fetchPastEvents", error)
+            console.error("An error occurred on fetchPastSellingStatusChangeEvents :", error)
         }
     }
     
@@ -212,7 +212,7 @@ const AdminBoard = () => {
                 console.error("Error fetching and formatting assets.")
             }
         } catch (error) {
-            console.error("Error getting assets:", error)
+            console.error("An error occured on getAssets :", error)
         }
     }
 
@@ -227,7 +227,7 @@ const AdminBoard = () => {
             const result = await contract.getBalance(assetAddress, accountAddress)
             console.log("getBalance", parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occured on getBalance :", error)
         }
     }
 
@@ -241,7 +241,7 @@ const AdminBoard = () => {
             const result = await contract.getBalanceOfFinancialVehicle()
             setFinancialVehicleBalance(parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occured on getBalanceOfFinancialVehicle :", error)
         }
     }
 
@@ -289,7 +289,7 @@ const AdminBoard = () => {
             await contract.startSellingSession(assetAddress)
             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occured on startSellingSession :", error)
         }
     }
 
@@ -389,7 +389,7 @@ const AdminBoard = () => {
                 isClosable: true
             })
         } catch (error) {
-            console.error("An error occured on withdraw from financial vehicle", error)
+            console.error("An error occured on withdraw from financial vehicle :", error)
             toast({
                 title: 'Oups !',
                 description: "Une erreur s'est produite :(",
