@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract Asset is ERC20, Initializable {
+
     string private name_;
     string private symbol_;
 

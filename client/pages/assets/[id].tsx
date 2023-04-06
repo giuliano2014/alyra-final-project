@@ -28,7 +28,7 @@ import Head from 'next/head'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
-import { useAccount, useContractEvent, useProvider, useSigner } from 'wagmi'
+import { useAccount, useContractEvent, useSigner } from 'wagmi'
 
 import AccountNotConnectedWarning from '@/components/accountNotConnectedWarning'
 import { financialVehicleContractAddress, financialVehicleAbi } from '@/contracts/financialVehicle'
@@ -44,18 +44,20 @@ const SingleAsset = () => {
     const { data: signer } = useSigner()
     const [isValidated, setIsValidated] = useState(false)
     const [numberOfToken, setNumberOfToken] = useState(0)
+    const [sellingStatus, setSellingStatus] = useState(0)
     const toast = useToast()
 
-    const [sellingStatus, setSellingStatus] = useState(0)
-
     const isNumberOfTokenError = numberOfToken < 1
-
-    const provider = useProvider()
 
     useEffect(() => {
         getKycValidationByAddress()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
+
+    useEffect(() => {
+        getSellingStatus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id])
   
     const buyToken = async (event: FormEvent) => {
         event.preventDefault()
@@ -93,8 +95,8 @@ const SingleAsset = () => {
             )
 
             toast({
-                title: 'Bravo !',
-                description: `Votre achat de ${numberOfToken} token(s), a bien été effectué.`,
+                title: 'Bravo :)',
+                description: `Votre achat de ${numberOfToken} token(s), a bien été effectué`,
                 status: 'success',
                 duration: 5000,
                 isClosable: true
@@ -102,8 +104,8 @@ const SingleAsset = () => {
         } catch (error) {
             console.error("An error occured on buy token :", error)
             toast({
-                title: 'Oups !',
-                description: "Une erreur s'est produite :(",
+                title: 'Oups :(',
+                description: "Une erreur s'est produite",
                 status: 'error',
                 duration: 5000,
                 isClosable: true
@@ -145,7 +147,6 @@ const SingleAsset = () => {
 
     const getSellingStatus = async () => {
         try {
-
             if (!signer) return
 
             if (!financialVehicleContractAddress) {
@@ -154,27 +155,19 @@ const SingleAsset = () => {
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             const result = await contract.getSellingStatus(id)
-            console.log('sellingStatus', result)
             setSellingStatus(result)
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occured on getSellingStatus :", error)
         }
     }
-
-    useEffect(() => {
-        getSellingStatus()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id])
 
     useContractEvent({
         address: financialVehicleContractAddress as any,
         abi: financialVehicleAbi,
         eventName: 'SellingStatusChange',
         listener(assetAddress, newStatus) {
-            if (assetAddress === id) {
-                console.log('setSellingStatus good assetAddress')
-                setSellingStatus(newStatus as number)
-            }
+            if (assetAddress !== id) return
+            setSellingStatus(newStatus as number)
         }
     })
 
@@ -308,82 +301,8 @@ const SingleAsset = () => {
                                             </Alert>
                                         </Stack>
                                     }
-                                    {/* <Stack spacing={3}>
-                                        <Alert status='error'>
-                                            <AlertIcon />
-                                            There was an error processing your request
-                                        </Alert>
-                                    
-                                        <Alert status='success'>
-                                            <AlertIcon />
-                                            Data uploaded to the server. Fire on!
-                                        </Alert>
-                                    
-                                        <Alert status='warning'>
-                                            <AlertIcon />
-                                            Seems your account is about expire, upgrade now
-                                        </Alert>
-                                    
-                                        <Alert status='info'>
-                                            <AlertIcon />
-                                            Chakra is going live on August 30th. Get ready!
-                                        </Alert>
-                                    </Stack> */}
                                 </Box>
                             }
-                            {/* <Card bg='#F3F7F9' borderRadius='2xl' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Order information</Heading>
-                                    <Flex gap='4' justifyContent='space-between'>
-                                        <Text fontSize='sm' pt='2'>
-                                            Buying ETH
-                                        </Text>
-                                        <Text fontSize='sm' pt='2'>
-                                            0.25335 ETH $461.82
-                                        </Text>
-                                    </Flex>
-                                    <Flex gap='4' justifyContent='space-between'>
-                                        <Text fontSize='sm' pt='2'>
-                                            Total collateral
-                                        </Text>
-                                        <Text textAlign='right' fontSize='sm' pt='2'>
-                                            0.00000 ETH - 1.25258 ETH
-                                        </Text>
-                                    </Flex>
-                                    <Flex gap='4' justifyContent='space-between'>
-                                        <Text fontSize='sm' pt='2'>
-                                            Transaction fee
-                                        </Text>
-                                        <Text fontSize='sm' pt='2'>
-                                            0.924257 USDC
-                                        </Text>
-                                    </Flex>
-                                </CardBody>
-                            </Card>
-                            <Card bg='teal.100' borderRadius='2xl' color='teal' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Success information</Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        Buying ETH
-                                    </Text>
-                                </CardBody>
-                            </Card>
-                            <Card bg='orange.200' borderRadius='2xl' color='orange' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Warning information</Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        Buying ETH
-                                    </Text>
-                                </CardBody>
-                            </Card>
-                            <Card bg='red.200' borderRadius='2xl' color='red' mt='4'>
-                                <CardBody>
-                                    <Heading size='xs'>Error information</Heading>
-                                    <Text fontSize='sm' pt='2'>
-                                        Buying ETH
-                                    </Text>
-                                </CardBody>
-                            </Card> */}
                         </CardBody>
                     </Card>
                 </SimpleGrid>

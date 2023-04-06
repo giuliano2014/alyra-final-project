@@ -45,10 +45,10 @@ type FormattedAsset = {
 const AdminBoard = () => {
     const provider = useProvider()
     const { data: signer } = useSigner()
-    const [assets, setAssets] = useState<FormattedAsset[]>([])
     const [assetName, setAssetName] = useState('')
     const [assetSymbol, setAssetTokenSymbol] = useState('')
     const [assetTotalSupply, setAssetTotalSupply] = useState(0)
+    const [assets, setAssets] = useState<FormattedAsset[]>([])
     const [financialVehicleBalance, setFinancialVehicleBalance] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingEndSellingSessions, setIsLoadingEndSellingSessions] = useState<{ [key: string]: boolean }>({});
@@ -172,10 +172,12 @@ const AdminBoard = () => {
                     setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }))
                     setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }))
                 }
+
                 if (newStatus === 1) {
                     setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }))
                     setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }))
                 }
+
                 if (newStatus === 2) {
                     setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }))
                     setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }))
@@ -362,7 +364,7 @@ const AdminBoard = () => {
 
             await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occured on withdraw :", error)
         }
     }
 
@@ -382,44 +384,23 @@ const AdminBoard = () => {
             // const result = await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
             // await result.wait()
             toast({
-                title: 'Super !',
-                description: 'Votre retrait est en cours de traitement.',
+                title: 'Bravo :)',
+                description: 'Votre retrait est en cours de traitement',
                 status: 'success',
                 duration: 5000,
                 isClosable: true
             })
         } catch (error) {
-            console.error("An error occured on withdraw from financial vehicle :", error)
+            console.error("An error occured on withdrawFromFinancialVehicle :", error)
             toast({
-                title: 'Oups !',
-                description: "Une erreur s'est produite :(",
+                title: 'Oups :(',
+                description: "Une erreur s'est produite",
                 status: 'error',
                 duration: 5000,
                 isClosable: true
             })
         }
     }
-
-    // @TODO: remove this function if not used
-    // useContractEvent({
-    //     address: financialVehicleContractAddress as any,
-    //     abi: financialVehicleAbi,
-    //     eventName: 'SellingStatusChange',
-    //     listener(assetAddress, newStatus) {
-    //         if (newStatus === 0) {
-    //             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-    //             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-    //         }
-    //         if (newStatus === 1) {
-    //             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-    //             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-    //         }
-    //         if (newStatus === 2) {
-    //             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-    //             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-    //         }
-    //     }
-    // })
 
     return (
         <>
