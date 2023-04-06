@@ -114,6 +114,22 @@ const AdminBoard = () => {
         }
     }
 
+    const endSellingSession = async (assetAddress: string) => {
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            await contract.endSellingSession(assetAddress)
+            setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
     const fetchAndFormatAssets = async () => {
         try {
             if (!financialVehicleContractAddress) {
@@ -132,6 +148,42 @@ const AdminBoard = () => {
             return reversedResult
         } catch (error) {
             console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    const fetchPastSellingStatusChangeEvents = async () => {
+        try {
+            if (!signer) return
+        
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+        
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            const filter = contract.filters.SellingStatusChange()
+            const events = await contract.queryFilter(filter)
+
+            if (events.length === 0) return
+        
+            events.forEach(event => {
+                const { assetAddress, newStatus } = event.args as any;
+
+                if (newStatus === 0) {
+                    setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }))
+                    setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }))
+                }
+                if (newStatus === 1) {
+                    setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }))
+                    setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }))
+                }
+                if (newStatus === 2) {
+                    setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }))
+                    setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }))
+                }
+            })
+    
+        } catch (error) {
+            console.error("An error occurred on fetchPastEvents", error)
         }
     }
     
@@ -164,7 +216,8 @@ const AdminBoard = () => {
         }
     }
 
-    const getBalance = async (assetAddress: string, accountAddress: string) => { // TODO: remove this function
+    // @TODO : remove this function if not used
+    const getBalance = async (assetAddress: string, accountAddress: string) => {
         try {
             if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
@@ -224,6 +277,27 @@ const AdminBoard = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
+    const startSellingSession = async (assetAddress: string) => {
+        try {
+            if (!signer) return
+
+            if (!financialVehicleContractAddress) {
+                throw new Error("contractAddress is not defined")
+            }
+
+            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
+            await contract.startSellingSession(assetAddress)
+            setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
+        } catch (error) {
+            console.error("Error fetching and formatting assets:", error)
+        }
+    }
+
+    useEffect(() => {
+        fetchPastSellingStatusChangeEvents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [startSellingSession])
+
     const validateKyc = async (id: string, isValidated: boolean) => {
         setIsLoading(true)
 
@@ -271,7 +345,8 @@ const AdminBoard = () => {
         }
     }
 
-    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => { // TODO: move this function in the right component
+    // @TODO: remove this function if not used
+    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => {
         try {
             if (!signer) return
 
@@ -325,97 +400,26 @@ const AdminBoard = () => {
         }
     }
 
-    const startSellingSession = async (assetAddress: string) => {
-        try {
-            if (!signer) return
-
-            if (!financialVehicleContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            await contract.startSellingSession(assetAddress)
-            setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
-    const endSellingSession = async (assetAddress: string) => {
-        try {
-            if (!signer) return
-
-            if (!financialVehicleContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            await contract.endSellingSession(assetAddress)
-            setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }));
-        } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
-        }
-    }
-
-    useContractEvent({
-        address: financialVehicleContractAddress as any,
-        abi: financialVehicleAbi,
-        eventName: 'WorkflowStatusChange',
-        listener(assetAddress, newStatus) {
-            console.log("WorkflowStatusChange newStatus", newStatus)
-            if (newStatus === 0) {
-                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-                setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-            }
-            if (newStatus === 1) {
-                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-                setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-            }
-            if (newStatus === 2) {
-                setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-                setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-            }
-        }
-    })
-
-    useEffect(() => {
-        async function fetchPastEvents() {
-            try {
-                if (!signer) return
-            
-                if (!financialVehicleContractAddress) {
-                    throw new Error("contractAddress is not defined")
-                }
-            
-                const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-                const filter = contract.filters.WorkflowStatusChange();
-                const events = await contract.queryFilter(filter);
-            
-                events.forEach((event) => {
-                    const { assetAddress, newStatus } = event.args;
-
-                    if (newStatus === 0) {
-                        setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-                        setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-                    }
-                    if (newStatus === 1) {
-                        setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-                        setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
-                    }
-                    if (newStatus === 2) {
-                        setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-                        setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
-                    }
-                })
-        
-            } catch (error) {
-                console.error("Error fetching and formatting assets:", error)
-            }
-        }
-        
-        fetchPastEvents()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [startSellingSession])
+    // @TODO: remove this function if not used
+    // useContractEvent({
+    //     address: financialVehicleContractAddress as any,
+    //     abi: financialVehicleAbi,
+    //     eventName: 'SellingStatusChange',
+    //     listener(assetAddress, newStatus) {
+    //         if (newStatus === 0) {
+    //             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+    //             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+    //         }
+    //         if (newStatus === 1) {
+    //             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+    //             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: false }));
+    //         }
+    //         if (newStatus === 2) {
+    //             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+    //             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress as string]: true }));
+    //         }
+    //     }
+    // })
 
     return (
         <>
@@ -442,11 +446,11 @@ const AdminBoard = () => {
                                             <Tr>
                                                 <Th>Adresse</Th>
                                                 <Th>Nom</Th>
+                                                <Th>Statut</Th>
                                                 <Th>Nb total de token</Th>
                                                 <Th>Symbol du token</Th>
                                                 <Th>Nb token vendu</Th>
                                                 <Th>Nb token restant</Th>
-                                                <Th>Statut</Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
@@ -455,21 +459,21 @@ const AdminBoard = () => {
                                                     <Tr key={assetAddress}>
                                                         <Td>{assetAddress}</Td>
                                                         <Td>{name}</Td>
+                                                        <Td>
+                                                            {!isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
+                                                                <Badge>Vente non commencée</Badge>
+                                                            )}
+                                                            {isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
+                                                                <Badge colorScheme="green">Vente en cours</Badge>
+                                                            )}
+                                                            {isLoadingStartSellingSessions[assetAddress] && isLoadingEndSellingSessions[assetAddress] && (
+                                                                <Badge colorScheme="red">Vente clôturée</Badge>
+                                                            )}
+                                                        </Td>
                                                         <Td>{totalSupply}</Td>
                                                         <Td>{symbol}</Td>
                                                         <Td>0</Td>
                                                         <Td>{totalSupply}</Td>
-                                                        <Td>
-                                                        {!isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
-                                                            <Badge>Vente non commencée</Badge>
-                                                        )}
-                                                        {isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
-                                                            <Badge colorScheme="green">Vente en cours</Badge>
-                                                        )}
-                                                        {isLoadingStartSellingSessions[assetAddress] && isLoadingEndSellingSessions[assetAddress] && (
-                                                            <Badge colorScheme="red">Vente clôturée</Badge>
-                                                        )}
-                                                        </Td>
                                                     </Tr>
                                                 )
                                             })}
