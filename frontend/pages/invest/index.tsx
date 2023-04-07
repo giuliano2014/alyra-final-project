@@ -47,6 +47,8 @@ const Assets = () => {
 
     const fetchAndFormatAssets = async () => {
         try {
+            if (!isAccountConnected) return
+
             if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
@@ -62,12 +64,14 @@ const Assets = () => {
 
             return formattedResult
         } catch (error) {
-            console.error("Error fetching and formatting assets:", error)
+            console.error("An error occured on fetchAndFormatAssets :", error)
         }
     }
     
     const getAssets = async () => {
         try {
+            if (!isAccountConnected) return
+
             if (!financialVehicleContractAddress) {
                 throw new Error("contractAddress is not defined")
             }
@@ -79,7 +83,7 @@ const Assets = () => {
                 if (formattedResult) {
                     setAssets(formattedResult)
                 } else {
-                    console.error("Error fetching and formatting assets.")
+                    console.error("An error occured on getAssets")
                 }
             })
     
@@ -87,10 +91,10 @@ const Assets = () => {
             if (formattedResult) {
                 setAssets(formattedResult)
             } else {
-                console.error("Error fetching and formatting assets.")
+                console.error("An error occured on getAssets")
             }
         } catch (error) {
-            console.error("Error getting assets:", error)
+            console.error("An error occured on getAssets :", error)
         }
     }
 
