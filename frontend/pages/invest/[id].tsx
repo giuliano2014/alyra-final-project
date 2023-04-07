@@ -54,10 +54,11 @@ const SingleAsset = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
+    // #TODO: modify this function with right dependencies for performance
     useEffect(() => {
         getSellingStatus()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id])
+    })
   
     const buyToken = async (event: FormEvent) => {
         event.preventDefault()
