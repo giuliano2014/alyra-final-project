@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
     Alert,
     AlertIcon,
@@ -17,10 +18,18 @@ import {
     InputGroup,
     InputRightElement,
     Link,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     SimpleGrid,
     Stack,
     StackDivider,
     Text,
+    useDisclosure,
     useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
@@ -39,9 +48,11 @@ const SingleAsset = () => {
     const { address } = useAccount()
     const isAdmin = useAdminCheck()
     const isAccountConnected = useIsAccountConnected()
+    const { isOpen, onOpen, onClose } = useDisclosure()
     const router = useRouter()
     const { id } = router.query
     const { data: signer } = useSigner()
+    const [isBuyingToken, setIsBuyingToken] = useState(false)
     const [isValidated, setIsValidated] = useState(false)
     const [numberOfToken, setNumberOfToken] = useState(0)
     const [sellingStatus, setSellingStatus] = useState(0)
@@ -102,6 +113,8 @@ const SingleAsset = () => {
                 duration: 5000,
                 isClosable: true
             })
+
+            setIsBuyingToken(true)
         } catch (error) {
             console.error("An error occured on buy token :", error)
             toast({
@@ -303,12 +316,58 @@ const SingleAsset = () => {
                                             </FormHelperText>
                                         )}
                                     </FormControl>
+                                    {isBuyingToken &&
+                                        <Heading
+                                            color='red'
+                                            cursor='pointer'
+                                            mt='5'
+                                            onClick={onOpen}
+                                            size='sm'
+                                            textDecoration='underline'
+                                        >
+                                            Récupérer vos tokens sur votre Wallet
+                                        </Heading>
+                                    }
                                 </Box>
                             }
                         </CardBody>
                     </Card>
                 </SimpleGrid>
             }
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                size='xl'
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Suivez ce tutoriel</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Text fontSize='md' mb='5'>
+                            Afin de récupérer vos tokens, vous aurez besoin de cette adresse, alors copiez la en lieu sûr : {" "}
+                            <span style={{ color: 'red', fontWeight: 'bold' }}>{id}</span>
+                        </Text>
+                        <Text fontSize='md' fontWeight='bold' mb='5'>
+                            Ensuite, suivez les étapes décrites dans les liens ci-dessous :
+                        </Text>
+                        <Link
+                            href='https://support.metamask.io/hc/en-us/articles/4404063526043-Adding-and-sharing-ENS-eth-address-tokens-in-MetaMask'
+                            isExternal
+                        >
+                            Ajouter des tokens à MetaMask <ExternalLinkIcon mx='2px' />
+                        </Link>
+                        <Divider my='4' />
+                        <Link
+                            href='https://support.metamask.io/hc/en-us/articles/360015489031-How-to-display-tokens-in-MetaMask'
+                            isExternal
+                        >
+                            Afficher des tokens sur MetaMask <ExternalLinkIcon mx='2px' />
+                        </Link>
+                    </ModalBody>
+                    <ModalFooter />
+                </ModalContent>
+            </Modal>
         </>
     )
 }
