@@ -183,9 +183,9 @@ const SingleAsset = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box mt='16' textAlign='center'>
-                <Heading size='xl'>Asset : {id}</Heading>
-                <Text fontSize='xl' mt='10'>Multiply your exposure to your favorite crypto assets.</Text>
-                <Text fontSize='xl'>Browse our featured products or select a asset.</Text>
+                {/* <Heading size='xl'>Asset : {id}</Heading> */}
+                <Heading size='xl'>Actif responsable</Heading>
+                <Text fontSize='xl' mt='10'>Participez au renforcement de la production d’énergie renouvelable en France aux côtés d’un opérateur de premier plan</Text>
                 {!isAccountConnected &&
                     <Box mt='10'>
                         <AccountNotConnectedWarning />
@@ -196,41 +196,41 @@ const SingleAsset = () => {
                 <SimpleGrid gridTemplateColumns={{ md: '60% 1fr' }} mt='20' spacing='40px'>
                     <Card borderRadius='2xl'>
                         <CardHeader>
-                            <Heading size='md'>Overview</Heading>
+                            <Heading size='md'>Caractétistiques principales</Heading>
                         </CardHeader>
                         <Divider color='#e2e8f0' />
                         <CardBody>
                             <Stack divider={<StackDivider />} spacing='4'>
                                 <Box>
                                     <Heading size='xs' textTransform='uppercase'>
-                                        Summary
+                                        Nature de l&apos;actif
                                     </Heading>
                                     <Text fontSize='sm' pt='2'>
-                                        View a summary of all your clients over the last month.
+                                        Actif responsable
                                     </Text>
                                 </Box>
                                 <Box>
                                     <Heading size='xs' textTransform='uppercase'>
-                                        Overview
+                                        Localisation de l&apos;actif
                                     </Heading>
                                     <Text fontSize='sm' pt='2'>
-                                        Check out the overview of your clients.
+                                        France
                                     </Text>
                                 </Box>
                                 <Box>
                                     <Heading size='xs' textTransform='uppercase'>
-                                        Analysis
+                                        Rendement
                                     </Heading>
                                     <Text fontSize='sm' pt='2'>
-                                        See a detailed analysis of all your business clients.
+                                        7% par an
                                     </Text>
                                 </Box>
                                 <Box>
                                     <Heading size='xs' textTransform='uppercase'>
-                                        More
+                                        Notation ESG (MSCI)
                                     </Heading>
                                     <Text fontSize='sm' pt='2'>
-                                        See more details about this asset.
+                                        AAA
                                     </Text>
                                 </Box>
                             </Stack>
@@ -243,10 +243,10 @@ const SingleAsset = () => {
                         <Divider color='#e2e8f0' />
                         <CardBody>
                             {sellingStatus === 0 &&
-                                <Heading size='sm' color='gray.500'>La vente de token n&apos;a pas encore commencée pour cet actif.</Heading>
+                                <Heading size='sm' color='gray.500'>La vente de tokens n&apos;a pas encore commencée pour cet actif.</Heading>
                             }
                             {sellingStatus === 2 &&
-                                <Heading size='sm' color='red.500'>La vente de token est clôturée pour cet actif.</Heading>
+                                <Heading size='sm' color='red.500'>La vente de tokens est clôturée pour cet actif.</Heading>
                             }
                             {isAdmin && sellingStatus === 1 &&
                                 <Stack mb='5'>
@@ -270,7 +270,7 @@ const SingleAsset = () => {
                             {sellingStatus === 1 &&
                                 <Box as='form' onSubmit={buyToken}>
                                     <FormControl isInvalid={isNumberOfTokenError}>
-                                        <FormLabel fontSize='sm'>Entrez le nombre de token que vous souhaitez acheter</FormLabel>
+                                        <FormLabel fontSize='sm'>Entrez le nombre de tokens que vous souhaitez acheter</FormLabel>
                                         <InputGroup size='md'>
                                             <Input
                                                 defaultValue={0}
@@ -296,11 +296,11 @@ const SingleAsset = () => {
                                         </InputGroup>
                                         {isNumberOfTokenError ? (
                                             <FormErrorMessage>
-                                                Le nombre total de token est obligatoire et doit être supérieur ou égal à 1.
+                                                Le nombre total de tokens est obligatoire et doit être supérieur ou égal à 1.
                                             </FormErrorMessage>
                                         ) : (
                                             <FormHelperText>
-                                                Le nombre total de token doit être supérieur ou égal à 1.
+                                                Le nombre total de tokens doit être supérieur ou égal à 1.
                                             </FormHelperText>
                                         )}
                                     </FormControl>

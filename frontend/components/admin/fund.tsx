@@ -54,7 +54,7 @@ const Fund: FC<FundProps>   = ({
             <Heading size='md'>Gestion des fonds</Heading>
             <Card borderRadius='2xl' mt='4'>
                 <CardHeader>
-                    <Heading size='sm'>Solde du véhicule financier</Heading>
+                    <Heading size='sm'>Balance du véhicule d&apos;acquisition</Heading>
                 </CardHeader>
                 <Divider color='#e2e8f0' />
                 <CardBody>
