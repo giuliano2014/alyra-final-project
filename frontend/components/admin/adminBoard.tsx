@@ -126,6 +126,7 @@ const AdminBoard = () => {
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             const transaction = await contract.endSellingSession(assetAddress)
             await transaction.wait()
+
             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }))
         } catch (error) {
             console.error("An error occurred on endSellingSession :", error)

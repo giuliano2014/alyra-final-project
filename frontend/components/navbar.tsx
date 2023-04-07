@@ -77,8 +77,8 @@ const Navbar = () => {
                                     <MenuItem as={NextLink} href='/account/board'>
                                         {isAdmin ? "Tableau de bord" : "Portefeuille"}
                                     </MenuItem>
-                                    <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
-                                    <MenuItem as={NextLink} href='/account/settings'>Paramètres</MenuItem>
+                                    <MenuItem>Profil</MenuItem>
+                                    <MenuItem>Paramètres</MenuItem>
                                 </MenuList>
                             </Menu>
                         }

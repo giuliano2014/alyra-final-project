@@ -183,7 +183,6 @@ const SingleAsset = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box mt='16' textAlign='center'>
-                {/* <Heading size='xl'>Asset : {id}</Heading> */}
                 <Heading size='xl'>Actif responsable</Heading>
                 <Text fontSize='xl' mt='10'>Participez au renforcement de la production d’énergie renouvelable en France aux côtés d’un opérateur de premier plan</Text>
                 {!isAccountConnected &&
@@ -304,25 +303,6 @@ const SingleAsset = () => {
                                             </FormHelperText>
                                         )}
                                     </FormControl>
-                                    {/* {isAdmin &&
-                                        <Stack mt='5'>
-                                            <Alert status='warning'>
-                                                <AlertIcon />
-                                                Veuillez vous connecter avec un compte utilisateur, non administrateur.
-                                            </Alert>
-                                        </Stack>
-                                    }
-                                    {!isValidated && !isAdmin &&
-                                        <Stack mt='5'>
-                                            <Alert status='error'>
-                                                <AlertIcon />
-                                                <AlertTitle fontWeight='normal'>
-                                                    Pour acheter des tokens, faites une demande de validation de KYC,{" "}
-                                                    <Link as={NextLink} href='/account/board'>ici</Link>.
-                                                </AlertTitle>
-                                            </Alert>
-                                        </Stack>
-                                    } */}
                                 </Box>
                             }
                         </CardBody>
