@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 describe("Asset", () => {
-    async function deploySimpleFixture() {
+    const deploySimpleFixture = async () => {
         const [owner, otherAccount] = await ethers.getSigners();
         const Asset = await ethers.getContractFactory("Asset");
         const asset = await Asset.deploy();
