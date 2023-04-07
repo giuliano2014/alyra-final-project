@@ -3,6 +3,9 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-etherscan";
 import "dotenv/config";
 
+// @TODO: Remove this line if you don't want to use OpenZeppelin Upgrades
+// import "@openzeppelin/hardhat-upgrades";
+
 const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",
     etherscan: {

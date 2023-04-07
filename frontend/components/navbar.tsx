@@ -18,25 +18,13 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import NextLink from 'next/link'
 import React, { useState } from 'react'
 
+import useAdminCheck from '@/hooks/useAdminCheck'
 import useIsAccountConnected from '@/hooks/useIsAccountConnected'
 
 const Navbar = () => {
+    const isAdmin = useAdminCheck()
     const isAccountConnected = useIsAccountConnected()
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-
-    // const { address, connector, isConnected, isReconnecting, isDisconnected } = useAccount({
-    //     onConnect: () => {
-    //         console.log('onConnect isConnected', isConnected)
-    //         console.log('onConnect isDisconnected', isDisconnected)
-    //         console.log('onConnect isReconnecting', isReconnecting)
-    //     },
-    //     onDisconnect: () => {
-    //         console.log('onDisconnect isConnected', isConnected)
-    //         console.log('onDisconnect isDisconnected', isDisconnected)
-    //         console.log('onDisconnect isReconnecting', isReconnecting)
-    //     }
-    // })
 
     const handleMobileMenu = () => {
         setMobileMenuOpen(!isMobileMenuOpen)
@@ -60,8 +48,8 @@ const Navbar = () => {
                             <Button as={NextLink} href='/' variant='ghost'>
                                 Accueil
                             </Button>
-                            <Button as={NextLink} href='/assets' variant='ghost'>
-                                Actifs
+                            <Button as={NextLink} href='/invest' variant='ghost'>
+                                Investir
                             </Button>
                             <Menu>
                                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
@@ -69,9 +57,9 @@ const Navbar = () => {
                                 </MenuButton>
                                 <MenuList>
                                     <MenuItem as={NextLink} href='/about/team'>L&apos;équipe</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/manifest'>Le manifest</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/white-paper'>Le white Paper</MenuItem>
-                                    <MenuItem as={NextLink} href='/about/help'>Aide</MenuItem>
+                                    <MenuItem>Le manifest</MenuItem>
+                                    <MenuItem>Le white Paper</MenuItem>
+                                    <MenuItem>Aide</MenuItem>
                                 </MenuList>
                             </Menu>
                         </Flex>
@@ -86,9 +74,11 @@ const Navbar = () => {
                                     variant='outline'
                                 />
                                 <MenuList>
-                                    <MenuItem as={NextLink} href='/account/board'>Tableau de bord</MenuItem>
-                                    <MenuItem as={NextLink} href='/account/profil'>Profil</MenuItem>
-                                    <MenuItem as={NextLink} href='/account/settings'>Paramètres</MenuItem>
+                                    <MenuItem as={NextLink} href='/account/board'>
+                                        {isAdmin ? "Tableau de bord" : "Portefeuille"}
+                                    </MenuItem>
+                                    <MenuItem>Profil</MenuItem>
+                                    <MenuItem>Paramètres</MenuItem>
                                 </MenuList>
                             </Menu>
                         }
@@ -110,8 +100,8 @@ const Navbar = () => {
                         <Link href="/" mb='2'>
                             Accueil
                         </Link>
-                        <Link href="/assets" mb='2'>
-                            Actifs
+                        <Link href="/invest" mb='2'>
+                            Investir
                         </Link>
                         <Text mb='2'>
                             À propos
@@ -120,13 +110,13 @@ const Navbar = () => {
                             <Link href="/about/team" mb='2'>
                                 L&apos;équipe
                             </Link>
-                            <Link href="/about/manifest" mb='2'>
+                            <Link mb='2'>
                                 Le manifest
                             </Link>
-                            <Link href="/about/white-paper" mb='2'>
+                            <Link mb='2'>
                                 Le white Paper
                             </Link>
-                            <Link href="/about/help" mb='2'>
+                            <Link mb='2'>
                                 Aide
                             </Link>
                         </Flex>

@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app'
 import { WagmiConfig } from 'wagmi'
 
 import Layout from '@/components/layout'
-import { chains, wagmiClient } from '@/libraries/rainbowkit.config'
+import { chains, wagmiClient } from '@/libs/rainbowkit.config'
 
 const App = ({ Component, pageProps }: AppProps) => {
     return (
