@@ -94,6 +94,7 @@ const AdminBoard = () => {
             const assetTotalSupplyBigNumber = ethers.utils.parseUnits(assetTotalSupply.toString(), 'ether')
             const transaction = await contract.createAsset(assetName, assetSymbol, assetTotalSupplyBigNumber)
             await transaction.wait()
+
             toast({
                 title: 'Bravo :)',
                 description: 'Votre nouvel actif a été créé',
@@ -123,7 +124,9 @@ const AdminBoard = () => {
             }
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            await contract.endSellingSession(assetAddress)
+            const transaction = await contract.endSellingSession(assetAddress)
+            await transaction.wait()
+
             setIsLoadingEndSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }))
         } catch (error) {
             console.error("An error occurred on endSellingSession :", error)
@@ -303,7 +306,9 @@ const AdminBoard = () => {
             }
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            await contract.startSellingSession(assetAddress)
+            const transaction = await contract.startSellingSession(assetAddress)
+            await transaction.wait()
+
             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }))
         } catch (error) {
             console.error("An error occured on startSellingSession :", error)

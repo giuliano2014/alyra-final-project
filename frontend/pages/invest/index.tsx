@@ -108,8 +108,7 @@ const Assets = () => {
             </Head>
             <Box mt='16' textAlign='center'>
                 <Heading size='xl'>Nos actifs</Heading>
-                <Text fontSize='xl' mt='10'>Multipliez votre exposition à vos crypto actifs préférés.</Text>
-                <Text fontSize='xl'>Parcourez nos produits ou sélectionnez un actif.</Text>
+                <Text fontSize='xl' mt='10'>Investissez en fonction de vos moyens et participez activement aux défis de notre monde.</Text>
                 {!isAccountConnected &&
                     <Box mt='10'>
                         <AccountNotConnectedWarning />
@@ -133,7 +132,7 @@ const Assets = () => {
                                             Nature de l&apos;actif
                                         </Heading>
                                         <Text fontSize='sm' pt='2'>
-                                            Portefeuille diversifié d’actifs forestiers
+                                            Actif responsable
                                         </Text>
                                     </Box>
                                     <Card bg='teal.100' borderRadius='2xl'>
@@ -144,7 +143,7 @@ const Assets = () => {
                                     </Card>
                                     <Box>
                                         <Heading size='xs' textTransform='uppercase'>
-                                            Nom du token de l&apos;actif
+                                            Nom du token
                                         </Heading>
                                         <Text fontSize='sm' pt='2'>
                                             {symbol}
