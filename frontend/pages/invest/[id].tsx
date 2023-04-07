@@ -154,6 +154,8 @@ const SingleAsset = () => {
                 throw new Error("contractAddress is not defined")
             }
 
+            if (!id) return
+
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             const result = await contract.getSellingStatus(id)
             setSellingStatus(result)
@@ -246,6 +248,25 @@ const SingleAsset = () => {
                             {sellingStatus === 2 &&
                                 <Heading size='sm' color='red.500'>La vente de token est clôturée pour cet actif.</Heading>
                             }
+                            {isAdmin && sellingStatus === 1 &&
+                                <Stack mb='5'>
+                                    <Alert status='warning'>
+                                        <AlertIcon />
+                                        Veuillez vous connecter avec un compte utilisateur, non administrateur.
+                                    </Alert>
+                                </Stack>
+                            }
+                            {!isValidated && !isAdmin && sellingStatus === 1 &&
+                                <Stack mb='5'>
+                                    <Alert status='error'>
+                                        <AlertIcon />
+                                        <AlertTitle fontWeight='normal'>
+                                            Pour acheter des tokens, faites une demande de validation de KYC,{" "}
+                                            <Link as={NextLink} href='/account/board'>ici</Link>.
+                                        </AlertTitle>
+                                    </Alert>
+                                </Stack>
+                            }
                             {sellingStatus === 1 &&
                                 <Box as='form' onSubmit={buyToken}>
                                     <FormControl isInvalid={isNumberOfTokenError}>
@@ -283,7 +304,7 @@ const SingleAsset = () => {
                                             </FormHelperText>
                                         )}
                                     </FormControl>
-                                    {isAdmin &&
+                                    {/* {isAdmin &&
                                         <Stack mt='5'>
                                             <Alert status='warning'>
                                                 <AlertIcon />
@@ -301,7 +322,7 @@ const SingleAsset = () => {
                                                 </AlertTitle>
                                             </Alert>
                                         </Stack>
-                                    }
+                                    } */}
                                 </Box>
                             }
                         </CardBody>
