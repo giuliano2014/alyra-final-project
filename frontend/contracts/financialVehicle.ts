@@ -560,4 +560,4 @@ export const financialVehicleAbi = [
       "stateMutability": "payable",
       "type": "receive"
     }
-  ]
+]
