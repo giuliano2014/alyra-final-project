@@ -279,5 +279,28 @@ describe("Financial Vehicle", () => {
     });
 
   });
+
+  describe("getBalanceOfFinancialVehicle", function() {
+    it("should return the right balance of FinancialVehicle contract after deployment", async function() {
+      const balance = await financialVehicle.getBalanceOfFinancialVehicle();
+  
+      expect(balance).to.equal(ethers.utils.parseEther("0"));
+    });
+
+    it("should return the right balance of FinancialVehicle contract after a transfer", async function() {
+
+        const [owner] = await ethers.getSigners();
+  
+  
+      // Transfer some ether to the financialVehicle contract
+      await owner.sendTransaction({
+        to: financialVehicle.address,
+        value: ethers.utils.parseEther("100")
+      });
+      const balance = await financialVehicle.getBalanceOfFinancialVehicle();
+  
+      expect(balance).to.equal(ethers.utils.parseEther("100"));
+    });
+  });
   
 });
