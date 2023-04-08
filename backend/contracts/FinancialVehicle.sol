@@ -22,12 +22,17 @@ contract FinancialVehicle is AccessControl {
         SellingSessionEnded
     }
 
-    event AssetCreated(address, string, string, uint256);
+    // event AssetCreated(address, string, string, uint256);
+    // event Received(uint value);
+    // event SellingStatusChange(address assetAddress, SellingStatus newStatus);
+    // event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
+    event AssetCreated(address indexed assetAddress, string name, string symbol, uint256 totalSupply);
     event Received(uint value);
-    event SellingStatusChange(address assetAddress, SellingStatus newStatus);
+    event SellingStatusChange(address indexed assetAddress, SellingStatus newStatus);
     event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
 
-    mapping(address => SellingStatus) sellingStatus;
+    // mapping(address => SellingStatus) sellingStatus;
+    mapping(address => SellingStatus) public sellingStatus;
 
     address internal master;
     Token[] private assets;
@@ -58,8 +63,15 @@ contract FinancialVehicle is AccessControl {
         _;
     }
 
+    // function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
+    //     require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
+    //     return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
+    // }
+
     function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
-        require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
+        uint256 tokenPrice = Asset(_assetAddress).price(_amount);
+        require(msg.value == tokenPrice, "Incorrect ether amount");
+        payable(address(this)).transfer(msg.value);
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
@@ -100,6 +112,7 @@ contract FinancialVehicle is AccessControl {
         return address(this).balance;
     }
 
+    // @TODO: remove this function and use sellingStatus mapping instead 
     function getSellingStatus(address _assetAddress) external view returns (SellingStatus) {
         return sellingStatus[_assetAddress];
     }
