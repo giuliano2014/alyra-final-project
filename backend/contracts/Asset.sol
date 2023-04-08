@@ -28,11 +28,26 @@ contract Asset is ERC20, Initializable {
         _mint(msg.sender, _totalSupply);
     }
 
+    /**
+     * @dev Returns the name of the token.
+     */
+    function name() public view virtual override returns (string memory) {
+        return name_;
+    }
+
     // @TODO: don't work with internal ???
     // @TODO: onlyAdmin
     function price(uint256 _amount) public pure virtual returns (uint256) {
         require(_amount > 100, "Amount must be greater than 100");
         return _amount * 1 wei;
+    }
+
+    /**
+     * @dev Returns the symbol of the token, usually a shorter version of the
+     * name.
+     */
+    function symbol() public view virtual override returns (string memory) {
+        return symbol_;
     }
 }
 
