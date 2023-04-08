@@ -30,7 +30,6 @@ contract FinancialVehicle is AccessControl {
     mapping(address => SellingStatus) sellingStatus;
 
     address internal master;
-    // Asset public asset;
     Token[] private assets;
 
     constructor(address _master, address[] memory _admins) {
@@ -59,26 +58,11 @@ contract FinancialVehicle is AccessControl {
         _;
     }
 
-    // // @TODO: onlyAdmin
-    // // C'est le véhicule financier qui approuve le transfert de tokens
-    // function approve(address _assetAddress, uint256 _amount) external returns (bool) {
-    //     return Asset(_assetAddress).approve(address(this), _amount);
-    // }
-
-    // @TODO: use asset, line 24
     function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
         require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
-    // function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
-    //     uint256 price = Asset(_assetAddress).price(_amount);
-    //     require(msg.value == price, "Incorrect ether amount");
-    //     require(Asset(_assetAddress).balanceOf(address(this)) >= _amount, "Insufficient balance");
-    //     return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
-    // }
-
-    // @TODO: use asset, line 24
     function createAsset(
         string calldata _name,
         string calldata _symbol,
@@ -90,7 +74,6 @@ contract FinancialVehicle is AccessControl {
     {
         clone = Asset(Clones.clone(master));
         clone.initialize(_name, _symbol, _totalSupply);
-        // clone.approve(address(this), type(uint256).max);
         clone.approve(address(this), _totalSupply);
         emit AssetCreated(address(clone), _name, _symbol, _totalSupply);
         assets.push(Token(address(clone), _name, _symbol, _totalSupply));
@@ -109,7 +92,6 @@ contract FinancialVehicle is AccessControl {
         return assets;
     }
 
-    // @TODO: use asset, line 24
     function getBalance(address _assetAddress, address _account) external view returns (uint256) {
         return Asset(_assetAddress).balanceOf(_account);
     }
@@ -117,11 +99,6 @@ contract FinancialVehicle is AccessControl {
     function getBalanceOfFinancialVehicle() external view onlyAdmin returns (uint256) {
         return address(this).balance;
     }
-
-    // // @TODO: remove this unused function
-    // function getPrice(address _assetAddress) external pure returns (uint256) {
-    //     return Asset(_assetAddress).price(1 ether);
-    // }
 
     function getSellingStatus(address _assetAddress) external view returns (SellingStatus) {
         return sellingStatus[_assetAddress];
@@ -134,11 +111,6 @@ contract FinancialVehicle is AccessControl {
         sellingStatus[_assetAddress] = SellingStatus.SellingSessionStarted;
         emit SellingStatusChange(_assetAddress, SellingStatus.SellingSessionStarted);
     }
-
-    // // @TODO: use asset, line 24
-    // function withdraw(address _assetAddress, address _to, uint256 _amount) external onlyAdmin returns (bool) {
-    //     return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
-    // }
 
     function withdrawFromFinancialVehicle(uint256 amount, address payable recipient) external onlyAdmin {
         require(address(this).balance >= amount, "Insufficient balance");
