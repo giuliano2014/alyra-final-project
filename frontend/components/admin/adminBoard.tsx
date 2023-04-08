@@ -204,7 +204,7 @@ const AdminBoard = () => {
                 const reversedResult = await fetchAndFormatAssets()
                 if (reversedResult) {
                     setAssets(reversedResult)
-                    scrollToTop()
+                    // scrollToTop()
                 } else {
                     console.error("Error fetching and formatting assets.")
                 }

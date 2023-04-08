@@ -35,7 +35,6 @@ contract FinancialVehicle is AccessControl {
     event SellingStatusChange(address indexed assetAddress, SellingStatus newStatus);
     event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
 
-    // mapping(address => SellingStatus) sellingStatus;
     mapping(address => SellingStatus) public sellingStatus;
 
     address internal master;
@@ -72,11 +71,6 @@ contract FinancialVehicle is AccessControl {
         _;
     }
 
-    // function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
-    //     require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
-    //     return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
-    // }
-
     /**
      * @notice Allows a user to buy an asset token by sending Ether.
      * @param _assetAddress The address of the asset token to buy.
@@ -84,9 +78,7 @@ contract FinancialVehicle is AccessControl {
      * @return A boolean indicating whether the purchase was successful.
      */
     function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
-        uint256 tokenPrice = Asset(_assetAddress).price(_amount);
-        require(msg.value == tokenPrice, "Incorrect ether amount");
-        payable(address(this)).transfer(msg.value);
+        require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
@@ -146,11 +138,6 @@ contract FinancialVehicle is AccessControl {
      */
     function getBalanceOfFinancialVehicle() external view onlyAdmin returns (uint256) {
         return address(this).balance;
-    }
-
-    // @TODO: remove this function and use sellingStatus mapping instead 
-    function getSellingStatus(address _assetAddress) external view returns (SellingStatus) {
-        return sellingStatus[_assetAddress];
     }
 
     /**
