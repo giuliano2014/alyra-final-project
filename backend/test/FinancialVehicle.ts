@@ -302,5 +302,22 @@ describe("Financial Vehicle", () => {
       expect(balance).to.equal(ethers.utils.parseEther("100"));
     });
   });
+
+  describe("getSellingStatus", function () {
+    it("returns NoCurrentSellingSession when a new asset is created", async function () {
+        expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(0);
+    });
+
+    it("returns SellingSessionStarted when a selling session is started", async function () {
+        await financialVehicle.startSellingSession(asset.address);
+        expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1);
+    });
+
+    it("returns SellingSessionEnded when a selling session is ended", async function () {
+        await financialVehicle.startSellingSession(asset.address);
+        await financialVehicle.endSellingSession(asset.address);
+        expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2);
+    });
+  });
   
 });
