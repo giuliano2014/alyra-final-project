@@ -121,10 +121,10 @@ contract FinancialVehicle is AccessControl {
         return address(this).balance;
     }
 
-    // @TODO: remove this unused function
-    function getPrice(address _assetAddress) external pure returns (uint256) {
-        return Asset(_assetAddress).price(1 ether);
-    }
+    // // @TODO: remove this unused function
+    // function getPrice(address _assetAddress) external pure returns (uint256) {
+    //     return Asset(_assetAddress).price(1 ether);
+    // }
 
     function getSellingStatus(address _assetAddress) external view returns (SellingStatus) {
         return sellingStatus[_assetAddress];
@@ -138,10 +138,10 @@ contract FinancialVehicle is AccessControl {
         emit SellingStatusChange(_assetAddress, SellingStatus.SellingSessionStarted);
     }
 
-    // @TODO: use asset, line 24
-    function withdraw(address _assetAddress, address _to, uint256 _amount) external onlyAdmin returns (bool) {
-        return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
-    }
+    // // @TODO: use asset, line 24
+    // function withdraw(address _assetAddress, address _to, uint256 _amount) external onlyAdmin returns (bool) {
+    //     return Asset(_assetAddress).transferFrom(address(this), _to, _amount);
+    // }
 
     function withdrawFromFinancialVehicle(uint256 amount, address payable recipient) external onlyAdmin {
         require(address(this).balance >= amount, "Insufficient balance");
