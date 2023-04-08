@@ -5,7 +5,7 @@ describe("Asset", () => {
     let Asset: any;
     let asset: any;
 
-    beforeEach(async function () {
+    beforeEach(async () => {
         Asset = await ethers.getContractFactory("Asset");
         asset = await Asset.deploy();
         await asset.deployed();
@@ -18,24 +18,24 @@ describe("Asset", () => {
         });
     });
 
-    describe("name()", function () {
-        it("should return the correct name", async function () {
+    describe("name", () => {
+        it("should return the correct name", async () => {
             expect(await asset.name()).to.equal("");
         });
     });
 
-    describe("price()", () => {
-        it("Should return the correct price", async () => {
+    describe("price", () => {
+        it("should return the correct price", async () => {
             expect(await asset.price(101)).to.equal(101);
         });
 
-        it("Should revert if the amount is less than or equal to 100", async () => {
+        it("should revert if the amount is less than or equal to 100", async () => {
             await expect(asset.price(100)).to.be.revertedWith("Amount must be greater than 100");
         });
     });
 
-    describe("symbol()", function () {
-        it("should return the correct symbol", async function () {
+    describe("symbol", () => {
+        it("should return the correct symbol", async () => {
             expect(await asset.symbol()).to.equal("");
         });
     });
