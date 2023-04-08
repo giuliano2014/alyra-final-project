@@ -15,6 +15,9 @@ describe("Financial Vehicle", () => {
     let Asset: any;
     let asset: any;
 
+    const test = (1 ** 18).toString();
+    const amount = ethers.utils.parseEther(test);
+
     beforeEach(async function () {
         FinancialVehicle = await ethers.getContractFactory("FinancialVehicle");
         financialVehicle = await FinancialVehicle.deploy('0x5FbDB2315678afecb367f032d93F642f64180aa3', admins);
@@ -163,6 +166,69 @@ describe("Financial Vehicle", () => {
       
 
       await expect(financialVehicle.endSellingSession(asset.address)).to.be.revertedWith("Selling session not started yet");
+    });
+  });
+
+  describe("buyToken()", async function () {
+
+    xit("should allow buying tokens with the correct amount of Ether", async function () {
+        // Start a selling session for the asset
+        await financialVehicle.startSellingSession(asset.address);
+    
+        // Make sure the selling session has started
+        expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
+    
+        // Buy some tokens with the correct amount of Ether
+        // const buyer = await ethers.getSigner(1);
+        const [owner, addr1] = await ethers.getSigners();
+        const tx = await financialVehicle.connect(addr1).buyToken(asset.address, amount, {
+          value: await asset.price(amount),
+        });
+    
+        // Check that the transaction was successful
+        expect(tx).to.emit(asset, "Transfer").withArgs(financialVehicle.address, addr1.address, amount);
+    
+        // Check that the buyer received the correct amount of tokens
+        expect(await asset.balanceOf(addr1.address)).to.equal(amount);
+    
+        // Check that the seller received the correct amount of Ether
+        expect(await ethers.provider.getBalance(financialVehicle.address)).to.equal(amount);
+    
+        // End the selling session
+        await financialVehicle.endSellingSession(owner.address);
+    
+        // Make sure the selling session has ended
+        expect(await financialVehicle.getSellingStatus(owner.address)).to.equal(2); // SellingSessionEnded
+      });
+    
+
+    
+
+    it("should not allow buying tokens with the incorrect amount of Ether", async function () {
+
+        // Start a selling session for the asset
+        await financialVehicle.startSellingSession(asset.address);
+    
+        // Make sure the selling session has started
+        expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
+    
+        // Try to buy some tokens with the incorrect amount of Ether
+        const buyer = await ethers.getSigner(1);
+        await expect(financialVehicle.connect(buyer).buyToken(asset.address, amount, { value: ethers.utils.parseEther("0.5") })).to.be.revertedWith(
+          "Incorrect ether amount"
+        );
+    
+        // Check that the buyer did not receive any tokens
+        expect(await asset.balanceOf(buyer.address)).to.equal(0);
+    
+        // Check that the seller did not receive any Ether
+        expect(await ethers.provider.getBalance(financialVehicle.address)).to.equal(0);
+    
+        // End the selling session
+        await financialVehicle.endSellingSession(asset.address);
+    
+        // Make sure the selling session has ended
+        expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
     });
   });
   
