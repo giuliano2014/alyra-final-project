@@ -319,5 +319,54 @@ describe("Financial Vehicle", () => {
         expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2);
     });
   });
+
+  xdescribe("withdrawFromFinancialVehicle", function () {
+
+    it("should withdraw ETH from the contract", async function () {
+        const amount = ethers.utils.parseEther("1");
+        // const recipient = deployer.address;
+        const [owner, addr1] = await ethers.getSigners();
+    
+        // Send ETH to the contract
+        await owner.sendTransaction({
+          to: financialVehicle.address,
+          value: amount,
+        });
+    
+        // Get the initial balance of the recipient
+        const initialBalance = await owner.getBalance();
+        // const test1 = (ethers.BigNumber.from(initialBalance.toString())).toString();
+        // const test1 = (ethers.BigNumber.from(initialBalance.toString()).mul(ethers.BigNumber.from(10).pow(18))).toString();
+        const test1 = (ethers.BigNumber.from(initialBalance.toString())).toString();
+
+        //  const amountBigNumber = ethers.utils.parseEther(initialBalance.toString());
+        
+        // const again = amountBigNumber ** 18;
+
+            // const numberOfTokens = ethers.utils.parseUnits(amount.toString(), 18)
+        // const test = initialBalance ** 18
+        expect(initialBalance).to.equal(ethers.utils.parseEther(test1));
+    
+        // // Call the withdrawFromFinancialVehicle function
+        // await financialVehicle.connect(owner).withdrawFromFinancialVehicle(amount, addr1);
+    
+        // // Get the final balance of the recipient
+        // const finalBalance = await owner.getBalance();
+    
+        // // Check that the balance of the recipient has increased by the expected amount
+        // const expectedFinalBalance = initialBalance.add(amount);
+        // expect(finalBalance).to.equal(expectedFinalBalance);
+      });
+    
+    //   it("should revert when trying to withdraw more ETH than the contract balance", async function () {
+    //     const amount = ethers.utils.parseEther("2");
+    //     const recipient = deployer.address;
+    
+    //     // Call the withdrawFromFinancialVehicle function with an amount greater than the contract balance
+    //     await expect(financialVehicle.connect(admin).withdrawFromFinancialVehicle(amount, recipient)).to.be.revertedWith("Insufficient balance");
+    //   });
+
+  });
+
   
 });
