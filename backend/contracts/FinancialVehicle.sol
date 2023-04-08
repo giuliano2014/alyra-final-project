@@ -73,6 +73,14 @@ contract FinancialVehicle is AccessControl {
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
+    // function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
+    //     uint256 price = Asset(_assetAddress).price(_amount);
+    //     require(msg.value == price, "Incorrect ether amount");
+    //     require(Asset(_assetAddress).balanceOf(address(this)) >= _amount, "Insufficient balance");
+    //     return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
+    // }
+
+
      // @TODO: use asset, line 24
     function createAsset(
         string calldata _name,

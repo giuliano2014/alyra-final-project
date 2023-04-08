@@ -14,11 +14,18 @@ describe("Financial Vehicle", () => {
     let financialVehicle: any;
     let Asset: any;
     let asset: any;
+//     let asset1: any;
+//     let asset2: any;
+//     let owner: any;
+//   let admin: any;
+//   let user: any;
 
     const test = (1 ** 18).toString();
     const amount = ethers.utils.parseEther(test);
 
     beforeEach(async function () {
+        // [owner, admin, user] = await ethers.getSigners();
+
         FinancialVehicle = await ethers.getContractFactory("FinancialVehicle");
         financialVehicle = await FinancialVehicle.deploy('0x5FbDB2315678afecb367f032d93F642f64180aa3', admins);
         await financialVehicle.deployed();
@@ -28,6 +35,23 @@ describe("Financial Vehicle", () => {
         Asset = await ethers.getContractFactory("Asset");
         asset = await Asset.deploy();
         await asset.deployed();
+
+        // asset1 = await Asset.connect(owner).deploy();
+        // await asset1.deployed();
+        // asset2 = await Asset.connect(owner).deploy();
+        // await asset2.deployed();
+    
+        // // Add assets to FinancialVehicle
+        // await financialVehicle.connect(admin).createAsset(
+        //   "Asset 1",
+        //   "A1",
+        //   1000
+        // );
+        // await financialVehicle.connect(admin).createAsset(
+        //   "Asset 2",
+        //   "A2",
+        //   2000
+        // );
     });
 
     // beforeEach(async function () {
@@ -230,6 +254,30 @@ describe("Financial Vehicle", () => {
         // Make sure the selling session has ended
         expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
     });
+  });
+
+  describe("getBalance()", async function () {
+
+    it("should return the correct balance of an account for an asset", async function () {
+
+        const [owner, addr1] = await ethers.getSigners();
+        
+        let asset1 = await Asset.connect(owner).deploy();
+            await asset1.deployed();
+    
+            await financialVehicle.connect(owner).createAsset(
+                "Asset 1",
+                "A1",
+                1000
+              );
+        const balance = await financialVehicle.getBalance(
+          asset1.address,
+          financialVehicle.address
+        );
+        expect(balance).to.equal(0);
+        // expect(balance).to.equal(parseFloat(ethers.utils.formatUnits(balance, 18)).toString());
+    });
+
   });
   
 });
