@@ -47,7 +47,7 @@ describe("Financial Vehicle", () => {
             await financialVehicle.startSellingSession(asset.address);
 
             // Make sure the selling session has started
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
 
             // Buy some tokens with the correct amount of Ether
             // const buyer = await ethers.getSigner(1);
@@ -69,7 +69,7 @@ describe("Financial Vehicle", () => {
             await financialVehicle.endSellingSession(owner.address);
 
             // Make sure the selling session has ended
-            expect(await financialVehicle.getSellingStatus(owner.address)).to.equal(2); // SellingSessionEnded
+            expect(await financialVehicle.sellingStatus(owner.address)).to.equal(2); // SellingSessionEnded
         });
 
         it("should not allow buying tokens with the incorrect amount of Ether", async () => {
@@ -77,7 +77,7 @@ describe("Financial Vehicle", () => {
             await financialVehicle.startSellingSession(asset.address);
 
             // Make sure the selling session has started
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
 
             // Try to buy some tokens with the incorrect amount of Ether
             const buyer = await ethers.getSigner(1);
@@ -95,7 +95,7 @@ describe("Financial Vehicle", () => {
             await financialVehicle.endSellingSession(asset.address);
 
             // Make sure the selling session has ended
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
         });
     });
 
@@ -150,16 +150,16 @@ describe("Financial Vehicle", () => {
     describe("endSellingSession", () => {
         it("should end the selling session", async () => {
             await financialVehicle.startSellingSession(asset.address);
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
             await financialVehicle.endSellingSession(asset.address);
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
         });
 
         it("should revert if the selling session has already ended", async () => {
             await financialVehicle.startSellingSession(asset.address);
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
             await financialVehicle.endSellingSession(asset.address);
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(2); // SellingSessionEnded
             await expect(financialVehicle.endSellingSession(asset.address)).to.be.revertedWith("Selling session already ended");
         });
 
@@ -212,20 +212,20 @@ describe("Financial Vehicle", () => {
         });
     });
 
-    describe("getSellingStatus", () => {
+    describe("sellingStatus", () => {
         it("returns NoCurrentSellingSession when a new asset is created", async () => {
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(0);
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(0);
         });
 
         it("returns SellingSessionStarted when a selling session is started", async () => {
             await financialVehicle.startSellingSession(asset.address);
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(1);
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(1);
         });
 
         it("returns SellingSessionEnded when a selling session is ended", async () => {
             await financialVehicle.startSellingSession(asset.address);
             await financialVehicle.endSellingSession(asset.address);
-            expect(await financialVehicle.getSellingStatus(asset.address)).to.equal(2);
+            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(2);
         });
     });
 
