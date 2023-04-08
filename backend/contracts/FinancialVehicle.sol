@@ -36,10 +36,12 @@ contract FinancialVehicle is AccessControl {
     constructor(address _master, address[] memory _admins) {
         master = _master;
 
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        // _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
         for (uint256 i = 0; i < _admins.length; i++) {
-            _setupRole(ADMIN_ROLE, _admins[i]);
+            // _setupRole(ADMIN_ROLE, _admins[i]);
+            _grantRole(ADMIN_ROLE, _admins[i]);
         }
     }
 
