@@ -21,27 +21,27 @@ export const financialVehicleAbi = [
         "anonymous": false,
         "inputs": [
         {
-            "indexed": false,
+            "indexed": true,
             "internalType": "address",
-            "name": "",
+            "name": "assetAddress",
             "type": "address"
         },
         {
             "indexed": false,
             "internalType": "string",
-            "name": "",
+            "name": "name",
             "type": "string"
         },
         {
             "indexed": false,
             "internalType": "string",
-            "name": "",
+            "name": "symbol",
             "type": "string"
         },
         {
             "indexed": false,
             "internalType": "uint256",
-            "name": "",
+            "name": "totalSupply",
             "type": "uint256"
         }
         ],
@@ -140,7 +140,7 @@ export const financialVehicleAbi = [
         "anonymous": false,
         "inputs": [
         {
-            "indexed": false,
+            "indexed": true,
             "internalType": "address",
             "name": "assetAddress",
             "type": "address"
@@ -364,25 +364,6 @@ export const financialVehicleAbi = [
     {
         "inputs": [
         {
-            "internalType": "address",
-            "name": "_assetAddress",
-            "type": "address"
-        }
-        ],
-        "name": "getSellingStatus",
-        "outputs": [
-        {
-            "internalType": "enum FinancialVehicle.SellingStatus",
-            "name": "",
-            "type": "uint8"
-        }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-        {
             "internalType": "bytes32",
             "name": "role",
             "type": "bytes32"
@@ -456,6 +437,25 @@ export const financialVehicleAbi = [
         "name": "revokeRole",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }
+        ],
+        "name": "sellingStatus",
+        "outputs": [
+        {
+            "internalType": "enum FinancialVehicle.SellingStatus",
+            "name": "",
+            "type": "uint8"
+        }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

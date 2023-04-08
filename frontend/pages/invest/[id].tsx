@@ -170,7 +170,7 @@ const SingleAsset = () => {
             if (!id) return
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            const result = await contract.getSellingStatus(id)
+            const result = await contract.sellingStatus(id)
             setSellingStatus(result)
         } catch (error) {
             console.error("An error occured on getSellingStatus :", error)
