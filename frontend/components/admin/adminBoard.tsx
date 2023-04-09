@@ -189,7 +189,7 @@ const AdminBoard = () => {
                 const reversedResult = await fetchAndFormatAssets()
                 if (reversedResult) {
                     setAssets(reversedResult)
-                    // // @TODO: remove this line when the bug is fixed
+                    // @TODO: remove this line when the bug is fixed
                     // scrollToTop()
                 } else {
                     console.error("Error fetching and formatting assets.")
@@ -354,27 +354,6 @@ const AdminBoard = () => {
         }
     }
 
-    // @TODO: remove this function if not used
-    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => {
-        try {
-            if (!signer) return
-
-            if (!financialVehicleContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            const amountBigNumber = ethers.utils.parseEther(amount.toString()).toString()
-
-            // const approval = await contract.approve(assetAddress, amountBigNumber)
-            // await approval.wait()
-
-            await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
-        } catch (error) {
-            console.error("An error occured on withdraw :", error)
-        }
-    }
-
     const withdrawFromFinancialVehicle = async (event: FormEvent) => {
         event.preventDefault()
 
@@ -387,9 +366,9 @@ const AdminBoard = () => {
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             const amountBigNumber = ethers.utils.parseEther(withdrawAmount.toString()).toString()
-            await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
-            // const result = await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
-            // await result.wait()
+            const transaction = await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
+            await transaction.wait()
+
             toast({
                 title: 'Bravo :)',
                 description: 'Votre retrait est en cours de traitement',

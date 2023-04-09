@@ -1,18 +1,11 @@
 import {
     Box,
-    Card,
     Heading,
     Tab,
-    Table,
-    TableCaption,
-    TableContainer,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
-    Th,
-    Thead,
-    Tr,
     useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
@@ -29,6 +22,7 @@ const UserBoard = () => {
 
     useEffect(() => {
         getKycValidationByAddress()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
     const askForKycValidation = async (e: any) => {

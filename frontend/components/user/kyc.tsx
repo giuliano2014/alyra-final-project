@@ -2,7 +2,7 @@ import { Badge, Box, Button, Card, Heading, Stack } from "@chakra-ui/react"
 import { FC, FormEvent } from "react"
 
 type KycProps = {
-    askForKycValidation: (e: FormEvent) => void
+    askForKycValidation: (event: FormEvent) => void
     status: string
     validated: boolean
 }
