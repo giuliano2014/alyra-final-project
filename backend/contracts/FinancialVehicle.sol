@@ -26,13 +26,10 @@ contract FinancialVehicle is AccessControl {
         SellingSessionEnded
     }
 
-    // event AssetCreated(address, string, string, uint256);
-    // event Received(uint value);
-    // event SellingStatusChange(address assetAddress, SellingStatus newStatus);
-    // event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
     event AssetCreated(address indexed assetAddress, string name, string symbol, uint256 totalSupply);
     event Received(uint value);
     event SellingStatusChange(address indexed assetAddress, SellingStatus newStatus);
+    event TokenPurchased(address indexed assetAddress, uint256 amount, address indexed buyer, uint256 price);
     event WithdrawFromFinancialVehicle(address indexed recipient, uint256 amount);
 
     mapping(address => SellingStatus) public sellingStatus;
@@ -79,6 +76,8 @@ contract FinancialVehicle is AccessControl {
      */
     function buyToken(address _assetAddress, uint256 _amount) external payable onlyUser returns (bool) {
         require(msg.value == Asset(_assetAddress).price(_amount), "Incorrect ether amount");
+
+        emit TokenPurchased(_assetAddress, _amount, msg.sender, msg.value);
         return Asset(_assetAddress).transferFrom(address(this), msg.sender, _amount);
     }
 
@@ -101,8 +100,9 @@ contract FinancialVehicle is AccessControl {
         clone = Asset(Clones.clone(master));
         clone.initialize(_name, _symbol, _totalSupply);
         clone.approve(address(this), _totalSupply);
-        emit AssetCreated(address(clone), _name, _symbol, _totalSupply);
+
         assets.push(Token(address(clone), _name, _symbol, _totalSupply));
+        emit AssetCreated(address(clone), _name, _symbol, _totalSupply);
         return clone;
     }
 
@@ -154,14 +154,14 @@ contract FinancialVehicle is AccessControl {
 
     /**
      * @notice Allows an admin to withdraw Ether from the financial vehicle to a recipient.
-     * @param amount The amount of Ether to withdraw.
-     * @param recipient The address of the recipient.
+     * @param _amount The amount of Ether to withdraw.
+     * @param _recipient The address of the recipient.
      */
-    function withdrawFromFinancialVehicle(uint256 amount, address payable recipient) external onlyAdmin {
-        require(address(this).balance >= amount, "Insufficient balance");
+    function withdrawFromFinancialVehicle(uint256 _amount, address payable _recipient) external onlyAdmin {
+        require(address(this).balance >= _amount, "Insufficient balance");
 
-        recipient.transfer(amount);
-        emit WithdrawFromFinancialVehicle(recipient, amount);
+        _recipient.transfer(_amount);
+        emit WithdrawFromFinancialVehicle(_recipient, _amount);
     }
     
     fallback() external payable {

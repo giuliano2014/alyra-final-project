@@ -161,6 +161,37 @@ export const financialVehicleAbi = [
         {
             "indexed": true,
             "internalType": "address",
+            "name": "assetAddress",
+            "type": "address"
+        },
+        {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+        },
+        {
+            "indexed": true,
+            "internalType": "address",
+            "name": "buyer",
+            "type": "address"
+        },
+        {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+        }
+        ],
+        "name": "TokenPurchased",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+        {
+            "indexed": true,
+            "internalType": "address",
             "name": "recipient",
             "type": "address"
         },
@@ -494,12 +525,12 @@ export const financialVehicleAbi = [
         "inputs": [
         {
             "internalType": "uint256",
-            "name": "amount",
+            "name": "_amount",
             "type": "uint256"
         },
         {
             "internalType": "address payable",
-            "name": "recipient",
+            "name": "_recipient",
             "type": "address"
         }
         ],
