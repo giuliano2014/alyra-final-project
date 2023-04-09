@@ -43,6 +43,7 @@ const AssetMetrics: FC<AssetMetricsProps> = ({
                                 <Th>Statut</Th>
                                 <Th>Nb total de token</Th>
                                 <Th>Symbol du token</Th>
+                                <Th>Prix du token</Th>
                             </Tr>
                         </Thead>
                         <Tbody>
@@ -64,6 +65,7 @@ const AssetMetrics: FC<AssetMetricsProps> = ({
                                         </Td>
                                         <Td>{totalSupply}</Td>
                                         <Td>{symbol}</Td>
+                                        <Td>1 ETH</Td>
                                     </Tr>
                                 )
                             })}

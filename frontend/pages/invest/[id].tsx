@@ -237,6 +237,14 @@ const SingleAsset = () => {
                             <Heading size='md'>Acheter des tokens</Heading>
                         </CardHeader>
                         <Divider color='#e2e8f0' />
+                        {sellingStatus === 1 &&
+                            <>
+                                <Heading color='gray.500' mb='5' mt='5' size='sm' textAlign='center'>
+                                    Le prix d&apos;un token est de 1 ETH
+                                </Heading>
+                                <Divider color='#e2e8f0' />
+                            </>
+                        }
                         <CardBody>
                             {sellingStatus === 0 &&
                                 <Heading size='sm' color='gray.500'>La vente de tokens n&apos;a pas encore commencée pour cet actif.</Heading>
