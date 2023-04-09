@@ -1,4 +1,4 @@
-import { Box, Container, Heading, Text } from '@chakra-ui/react'
+import { Box, Heading } from '@chakra-ui/react'
 import Head from 'next/head'
 
 const Team = () => {

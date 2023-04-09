@@ -1,29 +1,21 @@
 import {
-    Badge,
     Box,
-    Button,
-    Card,
     Heading,
     Tab,
-    Table,
-    TableCaption,
-    TableContainer,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
-    Tbody,
-    Td,
-    Th,
-    Thead,
-    Tr,
     useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { FormEvent, useEffect, useState } from 'react'
-import { useContractEvent, useProvider, useSigner } from 'wagmi'
+import { useProvider, useSigner } from 'wagmi'
 
+import { FormattedAsset } from "@/components/admin/adminBoard.types"
 import AddNewAsset from '@/components/admin/addNewAsset'
+import AssetActions from '@/components/admin/assetActions'
+import AssetMetrics from '@/components/admin/assetMetrics'
 import Fund from '@/components/admin/fund'
 import Kyc from '@/components/admin/kyc'
 import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
@@ -33,13 +25,6 @@ type Asset = {
     name: string
     symbol: string
     totalSupply: ethers.BigNumber
-}
-
-type FormattedAsset = {
-    assetAddress: string
-    name: string
-    symbol: string
-    totalSupply: string
 }
 
 const AdminBoard = () => {
@@ -204,6 +189,7 @@ const AdminBoard = () => {
                 const reversedResult = await fetchAndFormatAssets()
                 if (reversedResult) {
                     setAssets(reversedResult)
+                    // @TODO: remove this line when the bug is fixed
                     // scrollToTop()
                 } else {
                     console.error("Error fetching and formatting assets.")
@@ -293,6 +279,7 @@ const AdminBoard = () => {
         setKycValidations(data.data.kycValidations)
     }
 
+    // @TODO: remove this line when the bug is fixed
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -367,27 +354,6 @@ const AdminBoard = () => {
         }
     }
 
-    // @TODO: remove this function if not used
-    const withdraw = async (assetAddress: string, accountAddress: string, amount: number) => {
-        try {
-            if (!signer) return
-
-            if (!financialVehicleContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-            const amountBigNumber = ethers.utils.parseEther(amount.toString()).toString()
-
-            // const approval = await contract.approve(assetAddress, amountBigNumber)
-            // await approval.wait()
-
-            await contract.withdraw(assetAddress, accountAddress, amountBigNumber)
-        } catch (error) {
-            console.error("An error occured on withdraw :", error)
-        }
-    }
-
     const withdrawFromFinancialVehicle = async (event: FormEvent) => {
         event.preventDefault()
 
@@ -400,9 +366,9 @@ const AdminBoard = () => {
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
             const amountBigNumber = ethers.utils.parseEther(withdrawAmount.toString()).toString()
-            await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
-            // const result = await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
-            // await result.wait()
+            const transaction = await contract.withdrawFromFinancialVehicle(amountBigNumber, recipientAddress)
+            await transaction.wait()
+
             toast({
                 title: 'Bravo :)',
                 description: 'Votre retrait est en cours de traitement',
@@ -435,108 +401,19 @@ const AdminBoard = () => {
                 </TabList>
                 <TabPanels>
                     <TabPanel>
-                        <Box mt='10'>
-                            <Heading size='md'>Métriques des actifs</Heading>
-                            <Card borderRadius='2xl' mt='4'>
-                                <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>
-                                            {assets.length > 0 ? "Métriques des actifs" : "Aucun actif n'a été créé pour le moment"}
-                                        </TableCaption>
-                                        <Thead>
-                                            <Tr>
-                                                <Th>Adresse</Th>
-                                                <Th>Nom</Th>
-                                                <Th>Statut</Th>
-                                                <Th>Nb total de token</Th>
-                                                <Th>Symbol du token</Th>
-                                            </Tr>
-                                        </Thead>
-                                        <Tbody>
-                                            {assets.length > 0 && assets.map(({ assetAddress, name, symbol, totalSupply }) => {
-                                                return (
-                                                    <Tr key={assetAddress}>
-                                                        <Td>{assetAddress}</Td>
-                                                        <Td>{name}</Td>
-                                                        <Td>
-                                                            {!isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
-                                                                <Badge>Vente non commencée</Badge>
-                                                            )}
-                                                            {isLoadingStartSellingSessions[assetAddress] && !isLoadingEndSellingSessions[assetAddress] && (
-                                                                <Badge colorScheme="green">Vente en cours</Badge>
-                                                            )}
-                                                            {isLoadingStartSellingSessions[assetAddress] && isLoadingEndSellingSessions[assetAddress] && (
-                                                                <Badge colorScheme="red">Vente clôturée</Badge>
-                                                            )}
-                                                        </Td>
-                                                        <Td>{totalSupply}</Td>
-                                                        <Td>{symbol}</Td>
-                                                    </Tr>
-                                                )
-                                            })}
-                                        </Tbody>
-                                    </Table>
-                                </TableContainer>
-                            </Card>
-                        </Box>
-                        <Box mt='10'>
-                            <Heading size='md'>Actions sur les actifs</Heading>
-                            <Card borderRadius='2xl' mt='4'>
-                                <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>{assets.length > 0 ? "Actions sur les actifs " : "Aucun actif n'a été créé pour le moment"}</TableCaption>
-                                        <Thead>
-                                            <Tr>
-                                                <Th>Address</Th>
-                                                <Th>Nom</Th>
-                                                <Th>Démarrer la vente</Th>
-                                                <Th>Clôturer la vente</Th>
-                                                <Th>Balance</Th>
-                                            </Tr>
-                                        </Thead>
-                                        <Tbody>
-                                            {assets.length > 0 && assets.map(({ assetAddress, name }, index) => {
-                                                return (
-                                                    <Tr key={assetAddress}>
-                                                        <Td>{assetAddress}</Td>
-                                                        <Td>{name}</Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='teal'
-                                                                isDisabled={isLoadingStartSellingSessions[assetAddress]}
-                                                                onClick={() => startSellingSession(assetAddress)}
-                                                                size='xs'
-                                                            >
-                                                                Commencer
-                                                            </Button>
-                                                        </Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='red'
-                                                                isDisabled={isLoadingEndSellingSessions[assetAddress]}
-                                                                onClick={() => endSellingSession(assetAddress)}
-                                                                size='xs'
-                                                            >
-                                                                Terminer
-                                                            </Button>
-                                                        </Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='blue'
-                                                                onClick={() => getBalance(assetAddress, financialVehicleContractAddress || '')}
-                                                                size='xs'
-                                                            >
-                                                                Consulter
-                                                            </Button>
-                                                        </Td>
-                                                    </Tr>
-                                                )
-                                            })}
-                                        </Tbody>
-                                    </Table>
-                                </TableContainer>
-                            </Card>
-                        </Box>
+                        <AssetMetrics
+                            assets={assets}
+                            isLoadingEndSellingSessions={isLoadingEndSellingSessions}
+                            isLoadingStartSellingSessions={isLoadingStartSellingSessions}
+                        />
+                        <AssetActions
+                            assets={assets}
+                            endSellingSession={endSellingSession}
+                            getBalance={getBalance}
+                            isLoadingEndSellingSessions={isLoadingEndSellingSessions}
+                            isLoadingStartSellingSessions={isLoadingStartSellingSessions}
+                            startSellingSession={startSellingSession}
+                        />
                         <AddNewAsset
                             assetName={assetName}
                             assetSymbol={assetSymbol}

@@ -53,7 +53,7 @@ const Navbar = () => {
                             </Button>
                             <Menu>
                                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant='ghost'>
-                                    À propos
+                                    &Agrave; propos
                                 </MenuButton>
                                 <MenuList>
                                     <MenuItem as={NextLink} href='/about/team'>L&apos;équipe</MenuItem>
@@ -104,7 +104,7 @@ const Navbar = () => {
                             Investir
                         </Link>
                         <Text mb='2'>
-                            À propos
+                            &Agrave; propos
                         </Text>
                         <Flex direction='column' ml={4}>
                             <Link href="/about/team" mb='2'>

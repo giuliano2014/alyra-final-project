@@ -33,7 +33,7 @@ type FundProps = {
     withdrawFromFinancialVehicle: (event: FormEvent) => void
 }
 
-const Fund: FC<FundProps>   = ({
+const Fund: FC<FundProps> = ({
     financialVehicleBalance,
     getBalanceOfFinancialVehicle,
     recipientAddress,
