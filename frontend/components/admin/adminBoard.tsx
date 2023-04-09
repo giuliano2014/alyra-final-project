@@ -44,12 +44,39 @@ const AdminBoard = () => {
     const toast = useToast()
 
     useEffect(() => {
-        getAssets()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        let unsubscribe: any
+
+        const fetchAssetsAndSubscribe = async () => {
+            unsubscribe = await getAssets()
+        }
+
+        fetchAssetsAndSubscribe()
+
+        // Cleanup function to unsubscribe when the component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        getKycValidations()
+        let unsubscribe: any
+
+        const fetchKycValidationsAndSubscribe = async () => {
+            unsubscribe = await getKycValidations()
+        }
+
+        fetchKycValidationsAndSubscribe()
+
+        // Cleanup function to unsubscribe when the component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
     }, [isLoading])
 
     useEffect(() => {
@@ -59,10 +86,20 @@ const AdminBoard = () => {
 
         const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
 
-        contract.on("WithdrawFromFinancialVehicle", async () => {
+        // Create an event listener function
+        const onWithdrawFromFinancialVehicle = async () => {
             getBalanceOfFinancialVehicle()
-        })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        }
+
+        // Attach the event listener
+        contract.on("WithdrawFromFinancialVehicle", onWithdrawFromFinancialVehicle)
+
+        // Return a cleanup function to remove the event listener when the component unmounts
+        return () => {
+            contract.off("WithdrawFromFinancialVehicle", onWithdrawFromFinancialVehicle)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const createAsset = async (event: FormEvent) => {
@@ -189,8 +226,6 @@ const AdminBoard = () => {
                 const reversedResult = await fetchAndFormatAssets()
                 if (reversedResult) {
                     setAssets(reversedResult)
-                    // @TODO: remove this line when the bug is fixed
-                    // scrollToTop()
                 } else {
                     console.error("Error fetching and formatting assets.")
                 }
@@ -203,7 +238,7 @@ const AdminBoard = () => {
                 console.error("Error fetching and formatting assets.")
             }
         } catch (error) {
-            console.error("An error occured on getAssets :", error)
+            console.error("An error occurred on getAssets :", error)
         }
     }
 
@@ -226,7 +261,7 @@ const AdminBoard = () => {
                 isClosable: true
             })
         } catch (error) {
-            console.error("An error occured on getBalance :", error)
+            console.error("An error occurred on getBalance :", error)
             toast({
                 title: 'Oups :(',
                 description: "Une erreur s'est produite",
@@ -247,7 +282,7 @@ const AdminBoard = () => {
             const result = await contract.getBalanceOfFinancialVehicle()
             setFinancialVehicleBalance(parseFloat(ethers.utils.formatUnits(result, 18)).toString())
         } catch (error) {
-            console.error("An error occured on getBalanceOfFinancialVehicle :", error)
+            console.error("An error occurred on getBalanceOfFinancialVehicle :", error)
         }
     }
 
@@ -279,11 +314,6 @@ const AdminBoard = () => {
         setKycValidations(data.data.kycValidations)
     }
 
-    // @TODO: remove this line when the bug is fixed
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
     const startSellingSession = async (assetAddress: string) => {
         try {
             if (!signer) return
@@ -298,13 +328,27 @@ const AdminBoard = () => {
 
             setIsLoadingStartSellingSessions(prevState => ({ ...prevState, [assetAddress]: true }))
         } catch (error) {
-            console.error("An error occured on startSellingSession :", error)
+            console.error("An error occurred on startSellingSession :", error)
         }
     }
 
     useEffect(() => {
-        fetchPastSellingStatusChangeEvents()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        let unsubscribe: any
+
+        const fetchEventsAndSubscribe = async () => {
+            unsubscribe = await fetchPastSellingStatusChangeEvents()
+        }
+
+        fetchEventsAndSubscribe()
+
+        // Cleanup function to unsubscribe when component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startSellingSession])
 
     const validateKyc = async (id: string, isValidated: boolean) => {
@@ -377,7 +421,7 @@ const AdminBoard = () => {
                 isClosable: true
             })
         } catch (error) {
-            console.error("An error occured on withdrawFromFinancialVehicle :", error)
+            console.error("An error occurred on withdrawFromFinancialVehicle :", error)
             toast({
                 title: 'Oups :(',
                 description: "Une erreur s'est produite",
