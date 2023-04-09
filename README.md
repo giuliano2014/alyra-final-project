@@ -2,118 +2,58 @@
 
 HydrInvest est la première plateforme européenne d’investissement Web3, dédiée aux actifs responsables.
 
+## Table of Contents
+
+- [Présentation](#présentation)
+- [Stack](#stack)
+- [Tests](#tests)
+- [License](#license)
+- [Authors](#authors)
+
+
+## Présentation
+
 Dapp en ligne : https://alyra-hydrinvest.vercel.app/
 
 preprod de la Dapp : https://alyra-hydrinvest-preprod.vercel.app/
 
-Présentation d'HydrInvest :
+Vidéos d'HydrInvest :
 - [Présentation générale de la Dapp](https://www.loom.com/share/ac6697dd1a8449d8ac7386a040c77840)
 - [Présentation du board admin - création d'un actif ERC20](https://www.loom.com/share/2e2b9eb25f1d4b039509e5476cf2306b)
 - [Achat de tokens d'actif par un utilisateur](https://www.loom.com/share/27b87717bc504e09ba42dc1a7ec1bcd4)
 - [Autres fonctionnalités du board admin - retrait de fonds (withdraw) ...](https://www.loom.com/share/c921c6608e084272a6f767d47056144f)
 
-## Table of Contents
+## Stack
 
-- [Prerequis](#prerequis)
-- [Installation](#installation)
-- [Launch front-end Dapp](#launch-front-end-dapp)
-- [Launch back-end app](#launch-back-end-app)
-- [Running the tests](#running-the-tests)
-- [License](#license)
-- [Authors](#authors)
+Backend
 
-## Prerequis
+- [Solidity v0.8.19](https://docs.soliditylang.org/en/v0.8.19/)
+- [Hardhat](https://hardhat.org/docs)
+- [OpenZeppelin 4.x](https://docs.openzeppelin.com/contracts/4.x/)
+- [INFURA](https://www.infura.io/)
+- [hygraph](https://hygraph.com/)
 
-Before using voting contract, you need to install the following dependencies:
 
-- Node.js
-- Truffle
-- Ganache (or another local Ethereum client)
+Frontend
 
-## Installation
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Chakra](https://chakra-ui.com/)
+- [Ethers](https://docs.ethers.org/v5/)
+- [RainbowKit](https://www.rainbowkit.com/)
+- [wagmi](https://wagmi.sh/)
+- [Vercel](https://vercel.com/)
 
-Instructions on how to install the project and its dependencies.
+## Tests
 
-1. Clone the repository to your local machine.
+![test](https://user-images.githubusercontent.com/7302147/230777633-6299e56a-9227-41c0-9a9b-31c5ec0b96f1.jpg)
 
-```sh
-git clone git@github.com:giuliano2014/alyra-project-3.git
-```
-
-2. Navigate to truffle directory & install the required dependencies.
-
-```sh
-cd alyra-project-3/truffle && npm i
-```
-
-3. Navigate to client directory & install the required dependencies.
-
-```sh
-cd alyra-project-3/client && npm i
-```
-
-## Launch front-end Dapp
-
-Instructions on how to launch your local front-end.
-
-1. Start your local Dapp.
-
-```sh
-cd alyra-project-3/client && npm run start
-```
-
-2. Go to your local host : http://localhost:8080/
-
-## Launch back-end app
-
-Instructions on how to launch your local back-end.
-
-1. Launch your local Ethereum blockchain
-
-```sh
-cd alyra-project-3/truffle && ganache
-```
-
-2. Open another terminal window & deploy your smart contract.
-
-```sh
-cd alyra-project-3/truffle && truffle migrate
-```
-
-## Running the tests
-
-Tests are written using the Mocha framework and the OpenZeppelin Test Helpers tool.
-
-Follow the steps below:
-
-1. Launch local Ethereum client
-
-```sh
-ganache
-```
-
-2. Run the tests
-
-```sh
-truffle test
-```
-
-OR
-
-```sh
-npx hardhat test
-```
-
-3. Run test coverage
-
-```sh
-npx hardhat coverage
-```
+![coverage](https://user-images.githubusercontent.com/7302147/230777647-d7619946-dc4a-4eaa-8553-cfb7789e6057.jpg)
 
 ## License
 
-This project is MIT licensed - See the [LICENSE](https://github.com/giuliano2014/alyra-project-2/blob/main/LICENSE) file for details.
+Ce projet est sous licence MIT.
 
 ## Authors
 
-- [Giuliano Furgol](https://www.linkedin.com/in/giulianofurgol/) - Solidity Developer
+- [Giuliano Furgol](https://www.linkedin.com/in/giulianofurgol/) - Développeur Solidity, Web3.
