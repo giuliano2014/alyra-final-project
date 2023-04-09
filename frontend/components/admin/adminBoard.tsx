@@ -43,14 +43,63 @@ const AdminBoard = () => {
     const [withdrawAmount, setWithdrawAmount] = useState(0)
     const toast = useToast()
 
-    useEffect(() => {
-        getAssets()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    // useEffect(() => {
+    //     getAssets()
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [])
 
     useEffect(() => {
-        getKycValidations()
+        let unsubscribe: any
+
+        const fetchAssetsAndSubscribe = async () => {
+            unsubscribe = await getAssets()
+        }
+
+        fetchAssetsAndSubscribe()
+
+        // Cleanup function to unsubscribe when the component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    // useEffect(() => {
+    //     getKycValidations()
+    // }, [isLoading])
+
+    useEffect(() => {
+        let unsubscribe: any
+
+        const fetchKycValidationsAndSubscribe = async () => {
+            unsubscribe = await getKycValidations()
+        }
+
+        fetchKycValidationsAndSubscribe()
+
+        // Cleanup function to unsubscribe or perform cleanup when isLoading changes or the component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
     }, [isLoading])
+
+    // useEffect(() => {
+    //     if (!financialVehicleContractAddress) {
+    //         throw new Error("contractAddress is not defined")
+    //     }
+
+    //     const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+
+    //     contract.on("WithdrawFromFinancialVehicle", async () => {
+    //         getBalanceOfFinancialVehicle()
+    //     })
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [])
 
     useEffect(() => {
         if (!financialVehicleContractAddress) {
@@ -59,10 +108,20 @@ const AdminBoard = () => {
 
         const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
 
-        contract.on("WithdrawFromFinancialVehicle", async () => {
+        // Create an event listener function
+        const onWithdrawFromFinancialVehicle = async () => {
             getBalanceOfFinancialVehicle()
-        })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        }
+
+        // Attach the event listener
+        contract.on("WithdrawFromFinancialVehicle", onWithdrawFromFinancialVehicle)
+
+        // Return a cleanup function to remove the event listener when the component unmounts
+        return () => {
+            contract.off("WithdrawFromFinancialVehicle", onWithdrawFromFinancialVehicle)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const createAsset = async (event: FormEvent) => {
@@ -302,9 +361,28 @@ const AdminBoard = () => {
         }
     }
 
+    // useEffect(() => {
+    //     fetchPastSellingStatusChangeEvents()
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [startSellingSession])
+
     useEffect(() => {
-        fetchPastSellingStatusChangeEvents()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        let unsubscribe: any
+
+        const fetchEventsAndSubscribe = async () => {
+            unsubscribe = await fetchPastSellingStatusChangeEvents()
+        }
+
+        fetchEventsAndSubscribe()
+
+        // Cleanup function to unsubscribe or perform cleanup when startSellingSession changes or the component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startSellingSession])
 
     const validateKyc = async (id: string, isValidated: boolean) => {
