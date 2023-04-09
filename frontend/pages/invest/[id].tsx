@@ -65,7 +65,7 @@ const SingleAsset = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
-    // #TODO: modify this function with right dependencies for performance
+    // @TODO: modify this function with right dependencies for performance
     useEffect(() => {
         getSellingStatus()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,22 +82,6 @@ const SingleAsset = () => {
             }
 
             const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, signer)
-
-            // const price = await contract.getPrice(assetAddress)
-            // const amountBigNumber = ethers.utils.parseEther(amount.toString())
-            // console.log('amountBigNumber', amountBigNumber.toString())
-
-            // const numberOfTokens = ethers.utils.parseUnits(amount.toString(), 18)
-            // console.log('numberOfTokens', numberOfTokens.toString())
-    
-            // const value = ethers.utils.parseEther((amount * 0.01).toString())
-            // console.log('value', value.toString())
-    
-            // const result = await contract.buyToken(assetAddress, numberOfTokens, { value: value })
-            // const result = await contract.buyToken(assetAddress, "1000", { value: ethers.utils.parseEther("10") })
-
-            // const result = await contract.buyToken(assetAddress, ethers.utils.parseEther("150").toString(), { value: ethers.utils.parseEther("150") })
-
             const formattedNumberOfToken = ethers.utils.parseEther(numberOfToken.toString()).toString()
 
             await contract.buyToken(
@@ -253,6 +237,14 @@ const SingleAsset = () => {
                             <Heading size='md'>Acheter des tokens</Heading>
                         </CardHeader>
                         <Divider color='#e2e8f0' />
+                        {sellingStatus === 1 &&
+                            <>
+                                <Heading color='gray.500' mb='5' mt='5' size='sm' textAlign='center'>
+                                    Le prix d&apos;un token est de 1 ETH
+                                </Heading>
+                                <Divider color='#e2e8f0' />
+                            </>
+                        }
                         <CardBody>
                             {sellingStatus === 0 &&
                                 <Heading size='sm' color='gray.500'>La vente de tokens n&apos;a pas encore commencée pour cet actif.</Heading>

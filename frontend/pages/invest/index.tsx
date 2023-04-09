@@ -43,6 +43,7 @@ const Assets = () => {
 
     useEffect(() => {
         getAssets()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [assets, isAccountConnected])
 
     const fetchAndFormatAssets = async () => {

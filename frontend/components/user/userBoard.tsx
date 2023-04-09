@@ -1,27 +1,18 @@
 import {
-    Badge,
     Box,
-    Button,
-    Card,
     Heading,
-    Stack,
     Tab,
-    Table,
-    TableCaption,
-    TableContainer,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
-    Tbody,
-    Td,
-    Th,
-    Thead,
-    Tr,
     useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
+
+import Asset from '@/components/user/asset'
+import Kyc from '@/components/user/kyc'
 
 const UserBoard = () => {
     const { address } = useAccount()
@@ -31,6 +22,7 @@ const UserBoard = () => {
 
     useEffect(() => {
         getKycValidationByAddress()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
     const askForKycValidation = async (e: any) => {
@@ -138,82 +130,14 @@ const UserBoard = () => {
                 </TabList>
                 <TabPanels>
                     <TabPanel>
-                        <Box mt='10'>
-                            <Heading size='md'>Mon KYC</Heading>
-                        </Box>
-                        <Card borderRadius='2xl' mt='4' padding='4'>
-                            <Box
-                                alignItems='center'
-                                as='form'
-                                display='flex'
-                                justifyContent='space-between'
-                                onSubmit={askForKycValidation}
-                            >
-                                <Heading size='sm'>Demande de validation de mon KYC</Heading>
-                                <Stack direction='row' spacing={4}>
-                                    {status !== "in progress" && status !== "done" &&
-                                        <Button
-                                            size='sm'
-                                            colorScheme='teal'
-                                            type='submit'
-                                            variant='solid'
-                                        >
-                                            Validation
-                                        </Button>
-                                    }
-                                    {!validated && status === "in progress" &&
-                                        <Button
-                                            size='sm'
-                                            colorScheme='teal'
-                                            isLoading={true}
-                                            loadingText='Demande en cours de traitement'
-                                            type='submit'
-                                            variant='solid'
-                                        >
-                                            Validation
-                                        </Button>
-                                    }
-                                    {validated && status === "done" && <Badge colorScheme="green">Validé</Badge>}
-                                    {!validated && status === "done" && <Badge colorScheme="red">Votre KYC a été refusé</Badge>}
-                                </Stack>
-                            </Box>
-                        </Card>
+                        <Kyc
+                            askForKycValidation={askForKycValidation}
+                            status={status}
+                            validated={validated}
+                        />
                     </TabPanel>
                     <TabPanel>
-                        <Box mt='10'>
-                            <Heading size='md'>Mes actifs</Heading>
-                            <Card borderRadius='2xl' mt='4'>
-                                <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>Vos n&apos;avez pas encore acheté d&apos;actif</TableCaption>
-                                        <Thead>
-                                            <Tr>
-                                                <Th>Titre</Th>
-                                                <Th>Nb de token</Th>
-                                                <Th>Symbol du token</Th>
-                                            </Tr>
-                                        </Thead>
-                                        {/* <Tbody>
-                                            <Tr>
-                                                <Td>Actif #3</Td>
-                                                <Td>1.500</Td>
-                                                <Td>ATT</Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Actif #11</Td>
-                                                <Td>500</Td>
-                                                <Td>AET</Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>Actif #5</Td>
-                                                <Td>50.000</Td>
-                                                <Td>AFT</Td>
-                                            </Tr>
-                                        </Tbody> */}
-                                    </Table>
-                                </TableContainer>
-                            </Card>
-                        </Box>
+                        <Asset />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
