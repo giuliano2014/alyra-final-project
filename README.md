@@ -1,38 +1,119 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Alyra - Projet final
 
-## Getting Started
+HydrInvest est la première plateforme européenne d’investissement Web3, dédiée aux actifs responsables.
 
-First, run the development server:
+Dapp en ligne : https://alyra-hydrinvest.vercel.app/
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+preprod de la Dapp : https://alyra-hydrinvest-preprod.vercel.app/
+
+Présentation d'HydrInvest :
+- [Présentation générale de la Dapp](https://www.loom.com/share/ac6697dd1a8449d8ac7386a040c77840)
+- [Présentation du board admin - création d'un actif ERC20](https://www.loom.com/share/2e2b9eb25f1d4b039509e5476cf2306b)
+- [Achat de tokens d'actif par un utilisateur](https://www.loom.com/share/27b87717bc504e09ba42dc1a7ec1bcd4)
+- [Autres fonctionnalités du board admin - retrait de fonds (withdraw) ...](https://www.loom.com/share/c921c6608e084272a6f767d47056144f)
+
+## Table of Contents
+
+- [Prerequis](#prerequis)
+- [Installation](#installation)
+- [Launch front-end Dapp](#launch-front-end-dapp)
+- [Launch back-end app](#launch-back-end-app)
+- [Running the tests](#running-the-tests)
+- [License](#license)
+- [Authors](#authors)
+
+## Prerequis
+
+Before using voting contract, you need to install the following dependencies:
+
+- Node.js
+- Truffle
+- Ganache (or another local Ethereum client)
+
+## Installation
+
+Instructions on how to install the project and its dependencies.
+
+1. Clone the repository to your local machine.
+
+```sh
+git clone git@github.com:giuliano2014/alyra-project-3.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Navigate to truffle directory & install the required dependencies.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```sh
+cd alyra-project-3/truffle && npm i
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+3. Navigate to client directory & install the required dependencies.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```sh
+cd alyra-project-3/client && npm i
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Launch front-end Dapp
 
-## Learn More
+Instructions on how to launch your local front-end.
 
-To learn more about Next.js, take a look at the following resources:
+1. Start your local Dapp.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+cd alyra-project-3/client && npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+2. Go to your local host : http://localhost:8080/
 
-## Deploy on Vercel
+## Launch back-end app
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Instructions on how to launch your local back-end.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Launch your local Ethereum blockchain
+
+```sh
+cd alyra-project-3/truffle && ganache
+```
+
+2. Open another terminal window & deploy your smart contract.
+
+```sh
+cd alyra-project-3/truffle && truffle migrate
+```
+
+## Running the tests
+
+Tests are written using the Mocha framework and the OpenZeppelin Test Helpers tool.
+
+Follow the steps below:
+
+1. Launch local Ethereum client
+
+```sh
+ganache
+```
+
+2. Run the tests
+
+```sh
+truffle test
+```
+
+OR
+
+```sh
+npx hardhat test
+```
+
+3. Run test coverage
+
+```sh
+npx hardhat coverage
+```
+
+## License
+
+This project is MIT licensed - See the [LICENSE](https://github.com/giuliano2014/alyra-project-2/blob/main/LICENSE) file for details.
+
+## Authors
+
+- [Giuliano Furgol](https://www.linkedin.com/in/giulianofurgol/) - Solidity Developer
