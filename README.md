@@ -29,7 +29,7 @@ Backend
 
 - [Solidity v0.8.19](https://docs.soliditylang.org/en/v0.8.19/)
 - [NatSpec Format](https://docs.soliditylang.org/en/v0.8.19/natspec-format.html)
-- [Hardhat](https://hardhat.org/docs)
+- [Hardhat](https://hardhat.org/)
 - [OpenZeppelin 4.x](https://docs.openzeppelin.com/contracts/4.x/)
 - [INFURA](https://www.infura.io/)
 - [hygraph](https://hygraph.com/)
@@ -47,9 +47,9 @@ Frontend
 
 ## Tests
 
-![test](https://user-images.githubusercontent.com/7302147/230777633-6299e56a-9227-41c0-9a9b-31c5ec0b96f1.jpg)
+<img width="1440" alt="Capture d’écran 2023-04-09 à 17 25 30" src="https://user-images.githubusercontent.com/7302147/230781634-0bbc80f2-1df9-4927-918d-bd7facba2f40.png">
 
-![coverage](https://user-images.githubusercontent.com/7302147/230777647-d7619946-dc4a-4eaa-8553-cfb7789e6057.jpg)
+<img width="1440" alt="Capture d’écran 2023-04-09 à 17 26 42" src="https://user-images.githubusercontent.com/7302147/230781705-bd521653-df1e-42fd-aee3-5438caf42cc9.png">
 
 ## License
 
