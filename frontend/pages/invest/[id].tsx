@@ -60,17 +60,55 @@ const SingleAsset = () => {
 
     const isNumberOfTokenError = numberOfToken < 1
 
+    // useEffect(() => {
+    //     getKycValidationByAddress()
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [address])
+
     useEffect(() => {
-        getKycValidationByAddress()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        let unsubscribe: any
+    
+        const fetchKycValidationByAddress = async () => {
+            unsubscribe = await getKycValidationByAddress()
+        }
+    
+        fetchKycValidationByAddress()
+    
+        // Cleanup function to unsubscribe when the component unmounts or address changes
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
+    
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
+    
+
+    // @TODO: modify this function with right dependencies for performance
+    // useEffect(() => {
+    //     getSellingStatus()
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // })
 
     // @TODO: modify this function with right dependencies for performance
     useEffect(() => {
-        getSellingStatus()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        let unsubscribe: any
+    
+        const fetchSellingStatus = async () => {
+            unsubscribe = await getSellingStatus()
+        }
+    
+        fetchSellingStatus()
+    
+        // Cleanup function to unsubscribe when the component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
     })
-  
+    
     const buyToken = async (event: FormEvent) => {
         event.preventDefault()
 
