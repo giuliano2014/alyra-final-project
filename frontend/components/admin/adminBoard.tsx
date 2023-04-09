@@ -279,7 +279,7 @@ const AdminBoard = () => {
         setKycValidations(data.data.kycValidations)
     }
 
-    // @TODO: Remove this unused function
+    // @TODO: remove this line when the bug is fixed
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
