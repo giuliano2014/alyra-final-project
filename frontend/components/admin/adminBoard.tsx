@@ -1,30 +1,21 @@
 import {
-    Badge,
     Box,
-    Button,
-    Card,
     Heading,
     Tab,
-    Table,
-    TableCaption,
-    TableContainer,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
-    Tbody,
-    Td,
-    Th,
-    Thead,
-    Tr,
     useToast
 } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { FormEvent, useEffect, useState } from 'react'
 import { useProvider, useSigner } from 'wagmi'
 
+import { FormattedAsset } from "@/components/admin/adminBoard.types"
 import AddNewAsset from '@/components/admin/addNewAsset'
-import AssetMetrics, { FormattedAsset } from '@/components/admin/assetMetrics'
+import AssetActions from '@/components/admin/assetActions'
+import AssetMetrics from '@/components/admin/assetMetrics'
 import Fund from '@/components/admin/fund'
 import Kyc from '@/components/admin/kyc'
 import { financialVehicleAbi, financialVehicleContractAddress } from '@/contracts/financialVehicle'
@@ -198,6 +189,7 @@ const AdminBoard = () => {
                 const reversedResult = await fetchAndFormatAssets()
                 if (reversedResult) {
                     setAssets(reversedResult)
+                    // // @TODO: remove this line when the bug is fixed
                     // scrollToTop()
                 } else {
                     console.error("Error fetching and formatting assets.")
@@ -287,6 +279,7 @@ const AdminBoard = () => {
         setKycValidations(data.data.kycValidations)
     }
 
+    // @TODO: Remove this unused function
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -434,64 +427,14 @@ const AdminBoard = () => {
                             isLoadingEndSellingSessions={isLoadingEndSellingSessions}
                             isLoadingStartSellingSessions={isLoadingStartSellingSessions}
                         />
-                        <Box mt='10'>
-                            <Heading size='md'>Actions sur les actifs</Heading>
-                            <Card borderRadius='2xl' mt='4'>
-                                <TableContainer>
-                                    <Table variant='striped'>
-                                        <TableCaption>{assets.length > 0 ? "Actions sur les actifs " : "Aucun actif n'a été créé pour le moment"}</TableCaption>
-                                        <Thead>
-                                            <Tr>
-                                                <Th>Address</Th>
-                                                <Th>Nom</Th>
-                                                <Th>Démarrer la vente</Th>
-                                                <Th>Clôturer la vente</Th>
-                                                <Th>Balance</Th>
-                                            </Tr>
-                                        </Thead>
-                                        <Tbody>
-                                            {assets.length > 0 && assets.map(({ assetAddress, name }, index) => {
-                                                return (
-                                                    <Tr key={assetAddress}>
-                                                        <Td>{assetAddress}</Td>
-                                                        <Td>{name}</Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='teal'
-                                                                isDisabled={isLoadingStartSellingSessions[assetAddress]}
-                                                                onClick={() => startSellingSession(assetAddress)}
-                                                                size='xs'
-                                                            >
-                                                                Commencer
-                                                            </Button>
-                                                        </Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='red'
-                                                                isDisabled={isLoadingEndSellingSessions[assetAddress]}
-                                                                onClick={() => endSellingSession(assetAddress)}
-                                                                size='xs'
-                                                            >
-                                                                Terminer
-                                                            </Button>
-                                                        </Td>
-                                                        <Td>
-                                                            <Button
-                                                                colorScheme='blue'
-                                                                onClick={() => getBalance(assetAddress, financialVehicleContractAddress || '')}
-                                                                size='xs'
-                                                            >
-                                                                Consulter
-                                                            </Button>
-                                                        </Td>
-                                                    </Tr>
-                                                )
-                                            })}
-                                        </Tbody>
-                                    </Table>
-                                </TableContainer>
-                            </Card>
-                        </Box>
+                        <AssetActions
+                            assets={assets}
+                            endSellingSession={endSellingSession}
+                            getBalance={getBalance}
+                            isLoadingEndSellingSessions={isLoadingEndSellingSessions}
+                            isLoadingStartSellingSessions={isLoadingStartSellingSessions}
+                            startSellingSession={startSellingSession}
+                        />
                         <AddNewAsset
                             assetName={assetName}
                             assetSymbol={assetSymbol}

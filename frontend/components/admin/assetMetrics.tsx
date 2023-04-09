@@ -14,12 +14,7 @@ import {
 } from "@chakra-ui/react"
 import { FC } from "react"
 
-export type FormattedAsset = {
-    assetAddress: string
-    name: string
-    symbol: string
-    totalSupply: string
-}
+import { FormattedAsset } from "@/components/admin/adminBoard.types"
 
 type AssetMetricsProps = {
     assets: FormattedAsset[]
@@ -53,7 +48,7 @@ const AssetMetrics: FC<AssetMetricsProps> = ({
                         <Tbody>
                             {assets.length > 0 && assets.map(({ assetAddress, name, symbol, totalSupply }) => {
                                 return (
-                                    <Tr key={assetAddress}>
+                                    <Tr key={`metrics-${assetAddress}`}>
                                         <Td>{assetAddress}</Td>
                                         <Td>{name}</Td>
                                         <Td>
