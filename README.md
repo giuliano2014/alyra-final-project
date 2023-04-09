@@ -28,6 +28,7 @@ Vidéos d'HydrInvest :
 Backend
 
 - [Solidity v0.8.19](https://docs.soliditylang.org/en/v0.8.19/)
+- [NatSpec Format](https://docs.soliditylang.org/en/v0.8.19/natspec-format.html)
 - [Hardhat](https://hardhat.org/docs)
 - [OpenZeppelin 4.x](https://docs.openzeppelin.com/contracts/4.x/)
 - [INFURA](https://www.infura.io/)
