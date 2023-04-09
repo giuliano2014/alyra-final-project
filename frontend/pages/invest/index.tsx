@@ -42,63 +42,82 @@ const Assets = () => {
     const [assets, setAssets] = useState<FormattedAsset[]>([])
 
     useEffect(() => {
-        getAssets()
+        let unsubscribe: any;
+    
+        (async () => {
+            unsubscribe = await getAssets()
+        })()
+    
+        // Cleanup function to unsubscribe when the component unmounts or dependencies change
+        return () => {
+            if (unsubscribe) {
+                unsubscribe()
+            }
+        }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [assets, isAccountConnected])
+    }, [isAccountConnected])
 
+    const initContract = () => {
+        if (!isAccountConnected) return
+
+        if (!financialVehicleContractAddress) {
+            throw new Error("contractAddress is not defined")
+        }
+    
+        return new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+    }
+    
     const fetchAndFormatAssets = async () => {
         try {
-            if (!isAccountConnected) return
-
-            if (!financialVehicleContractAddress) {
-                throw new Error("contractAddress is not defined")
-            }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
+            const contract = initContract()
+            if (!contract) return
             const result = await contract.getAssets()
+    
             const formattedResult = result.map(({ assetAddress, name, symbol, totalSupply }: Asset) => ({
                 assetAddress,
                 name,
                 symbol,
                 totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
             }))
-
+    
             return formattedResult
         } catch (error) {
-            console.error("An error occured on fetchAndFormatAssets :", error)
+            console.error("An error occurred on fetchAndFormatAssets :", error)
+        }
+    }
+    
+    const updateAssets = async () => {
+        const formattedResult = await fetchAndFormatAssets()
+        if (formattedResult) {
+            setAssets(formattedResult)
+        } else {
+            console.error("An error occurred on getAssets")
         }
     }
     
     const getAssets = async () => {
         try {
-            if (!isAccountConnected) return
-
-            if (!financialVehicleContractAddress) {
-                throw new Error("contractAddress is not defined")
+            const contract = initContract()
+            if (!contract) return
+    
+            const onAssetCreated = async () => {
+                await updateAssets()
             }
-
-            const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
     
-            contract.on("AssetCreated", async () => {
-                const formattedResult = await fetchAndFormatAssets()
-                if (formattedResult) {
-                    setAssets(formattedResult)
-                } else {
-                    console.error("An error occured on getAssets")
-                }
-            })
+            contract.on("AssetCreated", onAssetCreated)
     
-            const formattedResult = await fetchAndFormatAssets()
-            if (formattedResult) {
-                setAssets(formattedResult)
-            } else {
-                console.error("An error occured on getAssets")
+            await updateAssets()
+    
+            // Return a cleanup function to unsubscribe from the contract event
+            return () => {
+                contract.off("AssetCreated", onAssetCreated)
             }
         } catch (error) {
-            console.error("An error occured on getAssets :", error)
+            console.error("An error occurred on getAssets:", error)
         }
     }
-
+    
     return (
         <>
             <Head>

@@ -21,9 +21,24 @@ const UserBoard = () => {
     const toast = useToast()
 
     useEffect(() => {
-        getKycValidationByAddress()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [address])
+        let unsubscribe: any;
+
+        const fetchValidationAndSubscribe = async () => {
+            unsubscribe = await getKycValidationByAddress();
+        };
+
+        fetchValidationAndSubscribe();
+
+        // Cleanup function to unsubscribe when the component unmounts
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [address]);
+
 
     const askForKycValidation = async (e: any) => {
         e.preventDefault()
