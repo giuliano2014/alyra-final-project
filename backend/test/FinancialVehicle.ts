@@ -31,7 +31,6 @@ describe("Financial Vehicle", () => {
 
     describe("deployment", () => {
         it("should set up the roles correctly", async () => {
-            // const DEFAULT_ADMIN_ROLE = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('DEFAULT_ADMIN_ROLE'));
             const ADMIN_ROLE = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('ADMIN_ROLE'));
             expect(await financialVehicle.hasRole(ADMIN_ROLE, admins[0])).to.equal(true);
             expect(await financialVehicle.hasRole(ADMIN_ROLE, admins[1])).to.equal(true);
@@ -42,36 +41,6 @@ describe("Financial Vehicle", () => {
     });
 
     describe("buyToken", async () => {
-        xit("should allow buying tokens with the correct amount of Ether", async () => {
-            // Start a selling session for the asset
-            await financialVehicle.startSellingSession(asset.address);
-
-            // Make sure the selling session has started
-            expect(await financialVehicle.sellingStatus(asset.address)).to.equal(1); // SellingSessionStarted
-
-            // Buy some tokens with the correct amount of Ether
-            // const buyer = await ethers.getSigner(1);
-            const [owner, addr1] = await ethers.getSigners();
-            const tx = await financialVehicle.connect(addr1).buyToken(asset.address, amount, {
-                value: await asset.price(amount),
-            });
-
-            // Check that the transaction was successful
-            expect(tx).to.emit(asset, "Transfer").withArgs(financialVehicle.address, addr1.address, amount);
-
-            // Check that the buyer received the correct amount of tokens
-            expect(await asset.balanceOf(addr1.address)).to.equal(amount);
-
-            // Check that the seller received the correct amount of Ether
-            expect(await ethers.provider.getBalance(financialVehicle.address)).to.equal(amount);
-
-            // End the selling session
-            await financialVehicle.endSellingSession(owner.address);
-
-            // Make sure the selling session has ended
-            expect(await financialVehicle.sellingStatus(owner.address)).to.equal(2); // SellingSessionEnded
-        });
-
         it("should not allow buying tokens with the incorrect amount of Ether", async () => {
             // Start a selling session for the asset
             await financialVehicle.startSellingSession(asset.address);
@@ -133,18 +102,6 @@ describe("Financial Vehicle", () => {
             expect(assets[0].symbol).to.equal("ASSET");
             expect(assets[0].totalSupply).to.equal(1000);
         });
-
-        xit("should only be called by an admin", async () => {
-            // On essaie d'appeler la fonction createAsset avec un non-admin
-            const [nonAdmin] = await ethers.getSigners();
-            await expect(
-                financialVehicle.connect(nonAdmin).createAsset(
-                    "Asset Name",
-                    "ASSET",
-                    1000
-                )
-            ).to.be.revertedWith("You are not an admin");
-        });
     });
 
     describe("endSellingSession", () => {
@@ -187,7 +144,6 @@ describe("Financial Vehicle", () => {
             );
 
             expect(balance).to.equal(0);
-            // expect(balance).to.equal(parseFloat(ethers.utils.formatUnits(balance, 18)).toString());
         });
     });
 
@@ -240,22 +196,6 @@ describe("Financial Vehicle", () => {
             await financialVehicle.startSellingSession(asset.address);
             await expect(financialVehicle.startSellingSession(asset.address))
             .to.be.revertedWith("Selling session already started");
-        });
-
-        xit("should revert if the selling session has already ended", async () => {
-            const [addr1] = await ethers.getSigners();
-            await financialVehicle.startSellingSession(asset.address);
-            await asset.approve(financialVehicle.address, 1000);
-            await financialVehicle.connect(addr1).buyToken(asset.address, 101);
-            await financialVehicle.startSellingSession(asset.address);
-            await expect(financialVehicle.startSellingSession(asset.address))
-                .to.be.revertedWith("Selling session already ended");
-        });
-
-        xit("should revert if called by a non-admin", async () => {
-            const [addr1] = await ethers.getSigners();
-            await expect(financialVehicle.connect(addr1).startSellingSession(asset.address))
-                .to.be.revertedWith("You are not an admin");
         });
     });
 });
