@@ -7,7 +7,7 @@ type KycProps = {
     validated: boolean
 }
 
-const Kyc: FC<KycProps>  = ({
+const Kyc: FC<KycProps> = ({
     askForKycValidation,
     status,
     validated

@@ -20,7 +20,7 @@ type KycProps = {
     validateKyc: (id: string, isValidated: boolean) => void
 }
 
-const Kyc: FC<KycProps>  = ({
+const Kyc: FC<KycProps> = ({
     kycValidations,
     validateKyc
 }) => {
