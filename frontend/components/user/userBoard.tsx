@@ -20,11 +20,6 @@ const UserBoard = () => {
     const [validated, setValidated] = useState(false)
     const toast = useToast()
 
-    // useEffect(() => {
-    //     getKycValidationByAddress()
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [address])
-
     useEffect(() => {
         let unsubscribe: any;
 
@@ -34,7 +29,7 @@ const UserBoard = () => {
 
         fetchValidationAndSubscribe();
 
-        // Cleanup function to unsubscribe or perform cleanup when address changes or the component unmounts
+        // Cleanup function to unsubscribe when the component unmounts
         return () => {
             if (unsubscribe) {
                 unsubscribe();

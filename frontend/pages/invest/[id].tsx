@@ -60,11 +60,6 @@ const SingleAsset = () => {
 
     const isNumberOfTokenError = numberOfToken < 1
 
-    // useEffect(() => {
-    //     getKycValidationByAddress()
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [address])
-
     useEffect(() => {
         let unsubscribe: any
     
@@ -74,7 +69,7 @@ const SingleAsset = () => {
     
         fetchKycValidationByAddress()
     
-        // Cleanup function to unsubscribe when the component unmounts or address changes
+        // Cleanup function to unsubscribe when the component unmounts
         return () => {
             if (unsubscribe) {
                 unsubscribe()
@@ -83,13 +78,6 @@ const SingleAsset = () => {
     
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
-    
-
-    // @TODO: modify this function with right dependencies for performance
-    // useEffect(() => {
-    //     getSellingStatus()
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // })
 
     // @TODO: modify this function with right dependencies for performance
     useEffect(() => {
@@ -138,7 +126,7 @@ const SingleAsset = () => {
 
             setIsBuyingToken(true)
         } catch (error) {
-            console.error("An error occured on buy token :", error)
+            console.error("An error occurred on buy token :", error)
             toast({
                 title: 'Oups :(',
                 description: "Une erreur s'est produite",
@@ -195,7 +183,7 @@ const SingleAsset = () => {
             const result = await contract.sellingStatus(id)
             setSellingStatus(result)
         } catch (error) {
-            console.error("An error occured on getSellingStatus :", error)
+            console.error("An error occurred on getSellingStatus :", error)
         }
     }
 

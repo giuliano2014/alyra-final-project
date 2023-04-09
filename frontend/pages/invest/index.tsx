@@ -41,64 +41,6 @@ const Assets = () => {
     const provider = useProvider()
     const [assets, setAssets] = useState<FormattedAsset[]>([])
 
-    // useEffect(() => {
-    //     getAssets()
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [assets, isAccountConnected])
-
-    // const fetchAndFormatAssets = async () => {
-    //     try {
-    //         if (!isAccountConnected) return
-
-    //         if (!financialVehicleContractAddress) {
-    //             throw new Error("contractAddress is not defined")
-    //         }
-
-    //         const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
-    //         const result = await contract.getAssets()
-    //         const formattedResult = result.map(({ assetAddress, name, symbol, totalSupply }: Asset) => ({
-    //             assetAddress,
-    //             name,
-    //             symbol,
-    //             totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
-    //         }))
-
-    //         return formattedResult
-    //     } catch (error) {
-    //         console.error("An error occured on fetchAndFormatAssets :", error)
-    //     }
-    // }
-    
-    // const getAssets = async () => {
-    //     try {
-    //         if (!isAccountConnected) return
-
-    //         if (!financialVehicleContractAddress) {
-    //             throw new Error("contractAddress is not defined")
-    //         }
-
-    //         const contract = new ethers.Contract(financialVehicleContractAddress, financialVehicleAbi, provider)
-    
-    //         contract.on("AssetCreated", async () => {
-    //             const formattedResult = await fetchAndFormatAssets()
-    //             if (formattedResult) {
-    //                 setAssets(formattedResult)
-    //             } else {
-    //                 console.error("An error occured on getAssets")
-    //             }
-    //         })
-    
-    //         const formattedResult = await fetchAndFormatAssets()
-    //         if (formattedResult) {
-    //             setAssets(formattedResult)
-    //         } else {
-    //             console.error("An error occured on getAssets")
-    //         }
-    //     } catch (error) {
-    //         console.error("An error occured on getAssets :", error)
-    //     }
-    // }
-
     useEffect(() => {
         let unsubscribe: any;
     
@@ -106,7 +48,7 @@ const Assets = () => {
             unsubscribe = await getAssets()
         })()
     
-        // Cleanup function to unsubscribe from the contract event when the component unmounts or dependencies change
+        // Cleanup function to unsubscribe when the component unmounts or dependencies change
         return () => {
             if (unsubscribe) {
                 unsubscribe()
@@ -136,12 +78,12 @@ const Assets = () => {
                 assetAddress,
                 name,
                 symbol,
-                totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString(),
+                totalSupply: parseFloat(ethers.utils.formatUnits(totalSupply, 18)).toString()
             }))
     
             return formattedResult
         } catch (error) {
-            console.error("An error occurred on fetchAndFormatAssets:", error)
+            console.error("An error occurred on fetchAndFormatAssets :", error)
         }
     }
     
