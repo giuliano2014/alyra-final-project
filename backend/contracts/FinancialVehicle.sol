@@ -3,13 +3,14 @@ pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Asset.sol";
 
 /**
  * @title FinancialVehicle
  * @dev A contract for managing dynamically assets that are ERC20 tokens and more.
  */
-contract FinancialVehicle is AccessControl {
+contract FinancialVehicle is AccessControl, ReentrancyGuard {
 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
@@ -155,13 +156,15 @@ contract FinancialVehicle is AccessControl {
     /**
      * @notice Allows an admin to withdraw Ether from the financial vehicle to a recipient.
      * @param _amount The amount of Ether to withdraw.
-     * @param _recipient The address of the recipient.
+     * @param _to The address of the recipient.
      */
-    function withdrawFromFinancialVehicle(uint256 _amount, address payable _recipient) external onlyAdmin {
+    function withdrawFromFinancialVehicle(uint256 _amount, address payable _to) external onlyAdmin nonReentrant {
         require(address(this).balance >= _amount, "Insufficient balance");
 
-        _recipient.transfer(_amount);
-        emit WithdrawFromFinancialVehicle(_recipient, _amount);
+        (bool sent, ) = _to.call{value: _amount}("");
+        require(sent, "Transfer failed");
+
+        emit WithdrawFromFinancialVehicle(_to, _amount);
     }
     
     fallback() external payable {
